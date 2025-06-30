@@ -38,8 +38,8 @@ const BuyerInterface: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header showNavigation />
+    <div className="min-h-screen bg-gray-900 pt-16">
+      {/* <Header showNavigation /> */}
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
