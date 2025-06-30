@@ -39,12 +39,12 @@ const BrandDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header userRole="brand" />
+    <div className="min-h-screen bg-gray-900">
+      {/* <Header userRole="brand" /> */}
       
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen">
+        <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen mt-16">
           <div className="p-6">
             <div className="mb-8">
               {!isConnected ? (

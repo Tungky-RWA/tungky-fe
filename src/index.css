@@ -111,7 +111,7 @@ body {
   }
 
   .nav-color-animation {
-    @apply before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-blue-900 before:via-purple-700 before:to-cyan-700  before:bg-[length:200%_200%]
+    @apply before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-[#cfeeff] before:via-purple-700 before:to-cyan-700  before:bg-[length:200%_200%]
   }
 
   .floating-nav {
