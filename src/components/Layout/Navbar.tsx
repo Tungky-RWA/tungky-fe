@@ -57,7 +57,7 @@ const Navbar = () => {
         <div className='flex items-center gap-7'>
           <Link to="/" className="flex items-center space-x-2">
             <img src='/img/logo.png' alt='logo' className='h-8' />
-            <span className="text-xl bg-gradient-to-r bg-clip-text text-transparent font-bold from-[#8ed2ff] to-[#cfeeff] text-shadow-lg">Tungky</span>
+            <span className="text-xl text-[#5409DA] font-bold from-[#8ed2ff] to-[#cfeeff] text-shadow-lg">Tungky</span>
           </Link>
           
           {/* <Button id="product-button" title="Product" 
