@@ -1,11 +1,12 @@
 'use client';
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Button from "../UI/ButtonCustom";
 import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import { Button as ButtonUI } from "../UI/button";
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -38,7 +39,7 @@ const Hero = () => {
 
 
   return (
-    <div className="relative h-dvh w-screen overflow-x-hidden">
+    <div className="relative h-dvh w-screen ">
       <div id="video-frame" className="relative z-10 h-dvh w-screen overflow-hidden bg-blue-75">
         <div>
           <video  
@@ -59,10 +60,10 @@ const Hero = () => {
               Secure Real-World Products with Blockchain <br /> Authenticate with NFC/QR. Fight fakes. Build trust.
             </p>
 
-            <Button id="watch-triler" title="Watch Trailer" leftIcon={<TiLocationArrow />} 
+            <ButtonUI id="watch-triler" title="Watch Trailer" leftIcon={<TiLocationArrow />} 
             containerClass="bg-[#BBFBFF] flex-center gap-1" >
               Register Now!!!
-            </Button>
+            </ButtonUI>
           </div>
 
         </div>

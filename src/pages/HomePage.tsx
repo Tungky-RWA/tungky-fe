@@ -11,6 +11,9 @@ import Card from '../components/UI/CardCustom';
 import About from '../components/Home/About';
 import Footer from '../components/Home/Footer';
 import NFTLending from '../components/Home/NFTLending';
+import ValueProposition from '@/components/Home/Value';
+import HowItWorks from '../components/Home/Step';
+import TargetUser from '@/components/Home/TargetUser';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -272,7 +275,7 @@ const HomePage: React.FC = () => {
       <Navbar />
       
       {/* Hero Section with Parallax */}
-      <section ref={heroRef} className="relative overflow-hidden min-h-screen w-screen items-center bg-[#BBFBFF]">
+      <section ref={heroRef} className="relative overflow-hidden w-screen bg-[#BBFBFF]">
         {/* Background Layer */}
         
 
@@ -314,101 +317,14 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Value Propositions */}
-      <section ref={featuresRef} className="py-20 relative bg-gradient-to-r from-primary to-accent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-reveal text-3xl lg:text-4xl font-bold text-white mb-4">
-              Keunggulan Platform Kami
-            </h2>
-            <p className="text-reveal text-xl text-white/60 max-w-2xl mx-auto">
-              Revolusi industri dengan teknologi blockchain untuk autentikasi produk
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="feature-card hover-card">
-              <Card hover className="h-full">
-                <Shield className="feature-icon card-icon h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  Anti-Pemalsuan Digital
-                </h3>
-                <p className="text-white/70">
-                  Bukti digital yang tak terbantahkan melalui tokenisasi RWA di blockchain 
-                  untuk melindungi produk dari pemalsuan.
-                </p>
-              </Card>
-            </div>
+      {/* <section ref={featuresRef} className="py-20 relative "> */}
+        < ValueProposition  />
+      {/* </section> */}
 
-            <div className="feature-card hover-card">
-              <Card hover className="h-full">
-                <Users className="feature-icon card-icon h-12 w-12 text-accent mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  Kepercayaan Konsumen
-                </h3>
-                <p className="text-white/70">
-                  Peningkatan kepercayaan konsumen dan transparansi rantai pasok 
-                  melalui verifikasi yang dapat diaudit.
-                </p>
-              </Card>
-            </div>
-
-            <div className="feature-card hover-card">
-              <Card hover className="h-full">
-                <Zap className="feature-icon card-icon h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  Inovasi & Diferensiasi
-                </h3>
-                <p className="text-white/70">
-                  Diferensiasi pasar melalui teknologi garda depan (on-chain) 
-                  yang memberikan keunggulan kompetitif.
-                </p>
-              </Card>
-            </div>
-
-            <div className="feature-card hover-card">
-              <Card hover className="h-full">
-                <TrendingUp className="feature-icon card-icon h-12 w-12 text-accent mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  Nilai Tambah Produk
-                </h3>
-                <p className="text-white/70">
-                  Engagement digital baru melalui NFT dan pengalaman unboxing 
-                  yang terverifikasi meningkatkan nilai produk.
-                </p>
-              </Card>
-            </div>
-
-            <div className="feature-card hover-card">
-              <Card hover className="h-full">
-                <Globe className="feature-icon card-icon h-12 w-12 text-primary mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  Efisiensi Operasional
-                </h3>
-                <p className="text-white/70">
-                  Digitalisasi sertifikat keaslian dan manajemen aset 
-                  yang efisien melalui sistem otomatis.
-                </p>
-              </Card>
-            </div>
-
-            <div className="feature-card hover-card">
-              <Card hover className="h-full">
-                <CheckCircle className="feature-icon card-icon h-12 w-12 text-accent mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  Verifikasi Instan
-                </h3>
-                <p className="text-white/70">
-                  Verifikasi produk secara real-time melalui NFC dan QR code 
-                  yang terhubung langsung dengan blockchain.
-                </p>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
+      < HowItWorks />
 
       {/* How It Works */}
-      <section ref={howItWorksRef} className="py-20 bg-white/5 relative bg-gradient-to-r from-primary to-accent">
+      {/* <section ref={howItWorksRef} className="py-20 bg-white/5 relative bg-gradient-to-r from-primary to-accent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-reveal text-3xl lg:text-4xl font-bold text-white mb-4">
@@ -453,74 +369,8 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Target Audience */}
-      <section ref={targetAudienceRef} className="py-20 relative bg-gradient-to-r from-primary to-accent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-reveal text-3xl lg:text-4xl font-bold text-white mb-4">
-              Target Pengguna
-            </h2>
-            <p className="text-reveal text-xl text-white/60 max-w-2xl mx-auto">
-              Platform untuk berbagai kalangan dalam ekosistem autentikasi produk
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="audience-card hover-card">
-              <Card hover className="text-center h-full">
-                <Shield className="card-icon h-16 w-16 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">Brand/UMKM</h3>
-                <p className="text-white/70 mb-6">
-                  Perusahaan yang ingin melindungi produk mereka dari pemalsuan 
-                  dan memberikan jaminan keaslian kepada konsumen.
-                </p>
-                <Link to="/brand" className="interactive-button">
-                  <Button variant="primary" size="sm" className="group">
-                    Mulai Sekarang 
-                    <ArrowRight className="button-icon w-4 h-4 ml-1 transition-transform" />
-                  </Button>
-                </Link>
-              </Card>
-            </div>
-
-            <div className="audience-card hover-card">
-              <Card hover className="text-center h-full">
-                <Users className="card-icon h-16 w-16 text-accent mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">Buyer/Konsumen & Kolektor</h3>
-                <p className="text-white/70 mb-6">
-                  Konsumen yang ingin memastikan keaslian produk yang mereka beli 
-                  dan kolektor yang menghargai autentisitas.
-                </p>
-                <Link to="/buyer" className="interactive-button">
-                  <Button variant="accent" size="sm" className="group">
-                    Verifikasi Produk 
-                    <ArrowRight className="button-icon w-4 h-4 ml-1 transition-transform" />
-                  </Button>
-                </Link>
-              </Card>
-            </div>
-
-            <div className="audience-card hover-card">
-              <Card hover className="text-center h-full">
-                <CheckCircle className="card-icon h-16 w-16 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-3">Administrator</h3>
-                <p className="text-white/70 mb-6">
-                  Pengelola platform yang mengawasi sistem, menvalidasi brand, 
-                  dan memastikan keamanan ekosistem.
-                </p>
-                <Link to="/admin" className="interactive-button">
-                  <Button variant="secondary" size="sm" className="group">
-                    Admin Panel 
-                    <ArrowRight className="button-icon w-4 h-4 ml-1 transition-transform" />
-                  </Button>
-                </Link>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
+      </section> */}
+      <TargetUser />
 
       {/* Footer */}
       <Footer />
