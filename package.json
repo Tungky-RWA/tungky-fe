@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "gsap": "^3.12.2",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.344.0",
     "path": "^0.12.7",
     "react": "^18.3.1",

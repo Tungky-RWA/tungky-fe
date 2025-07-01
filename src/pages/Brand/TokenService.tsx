@@ -31,9 +31,9 @@ const TokenService = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold gradient-text">Token Service</h1>
+        <h1 className="text-4xl font-bold blockchain-gradient animate-glow">Token Service</h1>
         <p className="text-muted-foreground text-lg">
-          Kelola token dan kuota minting Anda
+          Manage your tokens and minting quota
         </p>
       </div>
 

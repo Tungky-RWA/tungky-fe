@@ -1,19 +1,11 @@
 "use client";
 
-<<<<<<< HEAD:src/pages/Home/Hero.tsx
-import { useState } from "react";
-=======
 import { useState, useRef } from "react";
->>>>>>> 691260d729542c556e60b74752eaf1780b7a38be:src/components/Home/Hero.tsx
 import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-<<<<<<< HEAD:src/pages/Home/Hero.tsx
-import { Button as ButtonUI } from "../../components/UI/button";
-=======
-import Button from "../UI/ButtonCustom";
->>>>>>> 691260d729542c556e60b74752eaf1780b7a38be:src/components/Home/Hero.tsx
+import { Button } from "@/components/UI/button";
 
 gsap.registerPlugin(ScrollTrigger);
 

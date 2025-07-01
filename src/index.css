@@ -11,6 +11,10 @@ body {
   font-family: "General Sans", sans-serif;
 }
 
+.h1 {
+   @apply text-white;
+}
+
 @layer base {
   @font-face {
     font-family: "circular-web";

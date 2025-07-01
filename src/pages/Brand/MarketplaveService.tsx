@@ -91,7 +91,7 @@ const MarketplaceService = () => {
           </div>
           <div>
             <h1 className="text-4xl font-bold blockchain-gradient">Marketplace Service</h1>
-            <p className="text-muted-foreground">Kelola produk Anda di marketplace Web3</p>
+            <p className="text-muted-foreground">Manage your products in the Web3 marketplace</p>
           </div>
         </div>
       </div>

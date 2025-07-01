@@ -41,9 +41,9 @@ const ProductService = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold gradient-text">Product Service</h1>
+        <h1 className="text-4xl font-bold blockchain-gradient animate-glow">Product Service</h1>
         <p className="text-muted-foreground text-lg">
-          Kelola produk dan integrasinya dengan NFT
+          Manage products and their integration with NFT
         </p>
       </div>
 

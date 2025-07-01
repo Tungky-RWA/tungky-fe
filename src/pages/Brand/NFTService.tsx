@@ -56,7 +56,7 @@ const NFTService = () => {
       <div className="space-y-4 text-center">
         <h1 className="text-4xl font-bold blockchain-gradient animate-glow">NFT Service</h1>
         <p className="text-muted-foreground text-lg">
-          Kelola NFT dan tokenisasi produk Anda dengan teknologi blockchain
+          Manage NFTs and tokenize your products with blockchain technology
         </p>
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Gem className="h-4 w-4 text-purple-400" />

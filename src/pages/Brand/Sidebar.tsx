@@ -32,7 +32,7 @@ const Sidebar = () => {
     { path: '/brand/marketplace', icon: Store, label: 'Marketplace Service' },
     { path: '/brand/nfc', icon: Smartphone, label: 'NFC Service' },
     { path: '/brand/qr', icon: QrCode, label: 'QR Code Service' },
-    { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
+    // { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
   ];
 
   const handleWalletConnect = () => {
@@ -44,7 +44,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col sticky top-0 backdrop-blur-xl">
+    <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col  top-0 backdrop-blur-xl">
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-xl flex items-center justify-center animate-glow">
@@ -56,7 +56,7 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <Button
             onClick={handleWalletConnect}
             className={`w-full justify-start crypto-glass web3-glow ${
@@ -79,7 +79,7 @@ const Sidebar = () => {
               </div>
             )}
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <nav className="flex-1 px-4">

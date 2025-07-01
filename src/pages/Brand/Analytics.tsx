@@ -55,7 +55,7 @@ const Analytics = () => {
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold gradient-text">Analytics Dashboard</h1>
+          <h1 className="text-4xl font-bold blockchain-gradient">Analytics Dashboard</h1>
           <p className="text-muted-foreground text-lg">
             Detailed insights and performance metrics
           </p>
