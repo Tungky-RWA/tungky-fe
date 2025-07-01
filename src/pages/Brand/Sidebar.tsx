@@ -26,7 +26,7 @@ import {
 } from "@/components/UI/tooltip";
 import { Button } from '@/components/UI/button';
 import { useSignerStatus } from "@account-kit/react";
-import { useSmartAccountClient } from "@account-kit/react";
+import { useSmartAccountClient, useLogout } from "@account-kit/react";
 import { formatAddress } from '@/lib/utils';
 import ButtonCustom from '@/components/UI/ButtonCustom';
 
@@ -35,11 +35,10 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ pageType }: SidebarProps) => {
-  const signerStatus = useSignerStatus();
+  const { logout } = useLogout();
   const [isCopied, setIsCopied] = useState(false);
   const { client } = useSmartAccountClient({});
   const location = useLocation();
-  const [isWalletConnected, setIsWalletConnected] = React.useState(true);
 
   const navItems = pageType ? [
     { path: '/admin', icon: Home, label: 'Dashboard' },
@@ -83,11 +82,8 @@ const Sidebar = ({ pageType }: SidebarProps) => {
 
         <div className="mb-6">
           <div
-            className={`w-full flex items-center px-2 rounded-lg justify-start crypto-glass web3-glow ${
-              isWalletConnected 
-                ? 'bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400' 
-                : 'bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30 text-primary'
-            }`}
+            className={`w-full flex items-center px-2 rounded-lg justify-start crypto-glass web3-glow
+              bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400`}
           >
             <Wallet className="mr-3 h-4 w-4" />
             {client?.account?.address ? (
@@ -142,7 +138,7 @@ const Sidebar = ({ pageType }: SidebarProps) => {
 
       <div className="p-4 border-t border-white/10">
         <Button
-          onClick={handleLogout}
+          onClick={() => logout()}
           variant="outline"
           className="w-full justify-start text-red-400 border-red-400/30 hover:bg-red-400/10 hover:border-red-400/50 crypto-glass"
         >
