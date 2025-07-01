@@ -33,7 +33,6 @@ export default function FormRegister() {
   const user = useUser();
   const userEmail = user?.email ?? "anon";
   const { client } = useSmartAccountClient({});
-  console.log(client?.account?.address)
   
   const { handleRegisterBrand, isRegistering, transactionUrl } = useRegisterBrand({
     onSuccess: () => {

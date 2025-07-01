@@ -13,7 +13,11 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuthModal } from "@account-kit/react";
 
-export default function RegisterCard() {
+interface RegisterCardProps {
+  cardDescription?: string
+}
+
+export default function RegisterCard({ cardDescription }: RegisterCardProps) {
   
   const { openAuthModal } = useAuthModal();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -33,12 +37,12 @@ export default function RegisterCard() {
             "dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
           )}
         >
-          Register
+          Login
         </CardTitle>
         <CardDescription
           className={cn("text-base text-gray-600 dark:text-gray-400")}
         >
-          Before Register, Click log in to continue.
+          {cardDescription ? cardDescription : "Before Register, Click log in to continue."}
         </CardDescription>
       </CardHeader>
 

@@ -23,12 +23,6 @@ import FormRegister from '@/components/Register/FormRegister';
 
 const Register: React.FC = () => {
   const signerStatus = useSignerStatus();
-  const location = useLocation();
-  const [isConnected, setIsConnected] = useState(false);
-
-  const handleWalletConnect = () => {
-    setIsConnected(true);
-  };
 
   return (
     <div className="flex justify-center">
