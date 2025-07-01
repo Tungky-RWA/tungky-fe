@@ -15,13 +15,6 @@ import {
   Activity,
   Copy
 } from 'lucide-react';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/UI/card";
 import { Badge } from "@/components/UI/badge";
 import {
   Tooltip,
@@ -72,9 +65,9 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-900">
       {/* <Header userRole="admin" /> */}
       
-      <div className="flex pt-16">
+      <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen">
+        <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen mt-16">
           <div className="p-6">
             <div className="mb-8">
               <div className="flex items-center gap-2">
@@ -142,7 +135,7 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-const AdminHome: React.FC = () => (
+export const AdminHome: React.FC = () => (
   <div className="space-y-8">
     <div>
       <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
