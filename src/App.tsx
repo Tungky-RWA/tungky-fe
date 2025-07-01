@@ -24,7 +24,6 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          {/* <Route path="/brand/*" element={<BrandDashboard />} /> */}
           <Route path="/brand" element={<BrandLayout />}>
             <Route index element={<BrandDashboard />} />
             <Route path="analytics" element={<Analytics />} />

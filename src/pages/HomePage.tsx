@@ -1,19 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { Shield, Users, CheckCircle, Zap, Globe, TrendingUp, ArrowRight } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Hero from '../components/Home/Hero';
+import Hero from './Home/Hero';
 import Navbar from '../components/Layout/Navbar';
 import Header from '../components/Layout/Header';
-import Button from '../components/UI/ButtonCustom';
-import Card from '../components/UI/CardCustom';
-import About from '../components/Home/About';
-import Footer from '../components/Home/Footer';
-import NFTLending from '../components/Home/NFTLending';
-import ValueProposition from '@/components/Home/Value';
-import HowItWorks from '../components/Home/Step';
-import TargetUser from '@/components/Home/TargetUser';
+import About from './Home/About';
+import Footer from './Home/Footer';
+import NFTLending from './Home/NFTLending';
+import ValueProposition from '@/pages/Home/Value';
+import HowItWorks from './Home/Step';
+import TargetUser from '@/pages/Home/TargetUser';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);

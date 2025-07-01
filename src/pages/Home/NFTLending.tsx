@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/UI/button"
 import { TrendingUp, Shield, DollarSign, Calendar, Star } from "lucide-react"
-import NFTCard from "../UI/NFTCard"
+import NFTCard from "../../components/UI/NFTCard"
 
 export default function NFTLendingSection() {
 
