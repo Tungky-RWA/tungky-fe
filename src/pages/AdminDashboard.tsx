@@ -28,7 +28,7 @@ const AdminDashboard: React.FC = () => {
     { path: '/admin/tokens', label: 'TOKEN Management', icon: Coins },
     { path: '/admin/nfts', label: 'NFT Management', icon: Package },
     { path: '/admin/nfc', label: 'NFC Management', icon: Nfc },
-    { path: '/admin/buyers', label: 'Buyer Management', icon: Users },
+    // { path: '/admin/buyers', label: 'Buyer Management', icon: Users },
     { path: '/admin/transactions', label: 'Transaction Management', icon: ShoppingCart },
   ];
 
@@ -37,10 +37,10 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header userRole="admin" />
+    <div className="min-h-screen bg-gray-900">
+      {/* <Header userRole="admin" /> */}
       
-      <div className="flex">
+      <div className="flex pt-16">
         {/* Sidebar */}
         <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen">
           <div className="p-6">

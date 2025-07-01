@@ -76,8 +76,8 @@ const VerifyProduct: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen">
-        <Header showNavigation />
+      <div className="min-h-screen bg-gray-900 pt-16">
+        {/* <Header showNavigation /> */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
@@ -90,8 +90,8 @@ const VerifyProduct: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <Header showNavigation />
+    <div className="min-h-screen bg-gray-900 pt-16">
+      {/* <Header showNavigation /> */}
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">

@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+import { withAccountKitUi } from "@account-kit/react/tailwind";
+
+export default withAccountKitUi({
     darkMode: ['class'],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -129,4 +131,4 @@ export default {
   	}
   },
   plugins: [require("tailwindcss-animate")],
-};
+});
