@@ -1,10 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/UI/button";
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -12,59 +6,42 @@ import {
 } from "@/components/UI/card";
 import { cn } from "@/lib/utils";
 import { useAuthModal } from "@account-kit/react";
+import CardCustom from '@/components/UI/CardCustom';
+import ButtonCustom from '@/components/UI/ButtonCustom';
 
-export default function RegisterCard() {
+interface RegisterCardProps {
+  cardDescription?: string
+}
+
+export default function RegisterCard({ cardDescription }: RegisterCardProps) {
   
   const { openAuthModal } = useAuthModal();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   return (
-    <Card
-      className={cn(
-        "relative w-full max-w-md shadow-xl border border-gray-200/50",
-        "bg-white/70 dark:bg-gray-900/70 backdrop-blur-md",
-        "hover:shadow-2xl transition-all duration-300"
-      )}
-    >
+    <CardCustom className="w-full max-w-md" variant="neon">
       <CardHeader className={cn("text-center space-y-4 pb-8")}>
         <CardTitle
           className={cn(
-            "text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600",
-            "dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
+            "text-4xl font-bold blockchain-gradient animate-glow",
+            "dark:from-white dark:to-gray-300 bg-clip-text text-transparent",
           )}
         >
-          Register
+          Login
         </CardTitle>
         <CardDescription
-          className={cn("text-base text-gray-600 dark:text-gray-400")}
+          className={cn("text-muted-foreground text-lg")}
         >
-          Before Register, Click log in to continue.
+          {cardDescription ? cardDescription : "Before Register, Click log in to continue."}
         </CardDescription>
       </CardHeader>
 
       <CardContent className={cn("space-y-6 pb-8")}>
-        <Button
-          size="lg"
+        <ButtonCustom variant="crypto" className="w-full mt-4 border border-border/30 hover:border-primary/50"
           onClick={() => openAuthModal()}
-          disabled={isLoggingIn}
-          className={cn(
-            "w-full h-12 text-base font-medium bg-gradient-to-r from-gray-600/80 to-gray-800/80",
-            "hover:from-gray-700/90 hover:to-gray-900/90 border-0 shadow-lg hover:shadow-xl",
-            "dark:from-gray-300/20 dark:to-gray-500/30 dark:hover:from-gray-200/30 dark:hover:to-gray-400/40",
-            "backdrop-blur-sm text-white dark:text-gray-100",
-            "transition-all duration-200"
-          )}
         >
-          {isLoggingIn ? (
-            <>
-              <Loader2 className={cn("animate-spin -ml-1 mr-3 h-5 w-5")} />
-              Log in
-            </>
-          ) : (
-            <>Login</>
-          )}
-        </Button>
+          Login
+        </ButtonCustom>
       </CardContent>
-    </Card>
+    </CardCustom>
   );
 }
