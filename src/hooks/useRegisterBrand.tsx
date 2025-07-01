@@ -13,6 +13,7 @@ export interface useRegisterBrandNFTParams {
 export interface useRegisterBrandReturn {
   isRegistering: boolean;
   handleRegisterBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`) => void;
+  approveRegisteredBrand: (brandWallet: `0x${string}`) => void;
   transactionUrl?: string;
   error?: string;
 }
@@ -49,6 +50,25 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
     },
   });
 
+  const approveRegisteredBrand = useCallback(async (brandWallet: `0x${string}`) => {
+    if (!client) {
+      setError("Wallet not connected");
+      return;
+    }
+
+
+    sendUserOperation({
+      uo: {
+        target: CONTRACT_ADDRESS,
+        data: encodeFunctionData({
+          abi: CONTRACT_ABI,
+          functionName: "updateBrandLegalStatus",
+          args: [brandWallet, true],
+        }),
+      },
+    });
+  }, [client, sendUserOperation]);
+
   const handleRegisterBrand = useCallback(async (brandName: string, brandSymbol: string, brandWallet: `0x${string}`) => {
     if (!client) {
       setError("Wallet not connected");
@@ -69,7 +89,6 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
   }, [client, sendUserOperation]);
 
   const transactionUrl = useMemo(() => {
-    console.log(client?.chain, sendUserOperationResult, 'woiii')
     if (!client?.chain?.blockExplorers || !sendUserOperationResult?.hash) {
       return undefined;
     }
@@ -79,6 +98,7 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
   return {
     isRegistering,
     handleRegisterBrand,
+    approveRegisteredBrand,
     transactionUrl,
     error,
   };
