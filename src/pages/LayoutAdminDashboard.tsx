@@ -10,7 +10,7 @@ const BrandLayout = () => {
   if (!signerStatus.isConnected) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
-        <LoginCard cardDescription="Need to login first"/>
+        <LoginCard cardDescription="Login to continue"/>
       </div>
     )
   }
