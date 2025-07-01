@@ -1,59 +1,49 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Shield, User, Settings } from 'lucide-react';
+import { Bell, Search, User, Wallet } from 'lucide-react';
+import { Button } from '@/components/UI/button';
 
 interface HeaderProps {
-  showNavigation?: boolean;
-  userRole?: 'brand' | 'buyer' | 'admin';
+  userRole: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ showNavigation = false, userRole }) => {
+const Header: React.FC<HeaderProps> = ({ userRole }) => {
   return (
-    <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <Link to="/" className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-white">Tungky</span>
-          </Link>
-          
-          {showNavigation && (
-            <nav className="hidden md:flex space-x-8">
-              <Link to="/" className="text-white/80 hover:text-white transition-colors">
-                Home
-              </Link>
-              <Link to="/verify" className="text-white/80 hover:text-white transition-colors">
-                Verifikasi Produk
-              </Link>
-            </nav>
-          )}
-
-          <div className="flex items-center space-x-4">
-            {userRole && (
-              <div className="flex items-center space-x-2 text-white/80">
-                {userRole === 'brand' && <User className="h-4 w-4" />}
-                {userRole === 'admin' && <Settings className="h-4 w-4" />}
-                <span className="capitalize">{userRole}</span>
-              </div>
-            )}
-            
-            {!userRole && (
-              <div className="flex space-x-2">
-                <Link
-                  to="/brand"
-                  className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  Brand Login
-                </Link>
-                <Link
-                  to="/admin"
-                  className="bg-accent hover:bg-accent-light text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  Admin Login
-                </Link>
-              </div>
-            )}
+    <header className="h-16 crypto-glass border-b border-white/10 px-6 flex items-center justify-between sticky top-0 z-50 backdrop-blur-xl">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-lg flex items-center justify-center animate-glow">
+            <span className="text-white font-bold text-sm">T</span>
           </div>
+          <div>
+            <h1 className="text-lg font-semibold blockchain-gradient">Tungky</h1>
+            <p className="text-xs text-muted-foreground capitalize">{userRole} • Web3 Portal</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search NFTs, tokens..."
+            className="w-64 pl-10 pr-4 py-2 bg-input/50 backdrop-blur-sm border border-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all neon-border"
+          />
+        </div>
+        
+        <Button variant="ghost" size="sm" className="relative web3-glow hover:bg-primary/10">
+          <Bell className="h-4 w-4" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-r from-pink-400 to-cyan-400 rounded-full animate-pulse"></span>
+        </Button>
+
+        <Button variant="ghost" size="sm" className="web3-glow hover:bg-primary/10">
+          <User className="h-4 w-4" />
+        </Button>
+
+        <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-400/20 to-cyan-400/20 rounded-full border border-green-400/30">
+          <Wallet className="h-3 w-3 text-green-400" />
+          <span className="text-xs text-green-400 font-medium">Connected</span>
         </div>
       </div>
     </header>

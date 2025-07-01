@@ -1,19 +1,40 @@
-import React from 'react';
 
-interface CardProps {
+import React from 'react';
+import { Card } from '@/components/UI/card';
+import { cn } from '@/lib/utils';
+
+interface CardCustomProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
-  hover?: boolean;
+  variant?: 'default' | 'glass' | 'gradient' | 'crypto' | 'neon';
 }
 
-const Card: React.FC<CardProps> = ({ children, className = '', hover = false }) => {
-  const hoverClasses = hover ? 'hover:shadow-2xl hover:scale-105 transition-all duration-300' : '';
-  
+const CardCustom: React.FC<CardCustomProps> = ({ 
+  children, 
+  className,
+  variant = 'default',
+  ...props
+}) => {
+  const variants = {
+    default: 'bg-card border-border/50 hover:border-border/80',
+    glass: 'crypto-glass backdrop-blur-xl',
+    gradient: 'crypto-card backdrop-blur-xl',
+    crypto: 'crypto-metric web3-glow',
+    neon: 'neon-border crypto-glass'
+  };
+
   return (
-    <div className={`bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-lg border border-white/20 ${hoverClasses} ${className}`}>
+    <Card 
+      className={cn(
+        'transition-all duration-500 hover:scale-[1.02] animate-fade-in',
+        variants[variant],
+        className
+      )}
+      {...props}
+    >
       {children}
-    </div>
+    </Card>
   );
 };
 
-export default Card;
+export default CardCustom;

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from "react";
-import Button from "../UI/ButtonCustom";
 import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
