@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import BrandLayout from './pages/LayoutBrandDashboard';
+import AdminLayout from './pages/LayoutAdminDashboard.tsx';
 import BuyerInterface from './pages/BuyerInterface';
-import AdminDashboard from './pages/AdminDashboard';
+// import AdminDashboard from './pages/AdminDashboard';
 import VerifyProduct from './pages/VerifyProduct';
 import Register from './pages/Register';
 import Navbar from './components/Layout/Navbar';
@@ -15,6 +16,9 @@ import ProductService from './pages/Brand/ProductService';
 import MarketplaceService from './pages/Brand/MarketplaveService';
 import NFCService from './pages/Brand/NFCService';
 import QRService from './pages/Brand/QRService';
+
+import AdminDashboard from './pages/Admin/AdminDashboard.tsx';
+import AdminBrand from './pages/Admin/Brand.tsx';
 
 import { Providers } from "./providers.tsx";
 import { cookieToInitialState } from "@account-kit/core";
@@ -30,7 +34,7 @@ function App() {
     <Providers initialState={initialState}>
       <Router>
         <div className="relative min-h-screen w-screen overflow-x-hidden">
-          <Navbar />
+          {/* <Navbar /> */}
           <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/brand" element={<BrandLayout />}>
@@ -45,9 +49,14 @@ function App() {
             <Route path="qr" element={<QRService />} />
             {/* <Route path="help" element={<HelpService />} /> */}
           </Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="brand" element={<AdminBrand />} />
+            {/* <Route path="help" element={<HelpService />} /> */}
+          </Route>
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />
-          <Route path="/admin/*" element={<AdminDashboard />} />
           <Route path="/verify/:productId" element={<VerifyProduct />} />
         </Routes>
         </div>
