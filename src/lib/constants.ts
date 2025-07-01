@@ -1,0 +1,7 @@
+import { CONTRACT_ABI as ABI } from "./contractAbi"; 
+
+
+export const CONTRACT_ABI = ABI;
+
+export const CONTRACT_ADDRESS =
+  "0x03Dba94Cee749c45209d3B8BbC55D1aA4d4cdf6a";
