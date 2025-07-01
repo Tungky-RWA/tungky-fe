@@ -8,7 +8,7 @@ import VerifyProduct from './pages/VerifyProduct';
 import Navbar from './components/Layout/Navbar';
 import NFTService from './pages/Brand/NFTService';
 import BrandDashboard from './pages/Brand/BrandDashboard';
-import Analytics from './pages/Brand/analytics';
+import Analytics from './pages/Brand/Analytics';
 import NFTTracker from './pages/Brand/NFTTracker';
 import TokenService from './pages/Brand/TokenService';
 import ProductService from './pages/Brand/ProductService';
