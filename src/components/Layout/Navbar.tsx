@@ -16,7 +16,7 @@ const Navbar = () => {
   const navItems = [
     { path: "/brand", label: "Documentation", icon: Shield },
     { path: "/marketplace", label: "Marketplace" },
-    { path: "/verify", label: "Verify" },
+    { path: "/buyer", label: "Verify" },
   ]
 
   // Logic to show/hide navbar on scroll
