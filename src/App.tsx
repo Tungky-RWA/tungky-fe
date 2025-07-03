@@ -37,7 +37,7 @@ function App() {
   return (
     <Providers initialState={initialState}>
       <Router>
-        <div className="relative min-h-screen w-screen overflow-x-hidden">
+        <div className="relative min-h-screen w-full overflow-x-hidden">
           {/* <Navbar /> */}
           <Routes>
           <Route path="/" element={<HomePage />} />
