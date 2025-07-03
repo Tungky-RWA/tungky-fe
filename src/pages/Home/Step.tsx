@@ -9,17 +9,20 @@ const HowItWorks = () => {
       icon: Package,
       title: "Brand Mints NFT",
       description: "Brand registers and mints NFT on blockchain for product authentication",
-      color: "from-purple-500 to-pink-500",
-      bgColor: "bg-purple-100",
-      textColor: "text-purple-600"
+      // Gradasi biru dari warna utama
+      color: "from-sky-500 to-blue-600", 
+      // Latar belakang biru muda
+      bgColor: "bg-sky-100",
+      // Teks dengan warna biru utama
+      textColor: "text-blue-600"
     },
     {
       number: "02", 
       icon: Nfc,
       title: "Attach NFC/QR",
       description: "NFC tag or QR code is attached to the physical product",
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-blue-100",
+      color: "from-sky-500 to-blue-600",
+      bgColor: "bg-sky-100",
       textColor: "text-blue-600"
     },
     {
@@ -27,23 +30,23 @@ const HowItWorks = () => {
       icon: Smartphone,
       title: "Buyer Scans",
       description: "Consumer scans NFC/QR for product verification",
-      color: "from-emerald-500 to-teal-500",
-      bgColor: "bg-emerald-100",
-      textColor: "text-emerald-600"
+      color: "from-sky-500 to-blue-600",
+      bgColor: "bg-sky-100",
+      textColor: "text-blue-600"
     },
     {
       number: "04",
       icon: Globe,
       title: "Web Verification",
       description: "Verification results are displayed on web interface",
-      color: "from-orange-500 to-red-500",
-      bgColor: "bg-orange-100",
-      textColor: "text-orange-600"
+      color: "from-sky-500 to-blue-600",
+      bgColor: "bg-sky-100",
+      textColor: "text-blue-600"
     }
   ];
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-tr from-stone-50 to-gray-100 relative overflow-hidden ">
+    <section className="py-24 px-4 bg-gradient-to-tr from-stone-50 to-gray-100 relative overflow-hidden w-full">
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-delayed"></div>
@@ -54,7 +57,7 @@ const HowItWorks = () => {
         <div className="text-center mb-16">
           <h2 className="text-reveal text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             How Our Platform{' '}
-            <span className="text-reveal bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="text-reveal bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent">
               Works
             </span>
           </h2>

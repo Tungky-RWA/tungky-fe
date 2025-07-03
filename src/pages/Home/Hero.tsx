@@ -5,7 +5,7 @@ import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import { Button } from "../../components/UI/button";
+import { Button } from "@/components/UI/button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,7 +13,7 @@ const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(2);
   const totalVideos = 2; // Assuming you have videos named hero1.mp4 and hero2.mp4
   const heroRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null); // Ref for the main title container
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -141,28 +141,29 @@ const Hero = () => {
   };
 
   return (
-    <div ref={heroRef} className="relative h-screen w-full overflow-hidden">
+    <div ref={heroRef} className="relative h-[100vh] w-full overflow-hidden bg-[#1D242B]">
       {/* Gradient Overlay */}
       <div
         ref={overlayRef}
-        className="absolute inset-0 z-10 bg-gradient-to-br from-[#5409DA]/80 via-transparent to-[#4E71FF]/30"
+        className="absolute inset-0 z-10 bg-gradient-to-br from-[#1D242B]/80 via-transparent to-[#0077C0]/30"
       />
 
       {/* Animated Background Elements (Decorative) */}
-      <div className="absolute inset-0 z-10 bg-[#4E71FF]">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-[#8DD8FF] to-[#BBFBFF] rounded-full opacity-20 animate-pulse" />
-        <div className="absolute bottom-32 right-32 w-24 h-24 bg-gradient-to-r from-[#4E71FF] to-[#5409DA] rounded-full opacity-30 animate-bounce" />
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-[#BBFBFF] rounded-full opacity-25 animate-ping" />
+      <div className="absolute inset-0 z-10">
+        <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-[#C7EEFF] to-[#FAFAFA] rounded-full opacity-10 animate-pulse" />
+        <div className="absolute bottom-32 right-32 w-24 h-24 bg-gradient-to-r from-[#0077C0] to-[#1D242B] rounded-full opacity-20 animate-bounce" />
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-[#C7EEFF] rounded-full opacity-15 animate-ping" />
       </div>
 
       {/* Video Frame Container */}
-      <div id="video-frame" className="relative z-10 h-full w-full overflow-hidden">
+      <div id="video-frame" className="relative z-10 h-full w-full overflow-hidden" >
         <div className="absolute inset-0">
           <video
             autoPlay
             loop
             muted
-            className="absolute left-0 top-0 size-full object-fill object-center bg-black/50"
+            className="absolute left-0 top-0 size-full object-cover object-center bg-black/50 " 
+             style={{ filter: 'blur(2px)' }}
             // The video source depends on `currentIndex`. Adjust as needed if you only have one video.
           >
             <source
@@ -174,29 +175,26 @@ const Hero = () => {
         </div>
 
         {/* Main Content (Text and Button) */}
-        <div className="hero-content absolute inset-0 z-40 flex flex-col justify-center bg-gradient-to-br from-[#5409DA]/90 via-transparent to-[#4E71FF]/50">
+        <div className="hero-content absolute inset-0 z-40 flex flex-col justify-center bg-gradient-to-br from-[#1D242B]/90 via-transparent to-[#0077C0]/50">
           <div className="container mx-auto px-6 sm:px-8 lg:px-12">
             <div className="max-w-4xl">
               {/* Main Title "Tungky" */}
               <h1
                 ref={titleRef}
-                className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 leading-none"
-              >
-                <span
-                  id="tungky-text" // ID to target with GSAP for the typing effect
-                  className="block text-[#BBFBFF]  h-120 font-bold"
+                className="bitcount-grid-double-1 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 leading-none text-neon animate-flicker"
                 >
-                  Tungky
-                </span>
+                TUNGKY
+              
+
               </h1>
 
               {/* Subtitle */}
               <p
                 ref={subtitleRef}
-                className="text-lg sm:text-xl lg:text-2xl xl:text-3xl max-w-3xl mb-8 text-white/90 font-medium leading-relaxed drop-shadow-lg"
+                className="text-lg sm:text-xl lg:text-2xl xl:text-3xl max-w-3xl mb-8 text-[#FAFAFA]/90 font-medium leading-relaxed drop-shadow-lg"
               >
                 Secure Real-World Products with{" "}
-                <span className="text-[#4E71FF] font-bold">Blockchain</span>
+                <span className="text-[#C7EEFF] font-bold">Blockchain</span>
                 <br />
                 Authenticate with NFC/QR. Fight fakes. Build trust.
               </p>
@@ -205,9 +203,9 @@ const Hero = () => {
               <Button
                 ref={buttonRef}
                 onClick={handleWatchTrailer}
-                className="group relative overflow-hidden bg-gradient-to-r from-[#4E71FF] to-[#5409DA] hover:from-[#5409DA] hover:to-[#4E71FF] text-[#5409DA] font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-white/20"
+                className="group relative overflow-hidden bg-[#0077C0] hover:bg-[#1D242B] text-white font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-[#C7EEFF]/50"
               >
-                <span className="relative z-10 flex items-center gap-3 font-bold text-[#BBFBFF]">
+                <span className="relative z-10 flex items-center gap-3 font-bold text-[#FAFAFA]">
                   <TiLocationArrow className="text-xl group-hover:rotate-45 transition-transform duration-300" />
                   Register Now!!!
                 </span>
@@ -220,14 +218,14 @@ const Hero = () => {
 
       {/* Brand Logo "RWA" */}
       <div id="brand-logo" className="absolute bottom-8 right-8 z-50">
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#5409DA] via-[#4E71FF] to-[#8DD8FF] bg-clip-text text-transparent drop-shadow-xl">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#0077C0] via-[#C7EEFF] to-[#FAFAFA] bg-clip-text text-transparent drop-shadow-xl">
           RWA
         </h2>
       </div>
 
       {/* Decorative Gradient Overlays */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/30 to-transparent z-20" />
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/20 to-transparent z-20" />
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#1D242B] to-transparent z-20" />
+      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#1D242B]/80 to-transparent z-20" />
     </div>
   );
 };

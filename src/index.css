@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 body {
-  width: 100dvw;
+  width: 100%;
   overflow-x: hidden;
   /* background-color: #dfdff0; */
   font-family: "General Sans", sans-serif;
@@ -544,4 +544,165 @@ body {
       hsl(var(--blockchain-darker)) 100%
     );
   }
+}
+
+
+.zilla-slab-regular {
+  font-family: "Zilla Slab", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.bitcount-grid-double-1 {
+  font-family: "Bitcount Grid Double", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 1,
+    "CRSV" 1,
+    "ELSH" 1,
+    "ELXP" 1;
+}
+
+.grenze-gotisch-1 {
+  font-family: "Grenze Gotisch", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+/* File: globals.css atau file CSS utama Anda */
+
+.text-neon {
+  color: #fff; /* Warna teks utama yang cerah */
+  /* Tumpukan beberapa bayangan untuk menciptakan efek cahaya */
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px #0077C0, /* Warna cahaya luar (biru) */
+    0 0 30px #0077C0,
+    0 0 40px #0077C0,
+    0 0 55px #0077C0,
+    0 0 75px #0077C0;
+}
+
+/* (Opsional) Tambahkan animasi berkedip agar lebih hidup */
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow:
+      0 0 4px #fff,
+      0 0 11px #fff,
+      0 0 19px #fff,
+      0 0 40px #0077C0,
+      0 0 80px #0077C0,
+      0 0 90px #0077C0,
+      0 0 100px #0077C0,
+      0 0 150px #0077C0;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+.animate-flicker {
+  animation: flicker 3s linear infinite;
+}
+
+
+
+/* Neon Border Running Animation */
+@keyframes neon-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes neon-border-reverse {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-neon-border {
+  background-size: 400% 400%;
+  animation: neon-border 3s ease-in-out infinite;
+}
+
+.animate-neon-border-reverse {
+  background-size: 400% 400%;
+  animation: neon-border-reverse 3s ease-in-out infinite;
+}
+
+
+/* Snake Glow Animation - Always Active */
+@keyframes snake-glow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-snake-glow {
+  animation: snake-glow 4s linear infinite;
+}
+
+.bg-conic-gradient {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 60deg,
+    #0077c0 120deg,
+    #c7eeff 180deg,
+    #0077c0 240deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  filter: blur(2px);
+}
+
+/* Enhanced version with multiple snake trails */
+.bg-conic-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    transparent 60deg,
+    #0077c0 120deg,
+    #c7eeff 180deg,
+    #0077c0 240deg,
+    transparent 300deg,
+    transparent 360deg
+    transparent 0deg,
+    transparent 60deg,
+    #0077c0 120deg,
+    #c7eeff 180deg,
+    #0077c0 240deg,
+    transparent 300deg,
+    transparent 360deg
+    rgba(199, 238, 255, 0.3) 150deg,
+    rgba(0, 119, 192, 0.5) 210deg,
+    rgba(199, 238, 255, 0.3) 270deg,
+    transparent 330deg,
+    transparent 360deg
+  );
+  filter: blur(1px);
 }
