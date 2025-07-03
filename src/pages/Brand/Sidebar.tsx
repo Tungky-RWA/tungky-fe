@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
@@ -14,15 +14,37 @@ import {
   LogOut,
   Circle,
   Zap,
-  Store
+  Copy,
+  Store,
+  Users
 } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/UI/tooltip";
 import { Button } from '@/components/UI/button';
+import { useSignerStatus } from "@account-kit/react";
+import { useSmartAccountClient, useLogout } from "@account-kit/react";
+import { formatAddress } from '@/lib/utils';
+import ButtonCustom from '@/components/UI/ButtonCustom';
 
-const Sidebar = () => {
+interface SidebarProps {
+  pageType?: string
+}
+
+const Sidebar = ({ pageType }: SidebarProps) => {
+  const { logout } = useLogout();
+  const [isCopied, setIsCopied] = useState(false);
+  const { client } = useSmartAccountClient({});
   const location = useLocation();
-  const [isWalletConnected, setIsWalletConnected] = React.useState(true);
 
-  const navItems = [
+  const navItems = pageType ? [
+    { path: '/admin', icon: Home, label: 'Dashboard' },
+    { path: '/admin/brand', icon: Users, label: 'Brand' },
+    { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+  ] : [
     { path: '/brand', icon: Home, label: 'Dashboard' },
     { path: '/brand/analytics', icon: BarChart3, label: 'Analytics' },
     { path: '/brand/nft-tracker', icon: MapPin, label: 'NFT Tracker' },
@@ -35,8 +57,10 @@ const Sidebar = () => {
     // { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
   ];
 
-  const handleWalletConnect = () => {
-    setIsWalletConnected(!isWalletConnected);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(client?.account?.address ?? "");
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleLogout = () => {
@@ -112,7 +136,7 @@ const Sidebar = () => {
 
       <div className="p-4 border-t border-white/10">
         <Button
-          onClick={handleLogout}
+          onClick={() => logout()}
           variant="outline"
           className="w-full justify-start text-red-400 border-red-400/30 hover:bg-red-400/10 hover:border-red-400/50 crypto-glass"
         >

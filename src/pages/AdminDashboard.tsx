@@ -12,15 +12,29 @@ import {
   X,
   Eye,
   Settings,
-  Activity
+  Activity,
+  Copy
 } from 'lucide-react';
+import { Badge } from "@/components/UI/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/UI/tooltip";
+import { cn, formatAddress } from "@/lib/utils";
 import Header from '../components/Layout/Header';
-import Card from '../components/UI/CardCustom';
+import CardCustom from '../components/UI/CardCustom';
 import Button from '../components/UI/ButtonCustom';
+import { useSignerStatus } from "@account-kit/react";
+import { useSmartAccountClient } from "@account-kit/react";
+import LoginCard from '@/components/Register/login-card';
 
 const AdminDashboard: React.FC = () => {
+  const [isCopied, setIsCopied] = useState(false);
+  const signerStatus = useSignerStatus();
   const location = useLocation();
-  const [isConnected, setIsConnected] = useState(false);
+  const { client } = useSmartAccountClient({});
 
   const sidebarItems = [
     { path: '/admin', label: 'Dashboard', icon: Shield },
@@ -32,34 +46,52 @@ const AdminDashboard: React.FC = () => {
     { path: '/admin/transactions', label: 'Transaction Management', icon: ShoppingCart },
   ];
 
-  const handleWalletConnect = () => {
-    setIsConnected(true);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(client?.account?.address ?? "");
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
+
+
+  if (!signerStatus.isConnected) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gray-900">
+        <LoginCard cardDescription="Need to login first"/>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-900">
       {/* <Header userRole="admin" /> */}
       
-      <div className="flex pt-16">
+      <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen">
+        <aside className="w-64 bg-white/5 backdrop-blur-md border-r border-white/10 min-h-screen mt-16">
           <div className="p-6">
             <div className="mb-8">
-              {!isConnected ? (
-                <Button 
-                  variant="primary" 
-                  size="sm" 
-                  onClick={handleWalletConnect}
-                  className="w-full"
-                >
-                  Login Wallet
-                </Button>
-              ) : (
-                <div className="text-center">
-                  <div className="w-8 h-8 bg-green-500 rounded-full mx-auto mb-2"></div>
-                  <p className="text-white/80 text-sm">Admin Connected</p>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-white text-xs py-1 px-2">
+                  {formatAddress(client?.account?.address ?? "")}
+                </Badge>
+                <TooltipProvider>
+                  <Tooltip open={isCopied}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={handleCopy}
+                      >
+                        <Copy className="h-4 w-4" color="white" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copied!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
             
             <nav className="space-y-2">
@@ -103,7 +135,7 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-const AdminHome: React.FC = () => (
+export const AdminHome: React.FC = () => (
   <div className="space-y-8">
     <div>
       <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
@@ -111,37 +143,37 @@ const AdminHome: React.FC = () => (
     </div>
 
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card className="text-center">
+      <CardCustom className="text-center">
         <Users className="h-12 w-12 text-primary mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-white mb-2">Total Brands</h3>
         <p className="text-2xl font-bold text-primary">156</p>
         <p className="text-white/60 text-sm">+12 this month</p>
-      </Card>
+      </CardCustom>
       
-      <Card className="text-center">
+      <CardCustom className="text-center">
         <Package className="h-12 w-12 text-accent mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-white mb-2">Total NFTs</h3>
         <p className="text-2xl font-bold text-accent">2,847</p>
         <p className="text-white/60 text-sm">+89 today</p>
-      </Card>
+      </CardCustom>
       
-      <Card className="text-center">
+      <CardCustom className="text-center">
         <Activity className="h-12 w-12 text-primary mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-white mb-2">Verifications</h3>
         <p className="text-2xl font-bold text-primary">12,459</p>
         <p className="text-white/60 text-sm">+234 today</p>
-      </Card>
+      </CardCustom>
       
-      <Card className="text-center">
+      <CardCustom className="text-center">
         <Coins className="h-12 w-12 text-accent mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-white mb-2">Token Supply</h3>
         <p className="text-2xl font-bold text-accent">1.2M</p>
         <p className="text-white/60 text-sm">Total circulating</p>
-      </Card>
+      </CardCustom>
     </div>
 
     <div className="grid lg:grid-cols-2 gap-8">
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Recent Activities</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
@@ -166,9 +198,9 @@ const AdminHome: React.FC = () => (
             <span className="text-accent text-sm">18m ago</span>
           </div>
         </div>
-      </Card>
+      </CardCustom>
 
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Pending Approvals</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
@@ -200,7 +232,7 @@ const AdminHome: React.FC = () => (
             </div>
           </div>
         </div>
-      </Card>
+      </CardCustom>
     </div>
   </div>
 );
@@ -213,13 +245,15 @@ const BrandManagement: React.FC = () => (
     </div>
 
     <div className="grid lg:grid-cols-2 gap-8">
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Pending Brand Registrations</h3>
         <div className="space-y-4">
           <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
             <div className="flex justify-between items-start mb-3">
               <div>
-                <h4 className="text-white font-medium">Premium Electronics Co.</h4>
+                <h4 className="text-white font-medium">Premium Electronics Co.
+                  
+                </h4>
                 <p className="text-white/60 text-sm">electronics@premium.com</p>
                 <p className="text-white/60 text-sm">Registered: 2 hours ago</p>
               </div>
@@ -236,31 +270,10 @@ const BrandManagement: React.FC = () => (
               </Button>
             </div>
           </div>
-          
-          <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h4 className="text-white font-medium">Fashion Luxe Brand</h4>
-                <p className="text-white/60 text-sm">contact@fashionluxe.com</p>
-                <p className="text-white/60 text-sm">Registered: 5 hours ago</p>
-              </div>
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="accent" size="sm" icon={Check}>
-                Validate
-              </Button>
-              <Button variant="secondary" size="sm" icon={X}>
-                Reject
-              </Button>
-              <Button variant="outline" size="sm" icon={Eye}>
-                View Details
-              </Button>
-            </div>
-          </div>
         </div>
-      </Card>
+      </CardCustom>
 
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Active Brands</h3>
         <div className="space-y-4">
           <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
@@ -301,7 +314,7 @@ const BrandManagement: React.FC = () => (
             </div>
           </div>
         </div>
-      </Card>
+      </CardCustom>
     </div>
   </div>
 );
@@ -314,7 +327,7 @@ const TokenManagement: React.FC = () => (
     </div>
 
     <div className="grid lg:grid-cols-2 gap-8">
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Token Operations</h3>
         <div className="space-y-4">
           <div className="p-4 bg-primary/10 border border-primary/30 rounded-lg">
@@ -337,9 +350,9 @@ const TokenManagement: React.FC = () => (
             </Button>
           </div>
         </div>
-      </Card>
+      </CardCustom>
 
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Token Distribution</h3>
         <div className="space-y-4">
           <div className="p-3 bg-white/5 rounded-lg">
@@ -377,7 +390,7 @@ const TokenManagement: React.FC = () => (
             </div>
           </div>
         </div>
-      </Card>
+      </CardCustom>
     </div>
   </div>
 );
@@ -389,7 +402,7 @@ const NFTManagement: React.FC = () => (
       <p className="text-white/60">Monitor dan kelola semua NFT di platform</p>
     </div>
 
-    <Card>
+    <CardCustom>
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-white">Read All NFT</h3>
         <div className="flex space-x-4">
@@ -454,7 +467,7 @@ const NFTManagement: React.FC = () => (
           </tbody>
         </table>
       </div>
-    </Card>
+    </CardCustom>
   </div>
 );
 
@@ -466,7 +479,7 @@ const NFCManagement: React.FC = () => (
     </div>
 
     <div className="grid lg:grid-cols-2 gap-8">
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">Pending NFC Requests</h3>
         <div className="space-y-4">
           <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
@@ -487,9 +500,9 @@ const NFCManagement: React.FC = () => (
             </div>
           </div>
         </div>
-      </Card>
+      </CardCustom>
 
-      <Card>
+      <CardCustom>
         <h3 className="text-xl font-semibold text-white mb-4">NFC Inventory</h3>
         <div className="space-y-4">
           <div className="p-4 bg-primary/10 border border-primary/30 rounded-lg">
@@ -506,7 +519,7 @@ const NFCManagement: React.FC = () => (
             Order More Tags
           </Button>
         </div>
-      </Card>
+      </CardCustom>
     </div>
   </div>
 );
@@ -518,7 +531,7 @@ const BuyerManagement: React.FC = () => (
       <p className="text-white/60">Kelola registrasi dan aktivitas buyer</p>
     </div>
 
-    <Card>
+    <CardCustom>
       <h3 className="text-xl font-semibold text-white mb-4">Buyer Activity</h3>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -550,7 +563,7 @@ const BuyerManagement: React.FC = () => (
           </tbody>
         </table>
       </div>
-    </Card>
+    </CardCustom>
   </div>
 );
 
@@ -561,7 +574,7 @@ const TransactionManagement: React.FC = () => (
       <p className="text-white/60">Monitor semua transaksi di platform</p>
     </div>
 
-    <Card>
+    <CardCustom>
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-white">Melihat Seluruh Transaksi</h3>
         <div className="flex space-x-4">
@@ -619,7 +632,7 @@ const TransactionManagement: React.FC = () => (
           </tbody>
         </table>
       </div>
-    </Card>
+    </CardCustom>
   </div>
 );
 
