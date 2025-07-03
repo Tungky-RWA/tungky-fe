@@ -104,6 +104,14 @@ export default withAccountKitUi({
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'
   			},
+				// Web3 Neon Colors
+				neon: {
+					purple: '#8B5CF6',
+					blue: '#06B6D4',
+					green: '#10B981',
+					pink: '#EC4899',
+					cyan: '#06B6D4'
+				},
   			muted: {
   				DEFAULT: 'hsl(var(--muted))',
   				foreground: 'hsl(var(--muted-foreground))'

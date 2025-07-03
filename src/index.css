@@ -361,12 +361,12 @@ body {
 
   /* Blockchain gradient text */
   .blockchain-gradient {
-    @apply bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-neon-purple via-neon-blue to-neon-green bg-clip-text text-transparent;
   }
 
   /* Crypto gradient text */
   .crypto-gradient {
-    @apply bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-neon-blue to-neon-green bg-clip-text text-transparent;
   }
 
   /* Web3 glow effect */
@@ -445,7 +445,7 @@ body {
   .neon-border:hover {
     @apply border-primary/60;
     box-shadow: 
-      0 0 20px rgba(168, 85, 247, 0.5),
+      0 0 20px rgba(2, 93, 109, 0.5),
       inset 0 0 20px rgba(168, 85, 247, 0.2);
   }
 

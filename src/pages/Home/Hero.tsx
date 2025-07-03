@@ -141,7 +141,7 @@ const Hero = () => {
   };
 
   return (
-    <div ref={heroRef} className="relative h-[100vh] w-full overflow-hidden bg-[#1D242B]">
+    <div ref={heroRef} className="relative h-[100vh] w-full overflow-hidden  bg-[#1D242B]">
       {/* Gradient Overlay */}
       <div
         ref={overlayRef}
@@ -175,7 +175,7 @@ const Hero = () => {
         </div>
 
         {/* Main Content (Text and Button) */}
-        <div className="hero-content absolute inset-0 z-40 flex flex-col justify-center bg-gradient-to-br from-[#1D242B]/90 via-transparent to-[#0077C0]/50">
+        <div className=" absolute inset-0 z-40 flex flex-col justify-center bg-gradient-to-br from-[#1D242B]/90 via-transparent to-[#0077C0]/50">
           <div className="container mx-auto px-6 sm:px-8 lg:px-12">
             <div className="max-w-4xl">
               {/* Main Title "Tungky" */}

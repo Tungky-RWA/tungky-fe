@@ -1,5 +1,21 @@
-export const CONTRACT_ABI = [
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+export const MASTER_ABI = [
+  {
+    inputs: [
+      { internalType: "address", name: "_couponAddress", type: "address" },
+      {
+        internalType: "address",
+        name: "_brandMetadataAddress",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_contractFactoryAddress",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
   { inputs: [], name: "AccessControlBadConfirmation", type: "error" },
   {
     inputs: [
@@ -18,65 +34,6 @@ export const CONTRACT_ABI = [
     inputs: [{ internalType: "address", name: "account", type: "address" }],
     name: "OwnableUnauthorizedAccount",
     type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "brandWallet",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "newLegalStatus",
-        type: "bool",
-      },
-    ],
-    name: "BrandLegalStatusUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "brandWallet",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "nftContractAddress",
-        type: "address",
-      },
-      { indexed: false, internalType: "string", name: "name", type: "string" },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "isLegalVerified",
-        type: "bool",
-      },
-    ],
-    name: "BrandRegistered",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "brandWallet",
-        type: "address",
-      },
-      { indexed: false, internalType: "bool", name: "newStatus", type: "bool" },
-    ],
-    name: "BrandStatusUpdated",
-    type: "event",
   },
   {
     anonymous: false,
@@ -159,89 +116,25 @@ export const CONTRACT_ABI = [
   },
   {
     inputs: [],
-    name: "ADMIN_ROLE",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "DEFAULT_ADMIN_ROLE",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "brands",
-    outputs: [
-      { internalType: "address", name: "brandWallet", type: "address" },
-      { internalType: "address", name: "nftContractAddress", type: "address" },
-      { internalType: "string", name: "name", type: "string" },
-      { internalType: "string", name: "nftSymbol", type: "string" },
-      { internalType: "bool", name: "isActive", type: "bool" },
-      { internalType: "bool", name: "isLegalVerified", type: "bool" },
-      {
-        internalType: "uint256",
-        name: "registrationTimestamp",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "_brandWallet", type: "address" },
+      { internalType: "address", name: "_minterWallet", type: "address" },
     ],
-    name: "getBrandInfo",
-    outputs: [
-      {
-        components: [
-          { internalType: "address", name: "brandWallet", type: "address" },
-          {
-            internalType: "address",
-            name: "nftContractAddress",
-            type: "address",
-          },
-          { internalType: "string", name: "name", type: "string" },
-          { internalType: "string", name: "nftSymbol", type: "string" },
-          { internalType: "bool", name: "isActive", type: "bool" },
-          { internalType: "bool", name: "isLegalVerified", type: "bool" },
-          {
-            internalType: "uint256",
-            name: "registrationTimestamp",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct ContractFactory.BrandInfo",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_brandWallet", type: "address" },
-    ],
-    name: "getBrandNFTContractAddress",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
+    name: "approveBrand",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [{ internalType: "bytes32", name: "role", type: "bytes32" }],
     name: "getRoleAdmin",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTotalRegisteredBrands",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -266,6 +159,16 @@ export const CONTRACT_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address", name: "_to", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "mintCoupon",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [{ internalType: "address", name: "", type: "address" }],
@@ -277,17 +180,11 @@ export const CONTRACT_ABI = [
       { internalType: "string", name: "_brandName", type: "string" },
       { internalType: "string", name: "_nftSymbol", type: "string" },
       { internalType: "address", name: "_brandWallet", type: "address" },
+      { internalType: "string", name: "_uri", type: "string" },
     ],
     name: "registerBrand",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    name: "registeredBrands",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -327,26 +224,6 @@ export const CONTRACT_ABI = [
   {
     inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_brandWallet", type: "address" },
-      { internalType: "bool", name: "_isLegalVerified", type: "bool" },
-    ],
-    name: "updateBrandLegalStatus",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_brandWallet", type: "address" },
-      { internalType: "bool", name: "_isActive", type: "bool" },
-    ],
-    name: "updateBrandStatus",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

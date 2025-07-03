@@ -5,7 +5,7 @@ import {
   CardContent,
 } from "@/components/UI/card";
 import { cn } from "@/lib/utils";
-import { useAuthModal } from "@account-kit/react";
+import { useAuthModal, useUser } from "@account-kit/react";
 import CardCustom from '@/components/UI/CardCustom';
 import ButtonCustom from '@/components/UI/ButtonCustom';
 

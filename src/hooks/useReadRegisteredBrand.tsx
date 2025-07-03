@@ -53,7 +53,9 @@ export const useReadBrandData = (props: UseReadNFTUriParams) => {
         args: [ownerAddress],
       });
       return info;
+      
     },
+    
     enabled: !!client && !!contractAddress && !!ownerAddress,
   });
 

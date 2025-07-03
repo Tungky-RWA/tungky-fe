@@ -104,7 +104,7 @@ const AdminDashboard = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {summaryCards.map((card, index) => (
-          <CardCustom key={card.title} variant="crypto" className="animate-slide-up" {...({ animationDelay: `${index * 100}ms` } as any)}>
+          <CardCustom key={card.title} variant="neon" className="animate-slide-up" {...({ animationDelay: `${index * 100}ms` } as any)}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-xl ${card.bg} backdrop-blur-sm`}>

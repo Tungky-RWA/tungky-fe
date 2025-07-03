@@ -1,4 +1,4 @@
-export const CONTRACT_ABI = [
+export const FACTORY_ABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   { inputs: [], name: "AccessControlBadConfirmation", type: "error" },
   {
@@ -8,35 +8,6 @@ export const CONTRACT_ABI = [
     ],
     name: "AccessControlUnauthorizedAccount",
     type: "error",
-  },
-  {
-    inputs: [{ internalType: "address", name: "owner", type: "address" }],
-    name: "OwnableInvalidOwner",
-    type: "error",
-  },
-  {
-    inputs: [{ internalType: "address", name: "account", type: "address" }],
-    name: "OwnableUnauthorizedAccount",
-    type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "brandWallet",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "newLegalStatus",
-        type: "bool",
-      },
-    ],
-    name: "BrandLegalStatusUpdated",
-    type: "event",
   },
   {
     anonymous: false,
@@ -76,25 +47,6 @@ export const CONTRACT_ABI = [
       { indexed: false, internalType: "bool", name: "newStatus", type: "bool" },
     ],
     name: "BrandStatusUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "OwnershipTransferred",
     type: "event",
   },
   {
@@ -159,16 +111,19 @@ export const CONTRACT_ABI = [
   },
   {
     inputs: [],
-    name: "ADMIN_ROLE",
+    name: "DEFAULT_ADMIN_ROLE",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [],
-    name: "DEFAULT_ADMIN_ROLE",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    stateMutability: "view",
+    inputs: [
+      { internalType: "address", name: "_brandWallet", type: "address" },
+      { internalType: "address", name: "couponContract", type: "address" },
+    ],
+    name: "approveBrand",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -214,7 +169,7 @@ export const CONTRACT_ABI = [
             type: "uint256",
           },
         ],
-        internalType: "struct ContractFactory.BrandInfo",
+        internalType: "struct IContractFactory.BrandInfo",
         name: "",
         type: "tuple",
       },
@@ -239,13 +194,6 @@ export const CONTRACT_ABI = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "getTotalRegisteredBrands",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "bytes32", name: "role", type: "bytes32" },
       { internalType: "address", name: "account", type: "address" },
@@ -266,33 +214,12 @@ export const CONTRACT_ABI = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "owner",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "string", name: "_brandName", type: "string" },
       { internalType: "string", name: "_nftSymbol", type: "string" },
       { internalType: "address", name: "_brandWallet", type: "address" },
     ],
     name: "registerBrand",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    name: "registeredBrands",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -322,33 +249,6 @@ export const CONTRACT_ABI = [
     name: "supportsInterface",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_brandWallet", type: "address" },
-      { internalType: "bool", name: "_isLegalVerified", type: "bool" },
-    ],
-    name: "updateBrandLegalStatus",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "_brandWallet", type: "address" },
-      { internalType: "bool", name: "_isActive", type: "bool" },
-    ],
-    name: "updateBrandStatus",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ] as const;

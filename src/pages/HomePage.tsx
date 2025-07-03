@@ -261,7 +261,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen w-screen overflow-x-hidden">
+    <div ref={containerRef} className="relative min-h-screen  w-screen overflow-x-hidden">
       {/* Scroll Progress Indicator */}
       <div className="fixed top-0 left-0 w-full h-1 z-50">
         <div className="scroll-progress h-full bg-gradient-to-r from-primary to-accent origin-left scale-x-0"></div>

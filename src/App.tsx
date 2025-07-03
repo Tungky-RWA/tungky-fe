@@ -17,6 +17,8 @@ import MarketplaceService from './pages/Brand/MarketplaveService';
 import NFCService from './pages/Brand/NFCService';
 import QRService from './pages/Brand/QRService';
 
+import RequireAuth from './hooks/requireBrand.tsx';
+
 import AdminDashboard from './pages/Admin/AdminDashboard.tsx';
 import AdminBrand from './pages/Admin/Brand.tsx';
 
@@ -24,6 +26,8 @@ import { Providers } from "./providers.tsx";
 import { cookieToInitialState } from "@account-kit/core";
 import { config } from "./config";
 import { Toaster } from 'react-hot-toast';
+
+import RequireAdmin from './hooks/requireAdmin.tsx';
 
 function App() {
   const initialState = cookieToInitialState(
@@ -49,11 +53,13 @@ function App() {
             <Route path="qr" element={<QRService />} />
             {/* <Route path="help" element={<HelpService />} /> */}
           </Route>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="brand" element={<AdminBrand />} />
-            {/* <Route path="help" element={<HelpService />} /> */}
+          <Route element={<RequireAdmin />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="brand" element={<AdminBrand />} />
+              {/* <Route path="help" element={<HelpService />} /> */}
+            </Route>
           </Route>
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />

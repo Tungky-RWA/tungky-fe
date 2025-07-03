@@ -68,7 +68,7 @@ const Sidebar = ({ pageType }: SidebarProps) => {
   };
 
   return (
-    <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col  top-0 backdrop-blur-xl">
+    <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col top-0 backdrop-blur-xl">
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-xl flex items-center justify-center animate-glow">

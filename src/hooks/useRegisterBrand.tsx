@@ -74,8 +74,6 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
       setError("Wallet not connected");
       return;
     }
-
-
     sendUserOperation({
       uo: {
         target: CONTRACT_ADDRESS,
