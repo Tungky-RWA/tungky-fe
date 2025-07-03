@@ -181,15 +181,11 @@ const Hero = () => {
               {/* Main Title "Tungky" */}
               <h1
                 ref={titleRef}
-                className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 leading-none"
-              >
-                <span
-                  id="tungky-text" // ID to target with GSAP for the typing effect
-                  className="block text-[#FAFAFA] h-120 font-bold"
+                className="bitcount-grid-double-1 text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 leading-none text-neon animate-flicker"
                 >
-                  
-                  Tungky
-                </span>
+                TUNGKY
+              
+
               </h1>
 
               {/* Subtitle */}
