@@ -79,7 +79,7 @@ const Sidebar = ({ pageType }: SidebarProps) => {
           </div>
         </div>
 
-        <div className="mb-6">
+        <div>
           <div
             className={`w-full flex items-center px-2 rounded-lg justify-start crypto-glass web3-glow
               bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400`}

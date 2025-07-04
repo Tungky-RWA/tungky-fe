@@ -11,7 +11,8 @@ export const config = createConfig(
     enablePopupOauth: true,
     policyId: "0b6f281e-1d97-41bc-924c-70f42630fd22",
     sessionConfig: {
-      expirationTimeMs: 24 * 60 * 60 * 1000
+      expirationTimeMs: 86400000,
+      sessionKey: "WsqtzV_qpbzbcea1SWe3Q"
     }
   },
   {
