@@ -37,10 +37,10 @@ export const useReadHasRole = (props: UseHasRoleParams) => {
         functionName: "hasRole",
         args: [roleAddress, userAddress],
       });
-      return info;
       
+      return info;
     },
-    
+    refetchOnWindowFocus: false,
     enabled: !!client && !!roleAddress && !!userAddress,
   });
 

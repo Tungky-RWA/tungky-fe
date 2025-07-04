@@ -46,9 +46,9 @@ const RequireAdmin = () => {
   
  
 
-  // if (loading || isPending || hasRole === null) {
-  //   return <LoadingPage />;
-  // }
+  if (loading || isPending || hasRole === null) {
+    return <LoadingPage />;
+  }
 
   if (!signerStatus.isConnected && !loading) {
     return (

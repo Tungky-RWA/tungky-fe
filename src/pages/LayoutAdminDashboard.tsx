@@ -3,45 +3,37 @@ import Sidebar from './Brand/Sidebar';
 import Header from '@/components/Layout/Header';
 import { useSignerStatus, useSmartAccountClient  } from "@account-kit/react";
 import LoginCard from '@/components/Register/login-card';
-// import { Alchemy } from "@alchemy/aa-core";
+import { useReadHasRole } from '@/hooks/useHasRole';
+import LoadingPage from '@/components/UI/loadingPage';
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
 import { MASTER_ABI } from '@/lib/masterAbi';
-import { MASTER_ADDRESS } from '@/lib/constants';
-
-const ADMIN_ROLE = import.meta.env.VITE_ADMIN_ROLE as `0x${string}`;
+import { CONTRACT_TEMP, MASTER_ADDRESS, DEFAULT_ROLE_ADMIN } from '@/lib/constants';
 
 const BrandLayout = () => {
   const signerStatus = useSignerStatus();
-  const { address, isLoadingClient, client } = useSmartAccountClient({});
-  console.log(client?.account?.address)
+  const { isLoadingClient, client } = useSmartAccountClient({});
 
-  console.log(address, isLoadingClient)
+  const { hasRole, isLoadingHasRole } = useReadHasRole({
+    roleAddress: DEFAULT_ROLE_ADMIN,
+    userAddress: client?.account?.address || "0x0"
+  })
 
-  // const { data: hasRole, isLoading } = useQuery({
-  //   queryKey: ['hasRole', client?.account?.address],
-  //   enabled: !!client?.account?.address,
-  //   queryFn: async () => {
-  //     const result = await client!.readContract({
-  //       address: MASTER_ADDRESS,
-  //       abi: MASTER_ABI,
-  //       functionName: 'hasRole',
-  //       args: ['0x0000000000000000000000000000000000000000000000000000000000000000', '0x26F7384F8f2e80035c6bF0f1c40D0B69f7021Be2'],
-  //     });
-
-  //     return result as boolean;
-  //   },
-  // });
-
-  // console.log(hasRole, isLoading, "TESTTTT")
-
+  if (isLoadingHasRole || (isLoadingClient && !signerStatus.isDisconnected)) {
+    return <LoadingPage />;
+  }
   if (!signerStatus.isConnected) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
         <LoginCard cardDescription="Login to continue"/>
       </div>
     )
+  }
+  
+  
+  if (!hasRole && signerStatus.isConnected) {
+    return <>404</>
   }
   return (
 

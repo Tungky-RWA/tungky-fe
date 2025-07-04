@@ -56,14 +56,14 @@ function App() {
               {/* <Route path="help" element={<HelpService />} /> */}
             </Route>
           </Route>
-          <Route element={<RequireAdmin />}>
+          {/* <Route element={<RequireAdmin />}> */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="brand" element={<AdminBrand />} />
               {/* <Route path="help" element={<HelpService />} /> */}
             </Route>
-          </Route>
+          {/* </Route> */}
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />
           <Route path="/verify/:productId" element={<VerifyProduct />} />
