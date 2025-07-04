@@ -48,9 +48,9 @@ const RequireBrand = () => {
     return <LoadingPage />;
   }
 
-  if (!veryfied) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!veryfied) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return <Outlet />;
 };

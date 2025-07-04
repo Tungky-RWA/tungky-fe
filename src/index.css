@@ -372,11 +372,11 @@ body {
   /* Web3 glow effect */
   .web3-glow {
     @apply transition-all duration-300;
-    filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));
+    filter: drop-shadow(0 0 20px rgba(85, 101, 247, 0.3));
   }
 
   .web3-glow:hover {
-    filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.5));
+    filter: drop-shadow(0 0 30px rgba(85, 171, 247, 0.5));
     transform: translateY(-2px);
   }
 

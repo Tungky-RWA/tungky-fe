@@ -1,10 +1,14 @@
 import { CONTRACT_ABI as ABI } from "./contractAbi";
 import { factoryAbi } from "./factoryAbi";
 import { masterAbi } from "./masterAbi";
+import { nftBrandAbi } from "./nftBrand";
 
 export const CONTRACT_ABI = ABI;
 export const FACTORY_ABI = factoryAbi;
 export const MASTER_ABI = masterAbi;
+export const COUPON_ABI = [];
+export const METADATA_ABI = [];
+export const NFTBRAND_ABI = nftBrandAbi;
 
 export const CONTRACT_ADDRESS = "0x4275a4Efde9E37EF1CFc37dd1b6Db7589B59b8d4";
 export const MASTER_ADDRESS = "0xc398B0E417b6C985F3a31A6E66C2c7db2A7A9F4c";
