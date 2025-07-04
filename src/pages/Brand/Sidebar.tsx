@@ -25,7 +25,6 @@ import {
   TooltipTrigger,
 } from "@/components/UI/tooltip";
 import { Button } from '@/components/UI/button';
-import { useSignerStatus } from "@account-kit/react";
 import { useSmartAccountClient, useLogout } from "@account-kit/react";
 import { formatAddress } from '@/lib/utils';
 import ButtonCustom from '@/components/UI/ButtonCustom';
@@ -80,30 +79,32 @@ const Sidebar = ({ pageType }: SidebarProps) => {
           </div>
         </div>
 
-        {/* <div className="mb-6">
-          <Button
-            onClick={handleWalletConnect}
-            className={`w-full justify-start crypto-glass web3-glow ${
-              isWalletConnected 
-                ? 'bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400' 
-                : 'bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30 text-primary'
-            }`}
-            variant="outline"
+        <div>
+          <div
+            className={`w-full flex items-center px-2 rounded-lg justify-start crypto-glass web3-glow
+              bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400`}
           >
             <Wallet className="mr-3 h-4 w-4" />
-            {isWalletConnected ? (
-              <div className="flex items-center gap-2">
-                <span>Wallet Connected</span>
-                <Circle className="h-2 w-2 fill-green-400 text-green-400 animate-pulse" />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span>Connect Wallet</span>
-                <Zap className="h-3 w-3" />
-              </div>
-            )}
-          </Button>
-        </div> */}
+            {client?.account?.address ? (
+              formatAddress(client?.account?.address )
+            ) : ""}
+            <TooltipProvider>
+              <Tooltip open={isCopied}>
+                <TooltipTrigger asChild>
+                  <button
+                    className="h-6 w-6 ml-auto"
+                    onClick={handleCopy}
+                  >
+                    <Copy className="h-4 w-4 hover:text-white hover:" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copied!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
       </div>
 
       <nav className="flex-1 px-4">

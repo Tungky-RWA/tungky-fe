@@ -23,11 +23,9 @@ import {
   TooltipTrigger,
 } from "@/components/UI/tooltip";
 import { cn, formatAddress } from "@/lib/utils";
-import Header from '../components/Layout/Header';
 import CardCustom from '../components/UI/CardCustom';
 import Button from '../components/UI/ButtonCustom';
-import { useSignerStatus } from "@account-kit/react";
-import { useSmartAccountClient } from "@account-kit/react";
+import { useSignerStatus, useSmartAccountClient } from "@account-kit/react";
 import LoginCard from '@/components/Register/login-card';
 
 const AdminDashboard: React.FC = () => {
