@@ -8,7 +8,6 @@ import { Input } from "@/components/UI/input";
 import { Label } from "@/components/UI/label";
 
 import {
-  Card,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -21,12 +20,14 @@ import {
   TooltipTrigger,
 } from "@/components/UI/tooltip";
 import { cn, formatAddress } from "@/lib/utils";
-import { useUser, useSmartAccountClient } from "@account-kit/react";
+import { useUser, useSmartAccountClient, useLogout } from "@account-kit/react";
 import { useRegisterBrand } from "@/hooks/useRegisterBrand";
 import { useReadBrandData } from '@/hooks/useReadRegisteredBrand';
 import toast from 'react-hot-toast';
 import { CONTRACT_ADDRESS } from '@/lib/constants';
 import { Checkbox } from '../UI/CheckBox';
+import CardCustom from '../UI/CardCustom';
+import ButtonCustom from '../UI/ButtonCustom';
 
 // Palet warna baru yang terinspirasi dari dashboard
 const accentPurple = "violet-600";
@@ -35,6 +36,7 @@ const accentCyan = "cyan-400";
 const accentCyanHover = "cyan-300";
 
 export default function FormRegister() {
+  const { logout } = useLogout()
   const [isCopied, setIsCopied] = useState(false);
   const user = useUser();
   const navigate = useNavigate();
@@ -117,9 +119,9 @@ export default function FormRegister() {
   }
 
   return (
-    <Card
+    <CardCustom
       className={cn(
-        "relative w-full max-w-lg shadow-2xl border border-white/10",
+        "relative w-full max-w-lg shadow-2xl border neon-border crypto-glass",
         "bg-[#1D242B]/95 text-[#FAFAFA] backdrop-blur-md"
       )}
     >
@@ -213,7 +215,7 @@ export default function FormRegister() {
 
               <div>
                 <Label htmlFor="email" className="text-[#FAFAFA]">Email</Label>
-                <Input id="email" name="email" value={formData.email} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="email" placeholder="contact@company.com" className={inputStyles}/>
+                <Input disabled id="email" name="email" value={formData.email} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="email" placeholder="contact@company.com" className={inputStyles}/>
               </div>
 
               <div>
@@ -231,19 +233,21 @@ export default function FormRegister() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button type="button" variant="outline" onClick={() => navigate(-1)} className={cn(
+                <Button type="button" variant="outline" onClick={() => {
+                  logout()
+                }} className={cn(
                     `w-full sm:w-1/3 border-${accentPurple} text-${accentPurple}`,
                     `hover:bg-gradient-to-r hover:from-${accentPurpleHover} hover:via-${accentCyanHover} hover:to-${accentCyanHover} hover:text-white`
                 )}>
                   Back
                 </Button>
-                <Button type="submit" disabled={isFormInvalid} className={cn(
+                <ButtonCustom variant="primary" type="submit" disabled={isFormInvalid} className={cn(
                     "w-full sm:w-2/3 text-base font-medium text-[#FAFAFA]", 
                     `bg-${accentPurple} hover:bg-${accentPurpleHover}`,
                     "disabled:bg-gray-600 disabled:cursor-not-allowed"
                 )}>
                   {isRegistering ? 'Submitting...' : 'Submit Registration'}
-                </Button>
+                </ButtonCustom>
               </div>
 
               {transactionUrl && (
@@ -258,6 +262,6 @@ export default function FormRegister() {
           </>
         )}
       </CardContent>
-    </Card>
+    </CardCustom>
   );
 }
