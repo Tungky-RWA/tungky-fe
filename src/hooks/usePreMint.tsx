@@ -13,7 +13,7 @@ export interface usePremintParams {
 }
 export interface usePreMintParamsReturn {
   isPreMint: boolean;
-  preMint: (serialNumber: string, uri: URL, brandAddress: `0x${string}`) => void;
+  preMint: (serialNumber: string, uri: string, brandAddress: `0x${string}`) => void;
   updatePreMint: (oldSerialNumber: string, newSerialNumber: string, uri: URL, brandAddress: `0x${string}`) => void;
   transactionUrl?: string;
   error?: string;
@@ -51,7 +51,7 @@ export const usePreMint = ({ onSuccess }: usePremintParams): usePreMintParamsRet
     },
   });
 
-  const preMint = useCallback(async (serialNumber: string, uri: URL, brandAddress: `0x${string}`) => {
+  const preMint = useCallback(async (serialNumber: string, uri: string, brandAddress: `0x${string}`) => {
     if (!client) {
       setError("Wallet not connected");
       return;
