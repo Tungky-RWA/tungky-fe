@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapPin, Filter, Search, Info, Clock, Shield } from 'lucide-react';
 import CardCustom from '@/components/UI/CardCustom';
 import ButtonCustom from '@/components/UI/ButtonCustom';
@@ -74,7 +74,7 @@ const NFTTracker = () => {
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold gradient-text">NFT Tracker</h1>
+          <h1 className="text-4xl font-bold blockchain-gradient animate-glow ">NFT Tracker</h1>
           <p className="text-muted-foreground text-lg">
             Global verification heatmap and location insights
           </p>

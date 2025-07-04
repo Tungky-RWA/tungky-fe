@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+import { withAccountKitUi } from "@account-kit/react/tailwind";
+
+export default withAccountKitUi({
     darkMode: ['class'],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -102,6 +104,14 @@ export default {
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'
   			},
+				// Web3 Neon Colors
+				neon: {
+					purple: '#8B5CF6',
+					blue: '#06B6D4',
+					green: '#10B981',
+					pink: '#EC4899',
+					cyan: '#06B6D4'
+				},
   			muted: {
   				DEFAULT: 'hsl(var(--muted))',
   				foreground: 'hsl(var(--muted-foreground))'
@@ -129,4 +139,4 @@ export default {
   	}
   },
   plugins: [require("tailwindcss-animate")],
-};
+});

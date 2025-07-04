@@ -4,19 +4,47 @@ import { Shield, CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
 import Header from '../components/Layout/Header';
 import Card from '../components/UI/CardCustom';
 import Button from '../components/UI/ButtonCustom';
+import Navbar from '@/components/Layout/Navbar';
 
 const VerifyProduct: React.FC = () => {
   const { productId } = useParams();
   const [verificationResult, setVerificationResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingGetLocation, setIsLoadingGetLocation] = useState(true);
+  const [isLocationPermisionGranted, setIsLocationPermissionGranted] = useState(false);
+  const [location, setLocation] = useState({lat: 0, lng: 0});
+
 
   useEffect(() => {
+    setIsLoadingGetLocation(true)
+    if(!navigator.geolocation){
+        alert("location not support")
+    }
+    
     // Simulate product verification API call
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+      setLocation({ lat: latitude, lng: longitude });
+
+      setIsLocationPermissionGranted(true);
+       
+       setIsLoadingGetLocation(false);
+    }, (err) => {
+      if(err.code == 1){
+        setIsLocationPermissionGranted(false);
+      }
+       
+     setIsLoadingGetLocation(false);
+    })
+   
+
     const verifyProduct = async () => {
       setIsLoading(true);
       
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 9000));
       
       // Mock verification result based on productId
       if (productId && productId.length > 6) {
@@ -55,7 +83,7 @@ const VerifyProduct: React.FC = () => {
             }
           ],
           blockchainDetails: {
-            network: 'Polygon',
+            network: 'Monad',
             contractAddress: '0x1234567890abcdef1234567890abcdef12345678',
             blockNumber: '45123456',
             gasUsed: '145,892'
@@ -69,34 +97,76 @@ const VerifyProduct: React.FC = () => {
       }
       
       setIsLoading(false);
+
+      // send data to backend
+      
+
+
     };
 
     verifyProduct();
   }, [productId]);
 
-  if (isLoading) {
+  if(isLoadingGetLocation){
     return (
-      <div className="min-h-screen">
-        <Header showNavigation />
+      <div className="min-h-screen bg-gray-900 pt-16">
+        {/* <Header showNavigation /> */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-            <h2 className="text-xl font-semibold text-white mb-2">Memverifikasi Produk...</h2>
-            <p className="text-white/60">Mengecek keaslian produk melalui blockchain</p>
+            <h2 className="text-xl font-semibold text-white mb-2">Need Location Permision...</h2>
+            <p className="text-white/60">Turn On Your Browser location</p>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 pt-16">
+        {/* <Header showNavigation /> */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Card className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+            <h2 className="text-xl font-semibold text-white mb-2">Checking Originality Verified Produk...</h2>
+            <p className="text-white/60">Please wait, we are verifying your product with blockchain</p>
           </Card>
         </div>
       </div>
     );
   }
 
+
+
+  if(!isLocationPermisionGranted){
+    return (
+      <div className="min-h-screen bg-gray-900 pt-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center bg-gray-800 p-8 rounded-lg shadow-lg">
+          <h2 className="text-xl font-semibold text-white mb-4">You Need to Allow Location Browser Permission</h2>
+          <p className="text-white/60 mb-6">Please turn on your location in your browser and hit the refresh button.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition duration-300"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen">
-      <Header showNavigation />
+    <div className="min-h-screen bg-gray-900 pt-16">
+      {/* <Header showNavigation /> */}
+       <Navbar/>
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Hasil Verifikasi Produk
+            Result Product Verification
           </h1>
           <p className="text-xl text-white/60">
             Product ID: <span className="text-primary font-mono">{productId}</span>
@@ -118,16 +188,19 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
     <div className="space-y-8">
       {/* Verification Status */}
       <Card className="text-center bg-green-500/10 border-green-500/30">
-        <CheckCircle className="h-20 w-20 text-green-400 mx-auto mb-4 animate-bounce-subtle" />
+        {/* Placeholder for CheckCircle icon */}
+        <svg className="h-20 w-20 text-green-400 mx-auto mb-4 animate-bounce-subtle" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
         <h2 className="text-2xl font-bold text-green-400 mb-2">
-          ✅ PRODUK ASLI TERVERIFIKASI
+          ✅ AUTHENTIC PRODUCT VERIFIED
         </h2>
         <p className="text-white/80 text-lg">
-          Produk ini telah terverifikasi sebagai produk asli melalui teknologi blockchain
+          This product has been verified as authentic through blockchain technology.
         </p>
         <div className="mt-4 p-3 bg-green-500/20 rounded-lg">
           <p className="text-green-300 font-medium">
-            Verifikasi dilakukan pada: {new Date(result.verificationHistory[0].date).toLocaleString('id-ID')}
+            Verification performed on: {new Date(result.verificationHistory[0].date).toLocaleString('en-US')}
           </p>
         </div>
       </Card>
@@ -136,12 +209,15 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
         {/* Owner Information */}
         <Card>
           <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-            <Shield className="h-5 w-5 mr-2 text-primary" />
-            Informasi Pemilik & Brand
+            {/* Placeholder for Shield icon */}
+            <svg className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Owner & Brand Information
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="text-white/60 text-sm font-medium">Nama Pemilik/Brand</label>
+              <label className="text-white/60 text-sm font-medium">Owner/Brand Name</label>
               <p className="text-white font-semibold text-lg">{result.ownerName}</p>
             </div>
             <div>
@@ -150,9 +226,13 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
                 <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1">
                   {result.walletAddress}
                 </p>
-                <Button variant="outline" size="sm" icon={ExternalLink}>
+                {/* Placeholder for Button component with ExternalLink icon */}
+                <button className="px-3 py-1 bg-gray-700 text-white rounded text-sm flex items-center space-x-1">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
                   View
-                </Button>
+                </button>
               </div>
             </div>
             <div>
@@ -165,11 +245,11 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
         {/* Product Details */}
         <Card>
           <h3 className="text-xl font-semibold text-white mb-4">
-            Detail Produk
+            Product Details
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="text-white/60 text-sm font-medium">Nama Produk</label>
+              <label className="text-white/60 text-sm font-medium">Product Name</label>
               <p className="text-white font-semibold text-lg">{result.productDetails.name}</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -178,7 +258,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
                 <p className="text-primary font-bold">{result.productDetails.tokenId}</p>
               </div>
               <div>
-                <label className="text-white/60 text-sm font-medium">Kategori</label>
+                <label className="text-white/60 text-sm font-medium">Category</label>
                 <p className="text-white font-medium">{result.productDetails.category}</p>
               </div>
             </div>
@@ -189,13 +269,13 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
               </p>
             </div>
             <div>
-              <label className="text-white/60 text-sm font-medium">Tanggal Mint</label>
+              <label className="text-white/60 text-sm font-medium">Mint Date</label>
               <p className="text-white font-medium">
-                {new Date(result.productDetails.mintDate).toLocaleDateString('id-ID')}
+                {new Date(result.productDetails.mintDate).toLocaleDateString('en-US')}
               </p>
             </div>
             <div>
-              <label className="text-white/60 text-sm font-medium">Garansi</label>
+              <label className="text-white/60 text-sm font-medium">Warranty</label>
               <p className="text-accent font-medium">{result.productDetails.warranty}</p>
             </div>
           </div>
@@ -205,7 +285,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
       {/* Product Description */}
       <Card>
         <h3 className="text-xl font-semibold text-white mb-4">
-          Deskripsi Produk
+          Product Description
         </h3>
         <p className="text-white/80 leading-relaxed">{result.productDetails.description}</p>
       </Card>
@@ -213,8 +293,11 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
       {/* Blockchain Details */}
       <Card>
         <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
-          <Shield className="h-5 w-5 mr-2 text-accent" />
-          Detail Blockchain
+          {/* Placeholder for Shield icon */}
+          <svg className="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Blockchain Details
         </h3>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
@@ -235,9 +318,13 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
               <p className="text-white font-mono text-xs">
                 {result.blockchainDetails.contractAddress.substring(0, 10)}...
               </p>
-              <Button variant="outline" size="sm" icon={ExternalLink}>
+              {/* Placeholder for Button component with ExternalLink icon */}
+              <button className="px-3 py-1 bg-gray-700 text-white rounded text-xs flex items-center space-x-1">
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
                 View
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -246,7 +333,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
       {/* Verification History */}
       <Card>
         <h3 className="text-xl font-semibold text-white mb-4">
-          Riwayat Verifikasi & Audit Trail
+          Verification History & Audit Trail
         </h3>
         <div className="space-y-4">
           {result.verificationHistory.map((item: any, index: number) => (
@@ -260,7 +347,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
                     <p className="text-white/50 text-xs">Verified by: {item.verifier}</p>
                   </div>
                   <span className="text-white/80 text-sm">
-                    {new Date(item.date).toLocaleString('id-ID')}
+                    {new Date(item.date).toLocaleString('en-US')}
                   </span>
                 </div>
               </div>
@@ -271,28 +358,28 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
 
       {/* Action Buttons */}
       <div className="text-center space-x-4">
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={() => window.location.href = '/'}
           className="mr-4"
         >
-          Verifikasi Produk Lain
+          Verify Another Product
         </Button>
-        <Button 
-          variant="accent" 
+        <Button
+          variant="accent"
           onClick={() => window.print()}
         >
-          Print Sertifikat Keaslian
+          Print Authenticity Certificate
         </Button>
-        <Button 
-          variant="outline" 
-          onClick={() => navigator.share?.({ 
-            title: 'Produk Terverifikasi', 
-            text: `Produk ${result.productDetails.name} telah terverifikasi asli`,
-            url: window.location.href 
+        <Button
+          variant="outline"
+          onClick={() => navigator.share?.({
+            title: 'Product Verified',
+            text: `Product ${result.productDetails.name} has been verified as authentic`,
+            url: window.location.href
           })}
         >
-          Share Verifikasi
+          Share Verification
         </Button>
       </div>
     </div>
@@ -303,66 +390,70 @@ const InvalidProduct: React.FC<{ error: string }> = ({ error }) => {
   return (
     <div className="space-y-8">
       <Card className="text-center bg-red-500/10 border-red-500/30">
-        <AlertTriangle className="h-20 w-20 text-red-400 mx-auto mb-4" />
+        {/* Placeholder for AlertTriangle icon */}
+        <svg className="h-20 w-20 text-red-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
         <h2 className="text-2xl font-bold text-red-400 mb-2">
-          ❌ VERIFIKASI GAGAL
+          ❌ VERIFICATION FAILED
         </h2>
         <p className="text-white/80 text-lg mb-4">
-          {error || 'Produk tidak dapat diverifikasi atau kemungkinan tidak asli'}
+          {error || 'Product could not be verified or may not be authentic.'}
         </p>
         <div className="p-4 bg-red-500/20 rounded-lg">
-          <h4 className="text-red-300 font-medium mb-2">Kemungkinan Penyebab:</h4>
+          <h4 className="text-red-300 font-medium mb-2">Possible Causes:</h4>
           <ul className="text-red-200 text-sm text-left space-y-1">
-            <li>• Kode produk tidak valid atau salah</li>
-            <li>• Produk belum terdaftar di sistem</li>
-            <li>• NFC tag atau QR code rusak</li>
-            <li>• Produk mungkin palsu atau tidak asli</li>
+            <li>• Invalid or incorrect product code</li>
+            <li>• Product not yet registered in the system</li>
+            <li>• Damaged NFC tag or QR code</li>
+            <li>• Product might be counterfeit or not original</li>
           </ul>
         </div>
       </Card>
 
       <Card>
         <h3 className="text-xl font-semibold text-white mb-4">
-          Langkah Selanjutnya
+          Next Steps
         </h3>
         <div className="space-y-4">
           <div className="p-4 bg-white/5 rounded-lg">
-            <h4 className="text-white font-medium mb-2">1. Periksa Kembali Kode Produk</h4>
+            <h4 className="text-white font-medium mb-2">1. Recheck Product Code</h4>
             <p className="text-white/70 text-sm">
-              Pastikan kode yang dimasukkan sesuai dengan yang tertera pada produk
+              Ensure the entered code matches the one on the product.
             </p>
           </div>
           <div className="p-4 bg-white/5 rounded-lg">
-            <h4 className="text-white font-medium mb-2">2. Hubungi Brand/Penjual</h4>
+            <h4 className="text-white font-medium mb-2">2. Contact Brand/Seller</h4>
             <p className="text-white/70 text-sm">
-              Konfirmasi keaslian produk langsung dengan brand atau penjual resmi
+              Confirm product authenticity directly with the brand or authorized seller.
             </p>
           </div>
           <div className="p-4 bg-white/5 rounded-lg">
-            <h4 className="text-white font-medium mb-2">3. Laporkan Produk Mencurigakan</h4>
+            <h4 className="text-white font-medium mb-2">3. Report Suspicious Product</h4>
             <p className="text-white/70 text-sm">
-              Jika Anda yakin produk asli namun tidak terverifikasi, laporkan ke customer service
+              If you believe the product is authentic but unverified, report it to customer service.
             </p>
           </div>
         </div>
       </Card>
 
       <div className="text-center space-x-4">
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={() => window.location.href = '/buyer'}
         >
-          Coba Verifikasi Lagi
+          Try Verifying Again
         </Button>
-        <Button 
-          variant="accent" 
+        <Button
+          variant="accent"
           onClick={() => window.location.href = '/'}
         >
-          Kembali ke Beranda
+          Back to Home
         </Button>
       </div>
     </div>
   );
 };
+
 
 export default VerifyProduct;

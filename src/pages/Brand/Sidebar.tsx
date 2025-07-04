@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
@@ -14,15 +14,36 @@ import {
   LogOut,
   Circle,
   Zap,
-  Store
+  Copy,
+  Store,
+  Users
 } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/UI/tooltip";
 import { Button } from '@/components/UI/button';
+import { useSmartAccountClient, useLogout } from "@account-kit/react";
+import { formatAddress } from '@/lib/utils';
+import ButtonCustom from '@/components/UI/ButtonCustom';
 
-const Sidebar = () => {
+interface SidebarProps {
+  pageType?: string
+}
+
+const Sidebar = ({ pageType }: SidebarProps) => {
+  const { logout } = useLogout();
+  const [isCopied, setIsCopied] = useState(false);
+  const { client } = useSmartAccountClient({});
   const location = useLocation();
-  const [isWalletConnected, setIsWalletConnected] = React.useState(true);
 
-  const navItems = [
+  const navItems = pageType ? [
+    { path: '/admin', icon: Home, label: 'Dashboard' },
+    { path: '/admin/brand', icon: Users, label: 'Brand' },
+    { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+  ] : [
     { path: '/brand', icon: Home, label: 'Dashboard' },
     { path: '/brand/analytics', icon: BarChart3, label: 'Analytics' },
     { path: '/brand/nft-tracker', icon: MapPin, label: 'NFT Tracker' },
@@ -32,11 +53,13 @@ const Sidebar = () => {
     { path: '/brand/marketplace', icon: Store, label: 'Marketplace Service' },
     { path: '/brand/nfc', icon: Smartphone, label: 'NFC Service' },
     { path: '/brand/qr', icon: QrCode, label: 'QR Code Service' },
-    { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
+    // { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
   ];
 
-  const handleWalletConnect = () => {
-    setIsWalletConnected(!isWalletConnected);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(client?.account?.address ?? "");
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleLogout = () => {
@@ -44,7 +67,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col sticky top-0 backdrop-blur-xl">
+    <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col top-0 backdrop-blur-xl">
       <div className="p-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-xl flex items-center justify-center animate-glow">
@@ -56,29 +79,31 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className="mb-6">
-          <Button
-            onClick={handleWalletConnect}
-            className={`w-full justify-start crypto-glass web3-glow ${
-              isWalletConnected 
-                ? 'bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400' 
-                : 'bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30 text-primary'
-            }`}
-            variant="outline"
+        <div>
+          <div
+            className={`w-full flex items-center px-2 rounded-lg justify-start crypto-glass web3-glow
+              bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400`}
           >
             <Wallet className="mr-3 h-4 w-4" />
-            {isWalletConnected ? (
-              <div className="flex items-center gap-2">
-                <span>Wallet Connected</span>
-                <Circle className="h-2 w-2 fill-green-400 text-green-400 animate-pulse" />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span>Connect Wallet</span>
-                <Zap className="h-3 w-3" />
-              </div>
-            )}
-          </Button>
+            {client?.account?.address ? (
+              formatAddress(client?.account?.address )
+            ) : ""}
+            <TooltipProvider>
+              <Tooltip open={isCopied}>
+                <TooltipTrigger asChild>
+                  <button
+                    className="h-6 w-6 ml-auto"
+                    onClick={handleCopy}
+                  >
+                    <Copy className="h-4 w-4 hover:text-white hover:" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copied!</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
 
@@ -112,7 +137,7 @@ const Sidebar = () => {
 
       <div className="p-4 border-t border-white/10">
         <Button
-          onClick={handleLogout}
+          onClick={() => logout()}
           variant="outline"
           className="w-full justify-start text-red-400 border-red-400/30 hover:bg-red-400/10 hover:border-red-400/50 crypto-glass"
         >

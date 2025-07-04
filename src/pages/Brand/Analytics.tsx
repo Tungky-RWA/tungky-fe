@@ -55,7 +55,7 @@ const Analytics = () => {
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold gradient-text">Analytics Dashboard</h1>
+          <h1 className="text-4xl font-bold blockchain-gradient">Analytics Dashboard</h1>
           <p className="text-muted-foreground text-lg">
             Detailed insights and performance metrics
           </p>
@@ -85,7 +85,7 @@ const Analytics = () => {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {keyMetrics.map((metric, index) => (
-          <CardCustom key={metric.label} variant="glass" className="animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
+          <CardCustom key={metric.label} variant="neon" className="animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-medium text-muted-foreground">{metric.label}</p>
