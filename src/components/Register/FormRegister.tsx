@@ -1,12 +1,11 @@
 "use client";
 
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react";
-import { ExternalLink, Copy } from "lucide-react";
+import { useState, useEffect, useRef, type DragEvent } from "react";
+import { ExternalLink, Copy, Upload, X, ImageIcon } from "lucide-react";
 import { Button } from "@/components/UI/button";
 import { Input } from "@/components/UI/input";
 import { Label } from "@/components/UI/label";
-
 import {
   CardHeader,
   CardTitle,
@@ -29,14 +28,140 @@ import { Checkbox } from '../UI/CheckBox';
 import CardCustom from '../UI/CardCustom';
 import ButtonCustom from '../UI/ButtonCustom';
 
-// Palet warna baru yang terinspirasi dari dashboard
+// Palet warna
 const accentPurple = "violet-600";
 const accentPurpleHover = "violet-700";
 const accentCyan = "cyan-400";
 const accentCyanHover = "cyan-300";
 
+// --- Komponen Pengunggah Logo yang Ditingkatkan ---
+interface EnhancedLogoUploaderProps {
+  onLogoChange?: (file: File | null) => void;
+  className?: string;
+}
+
+function EnhancedLogoUploader({ onLogoChange, className = "" }: EnhancedLogoUploaderProps) {
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [fileName, setFileName] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLogoUpdate = (file: File | null) => {
+    if (file && file.type.match(/^image\/(png|jpeg|svg\+xml)$/)) {
+      const url = URL.createObjectURL(file);
+      setLogoPreviewUrl(url);
+      setFileName(file.name);
+      onLogoChange?.(file);
+    } else {
+      if (logoPreviewUrl) {
+        URL.revokeObjectURL(logoPreviewUrl);
+      }
+      setLogoPreviewUrl(null);
+      setFileName("");
+      onLogoChange?.(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    handleLogoUpdate(file);
+  };
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files?.[0] || null;
+    handleLogoUpdate(file);
+  };
+
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleLogoUpdate(null);
+  };
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <div className={`space-y-2 ${className}`}>
+      <Label htmlFor="brandLogo" className="text-[#FAFAFA] text-sm font-medium">
+        Brand Logo
+      </Label>
+      <div
+        onClick={handleClick}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={cn(
+          "relative border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all duration-300 ease-in-out h-full flex flex-col justify-center items-center",
+          isDragOver ? "border-violet-400 bg-violet-500/10 scale-[1.02]" : "border-gray-600 hover:border-violet-500 hover:bg-violet-500/5",
+          logoPreviewUrl ? "bg-black/20" : "bg-black/10"
+        )}
+      >
+        <Input
+          ref={fileInputRef}
+          id="brandLogo"
+          name="brandLogo"
+          type="file"
+          accept="image/png, image/jpeg, image/svg+xml"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        {logoPreviewUrl ? (
+          <div className="space-y-4">
+            <div className="relative inline-block">
+              <img
+                src={logoPreviewUrl}
+                alt="Logo Preview"
+                className="h-24 w-auto max-w-full rounded-lg shadow-lg border border-gray-700"
+              />
+              <button
+                onClick={handleRemove}
+                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors duration-200 shadow-lg leading-none"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <div className="space-y-1">
+              <p className="text-[#FAFAFA] text-sm font-medium truncate max-w-xs mx-auto">{fileName}</p>
+              <p className="text-gray-400 text-xs">Click to change or drag a new image</p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="mx-auto w-12 h-12 bg-violet-500/20 rounded-full flex items-center justify-center">
+              <Upload className="w-6 h-6 text-violet-400" />
+            </div>
+            <div>
+              <p className="text-[#FAFAFA] font-medium">
+                <span className="text-violet-400">Upload a file</span> or drag and drop
+              </p>
+              <p className="text-gray-500 text-xs mt-1">PNG, JPG, SVG up to 5MB</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 export default function FormRegister() {
-  const { logout } = useLogout()
+  const { logout } = useLogout();
   const [isCopied, setIsCopied] = useState(false);
   const user = useUser();
   const navigate = useNavigate();
@@ -54,6 +179,8 @@ export default function FormRegister() {
     termsAccepted: false,
   });
 
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+
   useEffect(() => {
     if (user?.email) {
       setFormData(prev => ({ ...prev, email: user.email }));
@@ -61,20 +188,17 @@ export default function FormRegister() {
   }, [user?.email]);
 
   const { handleRegisterBrand, isRegistering, transactionUrl } = useRegisterBrand({
-   
     onSuccess: () => {
       toast.dismiss();
       toast.success('Registration successful! Your brand is under review.');
       refetchBrandInfo();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.dismiss();
       const message = error?.shortMessage ?? "An error occurred.";
       toast.error(`Registration failed: ${message}`);
     }
   });
-
-  console.log(transactionUrl, "Transaction URL");
 
   const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
     contractAddress: CONTRACT_ADDRESS,
@@ -94,17 +218,15 @@ export default function FormRegister() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log('Form data:', formData,"Address", client?.account?.address);
-
-    handleRegisterBrand(
-      formData.companyName,
-      "tes",
-      client?.account?.address || "0x"
-    );
+    console.log('Mengirimkan data:', { ...formData, address: client?.account?.address, logoFile });
+    // handleRegisterBrand(
+    //   formData.companyName,
+    //   formData.brandName,
+    //   client?.account?.address || "0x",
+    //   // logoFile
+    // );
   };
 
-  // Gaya input disesuaikan dengan warna aksen ungu saat focus
   const inputStyles = `bg-black/30 border border-gray-700 placeholder:text-gray-500 focus:border-${accentPurple} focus:ring-1 focus:ring-${accentPurple}`;
                 
   const isFormInvalid =
@@ -121,7 +243,7 @@ export default function FormRegister() {
   return (
     <CardCustom
       className={cn(
-        "relative w-full max-w-lg shadow-2xl border neon-border crypto-glass",
+        "relative w-full max-w-4xl shadow-2xl border neon-border crypto-glass", // [DIUBAH] max-w-4xl untuk layout lebih lebar
         "bg-[#1D242B]/95 text-[#FAFAFA] backdrop-blur-md"
       )}
     >
@@ -137,7 +259,7 @@ export default function FormRegister() {
       <CardContent className={cn("space-y-6 pb-8")}>
         {brandInfo?.name ? (
           <div className="text-center space-y-4">
-            <p className={`font-medium text-lg text-${accentPurple}`}> {/* Warna aksen ungu */}
+            <p className={`font-medium text-lg text-${accentPurple}`}>
               You Are Already Registered!
             </p>
             <p className="text-[#FAFAFA]">
@@ -182,76 +304,82 @@ export default function FormRegister() {
               </div>
             </div>
             
-            <form className="space-y-4 border-t border-white/10 pt-6" onSubmit={handleSubmit}>
-              <div>
-                <Label htmlFor="companyName" className="text-[#FAFAFA]">Company Name <span className="text-red-500">*</span></Label>
-                <Input id="companyName" name="companyName" value={formData.companyName} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="e.g., Digital Innovation Inc." required className={inputStyles} />
+            {/* --- [DIUBAH] Form sekarang menggunakan layout 2 kolom --- */}
+            <form className="border-t border-white/10 pt-6" onSubmit={handleSubmit}>
+              <div className="flex flex-col lg:flex-row lg:gap-8">
+                
+                {/* Kolom Kiri - Input Fields */}
+                <div className="w-full lg:w-1/2 space-y-4">
+                  <div>
+                    <Label htmlFor="companyName" className="text-[#FAFAFA]">Company Name <span className="text-red-500">*</span></Label>
+                    <Input id="companyName" name="companyName" value={formData.companyName} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="e.g., Digital Innovation Inc." required className={inputStyles} />
+                  </div>
+                  <div>
+                    <Label htmlFor="incorporationCertificateNumber" className="text-[#FAFAFA]">Incorporation Certificate Number</Label>
+                    <Input id="incorporationCertificateNumber" name="incorporationCertificateNumber" value={formData.incorporationCertificateNumber} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="e.g., 123/PMA/2024" className={inputStyles}/>
+                  </div>
+                  <div>
+                    <Label htmlFor="brandName" className="text-[#FAFAFA]">Brand Name <span className="text-red-500">*</span></Label>
+                    <Input id="brandName" name="brandName" value={formData.brandName} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="e.g., Authentify" required className={inputStyles}/>
+                  </div>
+                  <div>
+                    <Label htmlFor="identityNumber" className="text-[#FAFAFA]">PIC National ID Number <span className="text-red-500">*</span></Label>
+                    <Input id="identityNumber" name="identityNumber" value={formData.identityNumber} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="16-digit National ID of PIC" required className={inputStyles}/>
+                  </div>
+                  <div>
+                    <Label htmlFor="websiteLink" className="text-[#FAFAFA]">Website</Label>
+                    <Input id="websiteLink" name="websiteLink" value={formData.websiteLink} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="url" placeholder="https://yourwebsite.com" className={inputStyles}/>
+                  </div>
+                  <div>
+                    <Label htmlFor="picName" className="text-[#FAFAFA]">Person in Charge (PIC) Name</Label>
+                    <Input id="picName" name="picName" value={formData.picName} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="Full name as per ID" className={inputStyles}/>
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-[#FAFAFA]">Email</Label>
+                    <Input disabled id="email" name="email" value={formData.email} type="email" placeholder="contact@company.com" className={inputStyles}/>
+                  </div>
+                  <div>
+                    <Label htmlFor="phoneNumber" className="text-[#FAFAFA]">Phone Number</Label>
+                    <Input id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="tel" placeholder="081234567890" className={inputStyles}/>
+                  </div>
+                </div>
+
+                {/* Kolom Kanan - Pengunggah Logo */}
+                <div className="w-full lg:w-1/2 mt-6 lg:mt-0">
+                  <EnhancedLogoUploader onLogoChange={setLogoFile} />
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="incorporationCertificateNumber" className="text-[#FAFAFA]">Incorporation Certificate Number</Label>
-                <Input id="incorporationCertificateNumber" name="incorporationCertificateNumber" value={formData.incorporationCertificateNumber} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="e.g., 123/PMA/2024" className={inputStyles}/>
-              </div>
+              {/* Bagian Bawah - Persetujuan dan Tombol */}
+              <div className="pt-6 mt-6 border-t border-white/20">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="terms" name="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked) => handleFormChange("termsAccepted", checked)} 
+                      className={`border-${accentPurple} data-[state=checked]:bg-${accentPurple} data-[state=checked]:text-[#FAFAFA]`}
+                  />
+                  <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#FAFAFA]">
+                    I agree to the applicable policies and terms <span className="text-red-500">*</span>
+                  </label>
+                </div>
 
-              <div>
-                <Label htmlFor="brandName" className="text-[#FAFAFA]">Brand Name <span className="text-red-500">*</span></Label>
-                <Input id="brandName" name="brandName" value={formData.brandName} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="e.g., Authentify" required className={inputStyles}/>
-              </div>
-
-              <div>
-                <Label htmlFor="identityNumber" className="text-[#FAFAFA]">PIC National ID Number <span className="text-red-500">*</span></Label>
-                <Input id="identityNumber" name="identityNumber" value={formData.identityNumber} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="16-digit National ID of PIC" required className={inputStyles}/>
-              </div>
-
-              <div>
-                <Label htmlFor="websiteLink" className="text-[#FAFAFA]">Website</Label>
-                <Input id="websiteLink" name="websiteLink" value={formData.websiteLink} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="url" placeholder="https://yourwebsite.com" className={inputStyles}/>
-              </div>
-
-              <div>
-                <Label htmlFor="picName" className="text-[#FAFAFA]">Person in Charge (PIC) Name</Label>
-                <Input id="picName" name="picName" value={formData.picName} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="text" placeholder="Full name as per ID" className={inputStyles}/>
-              </div>
-
-              <div>
-                <Label htmlFor="email" className="text-[#FAFAFA]">Email</Label>
-                <Input disabled id="email" name="email" value={formData.email} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="email" placeholder="contact@company.com" className={inputStyles}/>
-              </div>
-
-              <div>
-                <Label htmlFor="phoneNumber" className="text-[#FAFAFA]">Phone Number</Label>
-                <Input id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={(e) => handleFormChange(e.target.name, e.target.value)} type="tel" placeholder="081234567890" className={inputStyles}/>
-              </div>
-
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox id="terms" name="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked) => handleFormChange("termsAccepted", checked)} 
-                    className={`border-${accentPurple} data-[state=checked]:bg-${accentPurple} data-[state=checked]:text-[#FAFAFA]`}
-                />
-                <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#FAFAFA]">
-                  I agree to the applicable policies and terms <span className="text-red-500">*</span>
-                </label>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button type="button" variant="outline" onClick={() => {
-                  logout()
-                }} className={cn(
-                    `w-full sm:w-1/3 border-${accentPurple} text-${accentPurple}`,
-                    `hover:bg-gradient-to-r hover:from-${accentPurpleHover} hover:via-${accentCyanHover} hover:to-${accentCyanHover} hover:text-white`
-                )}>
-                  Back
-                </Button>
-                <ButtonCustom variant="primary" type="submit" disabled={isFormInvalid} className={cn(
-                    "w-full sm:w-2/3 text-base font-medium text-[#FAFAFA]", 
-                    `bg-${accentPurple} hover:bg-${accentPurpleHover}`,
-                    "disabled:bg-gray-600 disabled:cursor-not-allowed"
-                )}>
-                  {isRegistering ? 'Submitting...' : 'Submit Registration'}
-                </ButtonCustom>
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                  <Button type="button" variant="outline" onClick={() => logout()} className={cn(
+                      `w-full sm:w-1/3 border-${accentPurple} text-${accentPurple}`,
+                      `hover:bg-gradient-to-r hover:from-${accentPurpleHover} hover:via-${accentCyanHover} hover:to-${accentCyanHover} hover:text-white`
+                  )}>
+                    Back
+                  </Button>
+                  <ButtonCustom variant="primary" type="submit" disabled={isFormInvalid} className={cn(
+                      "w-full sm:w-2/3 text-base font-medium text-[#FAFAFA]", 
+                      `bg-${accentPurple} hover:bg-${accentPurpleHover}`,
+                      "disabled:bg-gray-600 disabled:cursor-not-allowed"
+                  )}>
+                    {isRegistering ? 'Submitting...' : 'Submit Registration'}
+                  </ButtonCustom>
+                </div>
               </div>
 
               {transactionUrl && (
-                <div className="text-center mt-4">
+                <div className="text-center mt-6">
                   <a href={transactionUrl} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 text-${accentCyan} hover:text-${accentCyanHover}`}>
                     <span>View Transaction</span>
                     <ExternalLink className="h-4 w-4" />
