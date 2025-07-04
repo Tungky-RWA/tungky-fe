@@ -45,9 +45,9 @@ const RequireAdmin = () => {
 
   
 
-  if (loading || isPending || hasRole === null) {
-    return <LoadingPage />;
-  }
+  // if (loading || isPending || hasRole === null) {
+  //   return <LoadingPage />;
+  // }
 
   if (!signerStatus.isConnected) {
     return (
@@ -57,9 +57,9 @@ const RequireAdmin = () => {
     )
   }
 
-  if (!hasRole) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!hasRole) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return <Outlet />;
 };
