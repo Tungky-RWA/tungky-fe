@@ -1,4 +1,4 @@
-export const MASTER_ABI = [
+export const masterAbi = [
   {
     inputs: [
       { internalType: "address", name: "_couponAddress", type: "address" },

@@ -7,19 +7,18 @@ import { encodeFunctionData } from "viem";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 import toast from 'react-hot-toast';
 
-export interface useRegisterBrandNFTParams {
+export interface useApproveBrandParams {
   onSuccess?: () => void;
-  onError?: (error: any) => void;
 }
 export interface useRegisterBrandReturn {
-  isRegistering: boolean;
-  handleRegisterBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`) => void;
-  approveRegisteredBrand: (brandWallet: `0x${string}`, minterWallet: `0x${string}`) => void;
+  isLegalVerified: boolean;
+  handleApproveBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`) => void;
+  approveRegisteredBrand: (brandWallet: `0x${string}`) => void;
   transactionUrl?: string;
   error?: string;
 }
 
-export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useRegisterBrandReturn => {
+export const useUpproveBrand = ({ onSuccess }: useApproveBrandParams): useRegisterBrandReturn => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState<string>();
 

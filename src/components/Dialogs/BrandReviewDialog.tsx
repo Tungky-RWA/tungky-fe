@@ -14,13 +14,19 @@ import { Badge } from "@/components/UI/badge"
 import { FileText, Download } from "lucide-react"
 import { useRegisterBrand } from "@/hooks/useRegisterBrand"
 import toast from 'react-hot-toast'
+import { CONTRACT_TEMP } from "@/lib/constants"
 import { useEffect } from "react"
 
-export default function BrandReviewDialog({ children, brandAddress }: any) {
+export default function BrandReviewDialog({ children, brandData }: any) {
   const { isRegistering, approveRegisteredBrand } = useRegisterBrand({
     onSuccess: () => {
       toast.dismiss();
       toast.success('Approve Success')
+    },
+    onError: (error: any) => {
+      toast.dismiss();
+      const message = error?.shortMessage ?? "An error occurred.";
+      toast.error(`Approve failed: ${message}`);
     }
   })
 
@@ -40,7 +46,7 @@ export default function BrandReviewDialog({ children, brandAddress }: any) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-600">Brand Name</label>
-                <p className="text-sm font-semibold">TechCorp Solutions</p>
+                <p className="text-sm font-semibold">{brandData?.name}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Industry</label>
@@ -48,7 +54,12 @@ export default function BrandReviewDialog({ children, brandAddress }: any) {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600">Registration Date</label>
-                <p className="text-sm">December 15, 2024</p>
+                <p className="text-sm">{brandData?.blockTimestamp
+                  ? new Date(brandData.blockTimestamp * 1000).toLocaleString('id-ID', {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })
+                  : 'Loading...'}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-600 mr-4">Status</label>
@@ -82,7 +93,7 @@ export default function BrandReviewDialog({ children, brandAddress }: any) {
             <ButtonCustom variant="outline">Close</ButtonCustom>
           </DialogClose>
           <ButtonCustom
-            onClick={() => approveRegisteredBrand("0xC7218c863CB794B787f2c8E403Ede71A17Ba3b64")}
+            onClick={() => approveRegisteredBrand(brandData.BrandWalletAddress, CONTRACT_TEMP)}
             disabled={isRegistering}
           >
             Approve Brand

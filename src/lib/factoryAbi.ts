@@ -1,4 +1,4 @@
-export const FACTORY_ABI = [
+export const factoryAbi = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   { inputs: [], name: "AccessControlBadConfirmation", type: "error" },
   {

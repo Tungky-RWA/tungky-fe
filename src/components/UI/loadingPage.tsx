@@ -107,7 +107,7 @@ const LoadingPage = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 animate-float">
-            Entering the Metaverse...
+            Entering the Dashboard...
           </p>
         </div>
 

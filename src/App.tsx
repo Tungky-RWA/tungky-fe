@@ -28,6 +28,7 @@ import { config } from "./config";
 import { Toaster } from 'react-hot-toast';
 
 import RequireAdmin from './hooks/requireAdmin.tsx';
+import RequireBrand from './hooks/requireBrand.tsx';
 
 function App() {
   const initialState = cookieToInitialState(
@@ -41,17 +42,19 @@ function App() {
           {/* <Navbar /> */}
           <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/brand" element={<BrandLayout />}>
-            <Route index element={<BrandDashboard />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="nft-tracker" element={<NFTTracker />} />
-            <Route path="nft" element={<NFTService />} />
-            <Route path="token" element={<TokenService />} />
-            <Route path="product" element={<ProductService />} />
-            <Route path="marketplace" element={<MarketplaceService />} />
-            <Route path="nfc" element={<NFCService />} />
-            <Route path="qr" element={<QRService />} />
-            {/* <Route path="help" element={<HelpService />} /> */}
+          <Route element={<RequireBrand />}>
+            <Route path="/brand" element={<BrandLayout />}>
+              <Route index element={<BrandDashboard />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="nft-tracker" element={<NFTTracker />} />
+              <Route path="nft" element={<NFTService />} />
+              <Route path="token" element={<TokenService />} />
+              <Route path="product" element={<ProductService />} />
+              {/* <Route path="marketplace" element={<MarketplaceService />} /> */}
+              <Route path="nfc" element={<NFCService />} />
+              <Route path="qr" element={<QRService />} />
+              {/* <Route path="help" element={<HelpService />} /> */}
+            </Route>
           </Route>
           <Route element={<RequireAdmin />}>
             <Route path="/admin" element={<AdminLayout />}>

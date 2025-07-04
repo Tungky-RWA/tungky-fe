@@ -2,13 +2,13 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { useSmartAccountClient, useAuthenticate, useSignerStatus } from '@account-kit/react';
 import { useState, useEffect } from 'react';
 import { Address } from 'viem';
-import { MASTER_ABI } from '@/lib/masterAbi';
+import { MASTER_ABI } from '@/lib/constants';
 import { MASTER_ADDRESS } from '@/lib/constants';
 import LoadingPage from '@/components/UI/loadingPage';
 import { DEFAULT_ROLE_ADMIN } from '@/lib/constants';
 import LoginCard from '@/components/Register/login-card';
 
-const RequireBrand = () => {
+const RequireAdmin = () => {
   const { client } = useSmartAccountClient({});
   const { isPending } = useAuthenticate({});
   const signerStatus = useSignerStatus();
@@ -45,16 +45,16 @@ const RequireBrand = () => {
 
   
 
-  if (!signerStatus.isConnected ) {
-    return (
-      <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
-        <LoginCard cardDescription="Login to continue"/>
-      </div>
-    )
-  }
-
   if (loading || isPending || hasRole === null) {
     return <LoadingPage />;
+  }
+
+  if (!signerStatus.isConnected) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gray-900">
+        <LoginCard cardDescription="Need to login first"/>
+      </div>
+    )
   }
 
   if (!hasRole) {
@@ -64,4 +64,4 @@ const RequireBrand = () => {
   return <Outlet />;
 };
 
-export default RequireBrand;
+export default RequireAdmin;

@@ -59,19 +59,20 @@ export default function FormRegister() {
   }, [user?.email]);
 
   const { handleRegisterBrand, isRegistering, transactionUrl } = useRegisterBrand({
-
    
     onSuccess: () => {
       toast.dismiss();
       toast.success('Registration successful! Your brand is under review.');
       refetchBrandInfo();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.dismiss();
       const message = error?.shortMessage ?? "An error occurred.";
       toast.error(`Registration failed: ${message}`);
     }
   });
+
+  console.log(transactionUrl, "Transaction URL");
 
   const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
     contractAddress: CONTRACT_ADDRESS,

@@ -7,8 +7,14 @@ import { Input } from '@/components/UI/input';
 import { Textarea } from '@/components/UI/textarea';
 import { Label } from '@/components/UI/label';
 import BrandReviewDialog from '@/components/Dialogs/BrandReviewDialog';
+import { useBrandRegisted } from '@/hooks/useGetBrandsRegisted';
+import WalletDisplay from '@/components/UI/WalletDisplay';
 
 const Brand = () => {
+
+
+  const { data: brands } = useBrandRegisted();
+  console.log(brands,'ini brands');
 
   const [formData, setFormData] = useState({
     productName: '',
@@ -64,30 +70,30 @@ const Brand = () => {
             </div>
             
             <div className="space-y-4">
-              {nftProducts.map((nft) => (
-                <div key={nft.id} className="p-4 border border-border/50 rounded-lg hover:border-primary/50 transition-all duration-300 crypto-glass backdrop-blur-sm">
+              {brands?.unverifiedBrands?.items?.map((data: any, index: number) => (
+                <div key={index} className="p-4 border border-border/50 rounded-lg hover:border-primary/50 transition-all duration-300 crypto-glass backdrop-blur-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium text-foreground">{nft.name} #{nft.id}</h3>
+                      <h3 className="font-medium text-foreground">{data.name}</h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Wallet: <span className="font-mono text-cyan-400">{nft.wallet}</span>
+                        Wallet: <span className="font-mono text-cyan-400"><WalletDisplay address={data?.BrandWalletAddress} /></span>
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      {/* <p className="text-xs text-muted-foreground mt-1">
                         Minted: {nft.minted}
-                      </p>
+                      </p> */}
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
                         <Circle className={`h-2 w-2 fill-current ${
-                          nft.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
+                          data.verified === 'true' ? 'text-green-400' : 'text-yellow-400'
                         }`} />
                         <span className={`text-sm font-medium ${
-                          nft.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
+                          data.verified === 'true' ? 'text-green-400' : 'text-yellow-400'
                         }`}>
-                          {nft.status}
+                          {data.verified}
                         </span>
                       </div>
-                      <BrandReviewDialog>
+                      <BrandReviewDialog brandData={data}>
                         <ButtonCustom variant="outline" size="sm">
                           <Eye className="mr-2 h-3 w-3" />
                           View Details
@@ -112,27 +118,27 @@ const Brand = () => {
             </div>
             
             <div className="space-y-4">
-              {nftProducts.map((nft) => (
-                <div key={nft.id} className="p-4 border border-border/50 rounded-lg hover:border-primary/50 transition-all duration-300 crypto-glass backdrop-blur-sm">
+              {brands?.verifiedBrands?.items?.map((brand: any, index: number) => (
+                <div key={index} className="p-4 border border-border/50 rounded-lg hover:border-primary/50 transition-all duration-300 crypto-glass backdrop-blur-sm">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium text-foreground">{nft.name} #{nft.id}</h3>
+                      <h3 className="font-medium text-foreground">{brand.name}</h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Wallet: <span className="font-mono text-cyan-400">{nft.wallet}</span>
+                        Wallet: <span className="font-mono text-cyan-400"><WalletDisplay address={brand?.BrandWalletAddress} /></span>
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      {/* <p className="text-xs text-muted-foreground mt-1">
                         Minted: {nft.minted}
-                      </p>
+                      </p> */}
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
                         <Circle className={`h-2 w-2 fill-current ${
-                          nft.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
+                          brand.verified === 'true' ? 'text-green-400' : 'text-yellow-400'
                         }`} />
                         <span className={`text-sm font-medium ${
-                          nft.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
+                          brand.verified === 'true' ? 'text-green-400' : 'text-yellow-400'
                         }`}>
-                          {nft.status}
+                          {brand.verified}
                         </span>
                       </div>
                       <ButtonCustom variant="outline" size="sm">
