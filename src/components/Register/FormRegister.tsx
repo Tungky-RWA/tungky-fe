@@ -28,6 +28,9 @@ import { Checkbox } from '../UI/CheckBox';
 import CardCustom from '../UI/CardCustom';
 import ButtonCustom from '../UI/ButtonCustom';
 
+
+
+
 // Palet warna
 const accentPurple = "violet-600";
 const accentPurpleHover = "violet-700";
@@ -179,11 +182,188 @@ export default function FormRegister() {
     termsAccepted: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [logoFile, setLogoFile] = useState<File | null>(null);
+
+
+
+   const uploadMetadataToPinata = async (metadata : any) => {
+
+
+    const config = {
+
+
+      method: 'POST',
+
+
+      headers: {
+
+
+        'Content-Type': 'application/json',
+
+
+        'pinata_api_key': "d71f9a4588a09de46fa8",
+
+
+        'pinata_secret_api_key': "c1c1d69aaabb92dad7fe2aa6752ee40d1096ccffc26fd241a1dce0a631733ace",
+
+
+      },
+
+
+      body: JSON.stringify({
+
+
+        pinataContent: metadata,
+
+
+        pinataMetadata: {
+
+
+          name: `Logo_Metadata_${metadata.companyName || 'Unknown'}_${Date.now()}`,
+
+
+          keyvalues: {
+
+
+            type: 'logo_metadata',
+
+
+            productName: metadata.brand || 'Unknown'
+
+
+          }
+
+
+        },
+
+
+        pinataOptions: {
+
+
+          cidVersion: 0,
+
+
+        }
+
+
+      }),
+
+
+    };
+
+
+
+
+
+    try {
+
+
+      const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', config);
+
+
+      const result = await response.json();
+
+
+      
+
+
+      if (response.ok) {
+
+
+        // return result.IpfsHash;
+        return `https://copper-defeated-gopher-612.mypinata.cloud/ipfs/${result.IpfsHash}?pinataGatewayToken=74Gtv0rsnTkTxjAlvYRQqwNgDvZVsXAgX1llN5vtq7FyD5cuksMtQND9v_uxNRlC`
+
+
+      } else {
+
+
+        throw new Error(result.error || 'Failed to upload metadata');
+
+
+      }
+
+
+    } catch (error) {
+
+
+      console.error('Error uploading metadata:', error);
+
+
+      throw error;
+
+
+    }
+
+
+  };
+
+
+
+    const uploadFileToPinata = async (fileContent : any, fileName : string) => {
+      const PINATA_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJhNzFkOWEzZi1iNmJlLTQyZGItYjViNy1iYjg1YWRjM2M5ZGYiLCJlbWFpbCI6Imhkenp6enp6MDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImQ3MWY5YTQ1ODhhMDlkZTQ2ZmE4Iiwic2NvcGVkS2V5U2VjcmV0IjoiYzFjMWQ2OWFhYWJiOTJkYWQ3ZmUyYWE2NzUyZWU0MGQxMDk2Y2NmZmMyNmZkMjQxYTFkY2UwYTYzMTczM2FjZSIsImV4cCI6MTc4MzE3OTkzNH0.eW2UIKuoeaA2moiUPV1nw6DxZDqkxV1_4pImHrJbdoE'; 
+      const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+      // 1. Membuat objek FormData
+      const formData = new FormData();
+      
+      // 2. Menambahkan file ke FormData
+      // Argumen pertama 'file' adalah nama field yang diharapkan oleh API Pinata.
+      formData.append('file', fileContent, { filename : fileName } as any);
+
+      // 3. (Opsional) Menambahkan metadata kustom
+      const metadata = JSON.stringify({
+        name: `Asset_${fileName}_${Date.now()}`,
+        // keyvalues: {
+        //   source: 'my-dapp',
+        //   user: 'user-id-123'
+        // }
+      });
+      formData.append('pinataMetadata', metadata);
+
+      // 4. (Opsional) Menambahkan opsi pinning
+      const options = JSON.stringify({
+        cidVersion: 0,
+      });
+
+      formData.append('pinataOptions', options);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            // Penting: Jangan set 'Content-Type' secara manual.
+            // fetch akan melakukannya secara otomatis dengan boundary yang benar.
+            'Authorization': `Bearer ${PINATA_JWT}`
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error ${response.status}: ${errorData.error.details || response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('File berhasil diunggah ke Pinata: ', result);
+        
+        // CID (Content Identifier) dari file Anda di IPFS
+        // return result.IpfsHash;
+
+        return `https://copper-defeated-gopher-612.mypinata.cloud/ipfs/${result.IpfsHash}?pinataGatewayToken=74Gtv0rsnTkTxjAlvYRQqwNgDvZVsXAgX1llN5vtq7FyD5cuksMtQND9v_uxNRlC`
+
+      } catch (error) {
+        console.error('Gagal mengunggah file:', error);
+        throw error;
+      }
+    };
+
+
 
   useEffect(() => {
     if (user?.email) {
-      setFormData(prev => ({ ...prev, email: user.email }));
+      setFormData(prev => ({ ...prev, email: user.email }) as any);
     }
   }, [user?.email]);
 
@@ -212,19 +392,39 @@ export default function FormRegister() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleFormChange = (name, value) => {
+  const handleFormChange = (name : any, value : any) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e : React.FormEvent) => {
+    setIsLoading(true);
     e.preventDefault();
+    console.log("submit");
+    
+    
+
     console.log('Mengirimkan data:', { ...formData, address: client?.account?.address, logoFile });
-    // handleRegisterBrand(
-    //   formData.companyName,
-    //   formData.brandName,
-    //   client?.account?.address || "0x",
-    //   // logoFile
-    // );
+    // handleUploadImageToIpfs();
+    const imageLinkIpfs = await uploadFileToPinata(logoFile, "logo_" + formData.companyName);
+
+    const metaDataLink = await uploadMetadataToPinata({
+      ...formData,
+      image: imageLinkIpfs
+    })
+
+    console.log(metaDataLink);
+    
+
+    
+    handleRegisterBrand(
+        formData.companyName,
+        formData.brandName,
+        client?.account?.address || "0x",
+        metaDataLink
+    );
+
+
+    setIsLoading(false);
   };
 
   const inputStyles = `bg-black/30 border border-gray-700 placeholder:text-gray-500 focus:border-${accentPurple} focus:ring-1 focus:ring-${accentPurple}`;
@@ -265,7 +465,7 @@ export default function FormRegister() {
             <p className="text-[#FAFAFA]">
               Your brand (<span className='font-semibold'>{brandInfo.name}</span>) is under review by our team.
             </p>
-            <Button onClick={() => navigate('/dashboard')} className={cn(
+            <Button onClick={() => navigate('/brand')} className={cn(
                 `w-full text-base font-medium text-[#FAFAFA] bg-${accentPurple} hover:bg-${accentPurpleHover}`
             )}>
                 Back to Dashboard
@@ -346,14 +546,14 @@ export default function FormRegister() {
 
                 {/* Kolom Kanan - Pengunggah Logo */}
                 <div className="w-full lg:w-1/2 mt-6 lg:mt-0">
-                  <EnhancedLogoUploader onLogoChange={setLogoFile} />
+                  <EnhancedLogoUploader onLogoChange={setLogoFile } />
                 </div>
               </div>
 
               {/* Bagian Bawah - Persetujuan dan Tombol */}
               <div className="pt-6 mt-6 border-t border-white/20">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" name="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked) => handleFormChange("termsAccepted", checked)} 
+                  <Checkbox id="terms" name="termsAccepted" checked={formData.termsAccepted} onCheckedChange={(checked : any) => handleFormChange("termsAccepted", checked)} 
                       className={`border-${accentPurple} data-[state=checked]:bg-${accentPurple} data-[state=checked]:text-[#FAFAFA]`}
                   />
                   <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#FAFAFA]">
@@ -368,12 +568,12 @@ export default function FormRegister() {
                   )}>
                     Back
                   </Button>
-                  <ButtonCustom variant="primary" type="submit" disabled={isFormInvalid} className={cn(
+                  <ButtonCustom variant="primary" type="submit" disabled={isFormInvalid || isLoading} className={cn(
                       "w-full sm:w-2/3 text-base font-medium text-[#FAFAFA]", 
                       `bg-${accentPurple} hover:bg-${accentPurpleHover}`,
                       "disabled:bg-gray-600 disabled:cursor-not-allowed"
                   )}>
-                    {isRegistering ? 'Submitting...' : 'Submit Registration'}
+                    {isRegistering || isLoading ? 'Submitting...' : 'Submit Registration'}
                   </ButtonCustom>
                 </div>
               </div>

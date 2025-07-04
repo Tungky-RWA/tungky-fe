@@ -29,6 +29,8 @@ import { Toaster } from 'react-hot-toast';
 
 import RequireAdmin from './hooks/requireAdmin.tsx';
 import RequireBrand from './hooks/requireBrand.tsx';
+import RegisterCard from './components/Register/login-card.tsx';
+import Login from './pages/Login.tsx';
 
 function App() {
   const initialState = cookieToInitialState(
@@ -64,6 +66,7 @@ function App() {
               {/* <Route path="help" element={<HelpService />} /> */}
             </Route>
           {/* </Route> */}
+           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />
           <Route path="/verify/:productId" element={<VerifyProduct />} />

@@ -103,12 +103,20 @@ const Navbar = () => {
               </Link>
             ))}
             <Link
-              to="/brand"
+              to="/register"
               className="bg-[#0077C0] text-white px-5 py-2 rounded-lg transition-all duration-300 hover:bg-opacity-80 hover:shadow-lg hover:shadow-[#0077C0]/30 ml-4"
             >
               Register
             </Link>
+            
+             <Link
+              to="/login"
+              className="bg-[#0077C0] text-white px-5 py-2 rounded-lg transition-all duration-300 hover:bg-opacity-80 hover:shadow-lg hover:shadow-[#0077C0]/30 ml-4"
+            >
+              Login
+            </Link>
           </div>
+          
 
           {/* Mobile Menu Button - dengan z-index tinggi */}
           <div className="flex items-center md:hidden z-30 relative">
