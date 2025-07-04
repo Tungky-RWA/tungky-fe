@@ -4,22 +4,23 @@ import {
   useSendUserOperation,
 } from "@account-kit/react";
 import { encodeFunctionData } from "viem";
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
+import { NFTBRAND_ABI } from "@/lib/constants";
 import toast from 'react-hot-toast';
 
-export interface useApproveBrandParams {
+export interface useClaimNFT {
   onSuccess?: () => void;
+  onError?: (error: any) => void;
 }
-export interface useRegisterBrandReturn {
-  isLegalVerified: boolean;
-  handleApproveBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`) => void;
-  approveRegisteredBrand: (brandWallet: `0x${string}`) => void;
+export interface useClaimNFTReturn {
+  isPreMint: boolean;
+  preMint: (serialNumber: string, uri: URL, brandAddress: `0x${string}`) => void;
+  updatePreMint: (oldSerialNumber: string, newSerialNumber: string, uri: URL, brandAddress: `0x${string}`) => void;
   transactionUrl?: string;
   error?: string;
 }
 
-export const useClaimNFT = ({ onSuccess }: useApproveBrandParams): useRegisterBrandReturn => {
-  const [isRegistering, setIsRegistering] = useState(false);
+export const usePreMint = ({ onSuccess }: useClaimNFT): useClaimNFTReturn => {
+  const [isPreMint, setIsRegistering] = useState(false);
   const [error, setError] = useState<string>();
 
   const { client } = useSmartAccountClient({});
@@ -50,37 +51,36 @@ export const useClaimNFT = ({ onSuccess }: useApproveBrandParams): useRegisterBr
     },
   });
 
-  const approveRegisteredBrand = useCallback(async (brandWallet: `0x${string}`) => {
+  const claimNFT = useCallback(async (tokenId: number, to: `0x${string}`, contractAddress: `0x${string}`) => {
     if (!client) {
       setError("Wallet not connected");
       return;
     }
 
-
-    sendUserOperation({
-      uo: {
-        target: CONTRACT_ADDRESS,
-        data: encodeFunctionData({
-          abi: CONTRACT_ABI,
-          functionName: "updateBrandLegalStatus",
-          args: [brandWallet, true],
-        }),
-      },
-    });
+    // sendUserOperation({
+    //   uo: {
+    //     target: contractAddress,
+    //     data: encodeFunctionData({
+    //       abi: NFTBRAND_ABI,
+    //       functionName: "claimNFT",
+    //       args: [to, uri],
+    //     }),
+    //   },
+    // });
   }, [client, sendUserOperation]);
 
-  const handleRegisterBrand = useCallback(async (brandName: string, brandSymbol: string, brandWallet: `0x${string}`) => {
+  const updatePreMint = useCallback(async (oldSerialNumber: string, newSerialNumber: string, uri: URL, brandAddress: `0x${string}`) => {
     if (!client) {
       setError("Wallet not connected");
       return;
     }
     sendUserOperation({
       uo: {
-        target: CONTRACT_ADDRESS,
+        target: brandAddress,
         data: encodeFunctionData({
-          abi: CONTRACT_ABI,
-          functionName: "registerBrand",
-          args: [brandName, brandSymbol, brandWallet],
+          abi: NFTBRAND_ABI,
+          functionName: "updatePreMint",
+          args: [oldSerialNumber, newSerialNumber, uri],
         }),
       },
     });
@@ -94,9 +94,9 @@ export const useClaimNFT = ({ onSuccess }: useApproveBrandParams): useRegisterBr
   }, [client, sendUserOperationResult?.hash]);
 
   return {
-    isRegistering,
-    handleRegisterBrand,
-    approveRegisteredBrand,
+    isPreMint,
+    updatePreMint,
+    preMint,
     transactionUrl,
     error,
   };

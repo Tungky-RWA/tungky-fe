@@ -28,7 +28,9 @@ import { config } from "./config";
 import { Toaster } from 'react-hot-toast';
 
 import RequireAdmin from './hooks/requireAdmin.tsx';
-import RequireBrand from './hooks/requireBrand.tsx';
+// import RequireBrand from '@/hooks/requireBrand.tsx';
+
+import VerificationPage from './pages/Verification';
 
 function App() {
   const initialState = cookieToInitialState(
@@ -42,7 +44,7 @@ function App() {
           {/* <Navbar /> */}
           <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route element={<RequireBrand />}>
+          <Route element={<BrandLayout />}>
             <Route path="/brand" element={<BrandLayout />}>
               <Route index element={<BrandDashboard />} />
               <Route path="analytics" element={<Analytics />} />
@@ -67,6 +69,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />
           <Route path="/verify/:productId" element={<VerifyProduct />} />
+          {/* <Route path="/verify/:productId" element={<VerificationPage />} /> */}
         </Routes>
         </div>
       </Router>

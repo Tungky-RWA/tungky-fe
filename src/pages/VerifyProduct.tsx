@@ -1,21 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Shield, CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { Shield, CheckCircle, AlertTriangle, ExternalLink, User } from 'lucide-react';
 import Header from '../components/Layout/Header';
 import Card from '../components/UI/CardCustom';
 import Button from '../components/UI/ButtonCustom';
 import Navbar from '@/components/Layout/Navbar';
+import LoginCard from '@/components/Register/login-card';
+import LoadingPage from '@/components/UI/loadingPage';
+
+import { useSignerStatus, useSmartAccountClient, useLogout, useUser } from '@account-kit/react';
+import ButtonCustom from '../components/UI/ButtonCustom';
 
 const VerifyProduct: React.FC = () => {
   const { productId } = useParams();
+  const [ searchParams ] = useSearchParams();
   const [verificationResult, setVerificationResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingGetLocation, setIsLoadingGetLocation] = useState(true);
   const [isLocationPermisionGranted, setIsLocationPermissionGranted] = useState(false);
   const [location, setLocation] = useState({lat: 0, lng: 0});
+  const signerStatus = useSignerStatus();
+  console.log(signerStatus)
 
-
+  const tokenId = searchParams.get('tokenId'); 
+  const contract = searchParams.get('contract'); 
+  console.log(tokenId, contract)
   useEffect(() => {
+    // logout()
     setIsLoadingGetLocation(true)
     if(!navigator.geolocation){
         alert("location not support")
@@ -30,7 +41,7 @@ const VerifyProduct: React.FC = () => {
 
       setIsLocationPermissionGranted(true);
        
-       setIsLoadingGetLocation(false);
+      setIsLoadingGetLocation(false);
     }, (err) => {
       if(err.code == 1){
         setIsLocationPermissionGranted(false);
@@ -44,7 +55,7 @@ const VerifyProduct: React.FC = () => {
       setIsLoading(true);
       
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 9000));
+      await new Promise(resolve => setTimeout(resolve, 4000));
       
       // Mock verification result based on productId
       if (productId && productId.length > 6) {
@@ -107,6 +118,14 @@ const VerifyProduct: React.FC = () => {
     verifyProduct();
   }, [productId]);
 
+  if (signerStatus.isDisconnected) {
+    return (
+      <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
+        <LoginCard cardDescription="Login to continue"/>
+      </div>
+    )
+  }
+
   if(isLoadingGetLocation){
     return (
       <div className="min-h-screen bg-gray-900 pt-16">
@@ -123,18 +142,21 @@ const VerifyProduct: React.FC = () => {
   }
 
   if (isLoading) {
+    // return (
+    //   <div className="min-h-screen bg-gray-900 pt-16">
+    //     {/* <Header showNavigation /> */}
+    //     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    //       <Card className="text-center">
+    //         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+    //         <h2 className="text-xl font-semibold text-white mb-2">Checking Originality Verified Produk...</h2>
+    //         <p className="text-white/60">Please wait, we are verifying your product with blockchain</p>
+    //       </Card>
+    //     </div>
+    //   </div>
+    // );
     return (
-      <div className="min-h-screen bg-gray-900 pt-16">
-        {/* <Header showNavigation /> */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Card className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-            <h2 className="text-xl font-semibold text-white mb-2">Checking Originality Verified Produk...</h2>
-            <p className="text-white/60">Please wait, we are verifying your product with blockchain</p>
-          </Card>
-        </div>
-      </div>
-    );
+      <LoadingPage message="Verifying the product..." />
+    )
   }
 
 
@@ -183,7 +205,11 @@ const VerifyProduct: React.FC = () => {
   );
 };
 
-const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
+const AuthenticProduct: React.FC<{ result: any, client: any }> = ({ result }) => {
+  const { client } = useSmartAccountClient({});
+  const { logout } = useLogout();
+  const user = useUser();
+  console.log(client)
   return (
     <div className="space-y-8">
       {/* Verification Status */}
@@ -207,7 +233,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Owner Information */}
-        <Card>
+        <Card className="p-6">
           <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
             {/* Placeholder for Shield icon */}
             <svg className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -217,11 +243,11 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="text-white/60 text-sm font-medium">Owner/Brand Name</label>
+              <label className="text-white/60 text-sm font-medium">Brand Name</label>
               <p className="text-white font-semibold text-lg">{result.ownerName}</p>
             </div>
             <div>
-              <label className="text-white/60 text-sm font-medium">Wallet Address</label>
+              <label className="text-white/60 text-sm font-medium">Owner</label>
               <div className="flex items-center space-x-2">
                 <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1">
                   {result.walletAddress}
@@ -236,14 +262,38 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
               </div>
             </div>
             <div>
-              <label className="text-white/60 text-sm font-medium">Manufacturer</label>
-              <p className="text-white font-medium">{result.productDetails.manufacturer}</p>
+              <p className="text-white font-semibold text-lg">There is no owner of this product</p>
+              <p className="text-white/60 text-sm font-medium">You can claim NFT of this product, but please make sure you want to mint to this account</p>
+              {/* <p className="text-white font-semibold text-lg mb-1">Your Account Information</p> */}
+              <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1 my-1">
+                {user?.email}
+              </p>
+              <div className="flex items-center space-x-2">
+                <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1">
+                  {result.walletAddress}
+                </p>
+                {/* Placeholder for Button component with ExternalLink icon */}
+                <button className="px-3 py-1 bg-gray-700 text-white rounded text-sm flex items-center space-x-1">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  View
+                </button>
+              </div>
+              <div className="flex items-center space-x-2 mt-2 justify-end">
+                <ButtonCustom onClick={() => logout()} variant="secondary">
+                  Change Account
+                </ButtonCustom>
+                <ButtonCustom variant="primary">
+                  Claim NFT
+                </ButtonCustom>
+              </div>
             </div>
           </div>
         </Card>
 
         {/* Product Details */}
-        <Card>
+        <Card className="p-6">
           <h3 className="text-xl font-semibold text-white mb-4">
             Product Details
           </h3>
@@ -257,10 +307,6 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
                 <label className="text-white/60 text-sm font-medium">Token ID</label>
                 <p className="text-primary font-bold">{result.productDetails.tokenId}</p>
               </div>
-              <div>
-                <label className="text-white/60 text-sm font-medium">Category</label>
-                <p className="text-white font-medium">{result.productDetails.category}</p>
-              </div>
             </div>
             <div>
               <label className="text-white/60 text-sm font-medium">Serial Number</label>
@@ -271,13 +317,14 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
             <div>
               <label className="text-white/60 text-sm font-medium">Mint Date</label>
               <p className="text-white font-medium">
-                {new Date(result.productDetails.mintDate).toLocaleDateString('en-US')}
+                {/* {new Date(result.productDetails.mintDate).toLocaleDateString('en-US')} */}
+                -
               </p>
             </div>
-            <div>
+            {/* <div>
               <label className="text-white/60 text-sm font-medium">Warranty</label>
               <p className="text-accent font-medium">{result.productDetails.warranty}</p>
-            </div>
+            </div> */}
           </div>
         </Card>
       </div>
@@ -291,7 +338,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
       </Card>
 
       {/* Blockchain Details */}
-      <Card>
+      <Card className="p-6">
         <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
           {/* Placeholder for Shield icon */}
           <svg className="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -331,7 +378,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
       </Card>
 
       {/* Verification History */}
-      <Card>
+      {/* <Card>
         <h3 className="text-xl font-semibold text-white mb-4">
           Verification History & Audit Trail
         </h3>
@@ -354,10 +401,10 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
             </div>
           ))}
         </div>
-      </Card>
+      </Card> */}
 
       {/* Action Buttons */}
-      <div className="text-center space-x-4">
+      {/* <div className="text-center space-x-4">
         <Button
           variant="primary"
           onClick={() => window.location.href = '/'}
@@ -381,7 +428,7 @@ const AuthenticProduct: React.FC<{ result: any }> = ({ result }) => {
         >
           Share Verification
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };
