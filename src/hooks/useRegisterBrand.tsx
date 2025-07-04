@@ -4,7 +4,7 @@ import {
   useSendUserOperation,
 } from "@account-kit/react";
 import { encodeFunctionData } from "viem";
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
+import { MASTER_ADDRESS, MASTER_ABI } from "@/lib/constants";
 import toast from 'react-hot-toast';
 
 export interface useRegisterBrandNFTParams {
@@ -51,20 +51,19 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
     },
   });
 
-  const approveRegisteredBrand = useCallback(async (brandWallet: `0x${string}`) => {
+  const approveRegisteredBrand = useCallback(async (brandWallet: `0x${string}`, minterWallet: `0x${string}`) => {
     if (!client) {
       setError("Wallet not connected");
       return;
     }
 
-
     sendUserOperation({
       uo: {
-        target: CONTRACT_ADDRESS,
+        target: MASTER_ADDRESS,
         data: encodeFunctionData({
-          abi: CONTRACT_ABI,
-          functionName: "updateBrandLegalStatus",
-          args: [brandWallet, true],
+          abi: MASTER_ABI,
+          functionName: "approveBrand",
+          args: [brandWallet, minterWallet],
         }),
       },
     });
@@ -77,9 +76,9 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
     }
     sendUserOperation({
       uo: {
-        target: CONTRACT_ADDRESS,
+        target: MASTER_ADDRESS,
         data: encodeFunctionData({
-          abi: CONTRACT_ABI,
+          abi: MASTER_ABI,
           functionName: "registerBrand",
           args: [brandName, brandSymbol, brandWallet],
         }),

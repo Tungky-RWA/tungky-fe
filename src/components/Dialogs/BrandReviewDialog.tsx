@@ -30,6 +30,11 @@ export default function BrandReviewDialog({ children, brandData }: any) {
     }
   })
 
+  const handleSubmit = () => {
+    console.log(brandData?.BrandWalletAddress, CONTRACT_TEMP);
+    approveRegisteredBrand(brandData?.BrandWalletAddress, CONTRACT_TEMP);
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -93,7 +98,7 @@ export default function BrandReviewDialog({ children, brandData }: any) {
             <ButtonCustom variant="outline">Close</ButtonCustom>
           </DialogClose>
           <ButtonCustom
-            onClick={() => approveRegisteredBrand(brandData.BrandWalletAddress, CONTRACT_TEMP)}
+            onClick={handleSubmit}
             disabled={isRegistering}
           >
             Approve Brand

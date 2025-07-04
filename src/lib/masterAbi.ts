@@ -228,4 +228,4 @@ export const masterAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];

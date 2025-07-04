@@ -44,18 +44,20 @@ const RequireAdmin = () => {
   }, [client, isPending]);
 
   
+ 
 
-  if (loading || isPending || hasRole === null) {
+  if (loading || isPending || hasRole === null && signerStatus.isConnected) {
     return <LoadingPage />;
   }
 
-  if (!signerStatus.isConnected) {
+  if (!signerStatus.isConnected && !loading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-900">
         <LoginCard cardDescription="Need to login first"/>
       </div>
     )
   }
+
 
   if (!hasRole) {
     return <Navigate to="/" replace />;
