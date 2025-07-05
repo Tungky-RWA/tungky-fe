@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -14,6 +14,10 @@ import {
 } from "lucide-react";
 import CardCustom from "@/components/UI/CardCustom";
 import ButtonCustom from "@/components/UI/ButtonCustom";
+import { useUserNFTS } from "@/hooks/useGetUserNFTS.tsx";
+import { useSmartAccountClient } from "@account-kit/react";
+import { useInfoMinted } from "@/hooks/useClaimNFT";
+import { useTransfer } from "@/hooks/useTransfer";
 
 // Dummy data for the user's NFT collection
 const myNfts = [
@@ -57,13 +61,32 @@ const myNfts = [
 
 // Main Component for the "Mine" page
 const MinePage = () => {
+  const { client } = useSmartAccountClient({});
   const [selectedNft, setSelectedNft] = useState(null);
   const [isActionModalOpen, setActionModalOpen] = useState(false);
   const [isTransferModalOpen, setTransferModalOpen] = useState(false);
 
+  const {
+    data: dataNfts,
+    isLoading,
+    isError,
+    refetch,
+  } = useUserNFTS(client?.account?.address);
+  const { handleTransfer } = useTransfer({
+    onSuccess: () => {
+      toast.dismiss();
+      toast.success("success transfer");
+      setTransferModalOpen(false);
+      refetch();
+    },
+  });
+
   const [transferAddress, setTransferAddress] = useState("");
   const [confirmNftName, setConfirmNftName] = useState("");
 
+  // useEffect(() => {
+  //   refetch();
+  // }, [client?.account?.address])
   // Open the first modal with NFT actions
   const handleNftClick = (nft: any) => {
     setSelectedNft(nft);
@@ -97,44 +120,6 @@ const MinePage = () => {
   };
   // -----------------------------
 
-  // Simulate the transfer process
-  const handleTransfer = () => {
-    const loadingToast = toast.loading("Processing transfer...");
-
-    // Simulate network delay
-    setTimeout(() => {
-      // Simulate a random success or failure
-      if (Math.random() > 0.2) {
-        // 80% success rate
-        toast.dismiss(loadingToast);
-        toast.success(
-          (t) => (
-            <div className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-green-400" />
-              <span>
-                <b>{selectedNft.name}</b> transferred successfully!
-              </span>
-            </div>
-          ),
-          { duration: 5000 }
-        );
-        // Here you would also update your backend/state to remove the NFT
-      } else {
-        toast.dismiss(loadingToast);
-        toast.error(
-          (t) => (
-            <div className="flex items-center gap-3">
-              <XCircle className="h-5 w-5 text-red-400" />
-              <span>Transfer failed. Please try again.</span>
-            </div>
-          ),
-          { duration: 5000 }
-        );
-      }
-      handleCloseModals();
-    }, 2000);
-  };
-
   // Memoized check to enable/disable the final transfer button
   const isTransferButtonDisabled = useMemo(() => {
     if (!transferAddress.trim() || !selectedNft) {
@@ -143,7 +128,7 @@ const MinePage = () => {
     // Case-insensitive comparison
     return confirmNftName.toLowerCase() !== selectedNft.name.toLowerCase();
   }, [transferAddress, confirmNftName, selectedNft]);
-
+  console.log(selectedNft, "selected");
   return (
     <div className="space-y-8 animate-fade-in">
       <Toaster /> {/* Add Toaster here if not in root layout */}
@@ -158,32 +143,8 @@ const MinePage = () => {
       </div>
       {/* NFT Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {myNfts.map((nft) => (
-          <div
-            key={nft.id}
-            onClick={() => handleNftClick(nft)}
-            className="cursor-pointer"
-          >
-            <CardCustom variant="neon" className="group overflow-hidden h-full">
-              <div className="relative h-56 bg-muted">
-                {/* Placeholder for image */}
-                {/* <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50 text-xs text-muted-foreground">
-                    {nft.name} Image
-                 </div> */}
-                <img
-                  src={nft.image}
-                  alt={nft.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-foreground truncate">
-                  {nft.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">{nft.brand}</p>
-              </div>
-            </CardCustom>
-          </div>
+        {dataNfts?.nfts?.items?.map((nft: any) => (
+          <NFTCard nft={nft} handleNftClick={handleNftClick} />
         ))}
       </div>
       {/* --- MODALS --- */}
@@ -267,7 +228,7 @@ const MinePage = () => {
               >
                 To confirm, type the NFT name:{" "}
                 <span className="font-bold text-cyan-400">
-                  {selectedNft.name}
+                  {selectedNft?.name}
                 </span>
               </label>
               <input
@@ -279,8 +240,15 @@ const MinePage = () => {
                 className="w-full bg-background/50 border border-border/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none text-white"
               />
             </div>
+
             <ButtonCustom
-              onClick={handleTransfer}
+              onClick={() =>
+                handleTransfer(
+                  selectedNft?.nftContractAddress,
+                  transferAddress,
+                  selectedNft?.tokenId
+                )
+              }
               disabled={isTransferButtonDisabled}
               className="w-full disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
             >
@@ -290,6 +258,53 @@ const MinePage = () => {
           </div>
         </Modal>
       )}
+    </div>
+  );
+};
+
+const NFTCard = ({ nft, handleNftClick }: any) => {
+  const [metadata, setMetadata] = useState<any>(null);
+  const { data, isLoading } = useInfoMinted({
+    tokenId: nft?.tokenId,
+    contractAddress: nft?.NftContractAddress,
+  });
+  console.log(metadata, nft, "data");
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      const res = await fetch(data);
+      const json = await res.json();
+      setMetadata(json);
+    };
+
+    fetchMetadata();
+  }, [data]);
+  // console.log(metadata, 'metadata')
+  if (isLoading) return <>loading...</>;
+  return (
+    <div
+      key={nft?.tokenId}
+      onClick={() => handleNftClick({ ...metadata, tokenId: nft?.tokenId })}
+      className="cursor-pointer"
+    >
+      <CardCustom variant="neon" className="group overflow-hidden h-full">
+        <div className="relative h-56 bg-muted">
+          {/* Placeholder for image */}
+          {/* <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50 text-xs text-muted-foreground">
+              {nft.name} Image
+            </div> */}
+          <img
+            src={metadata?.image}
+            alt={metadata?.name}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="font-semibold text-foreground truncate">
+            {metadata?.name}
+          </h3>
+          <p className="text-sm text-muted-foreground">{metadata?.nameBrand}</p>
+        </div>
+      </CardCustom>
     </div>
   );
 };

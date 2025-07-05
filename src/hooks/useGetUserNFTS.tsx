@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-const fetchBrandRegisted = async (userContractAddress: string) => {
+const fetchUserNFTS = async (userContractAddress: string) => {
   const res = await fetch(import.meta.env.VITE_PONDER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -47,10 +47,10 @@ const fetchBrandRegisted = async (userContractAddress: string) => {
   return response.data; // ✅ return final
 };
 
-export const useBrandRegisted = () => {
+export const useUserNFTS = (userContractAddress: string) => {
   return useQuery({
-    queryKey: ["brandRegisted"],
+    queryKey: ["userNFTS"],
     //@ts-ignore
-    queryFn: fetchBrandRegisted,
+    queryFn: () => fetchUserNFTS(userContractAddress),
   });
 };
