@@ -21,10 +21,10 @@ const BrandLayout = () => {
     brandTokenId: String(brandIds),
   });
 
-  console.log(metaData, "metadata");
+  // console.log(metaData, "metadata");
 
   const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
-  console.log(data, "data nft");
+  // console.log(data, "data nft");
 
   if (!signerStatus.isConnected) {
     return (
@@ -47,7 +47,7 @@ const BrandLayout = () => {
         <Header userRole="brand" />
         <main className="flex-1 p-8 min-h-screen">
           <div className="max-w-7xl mx-auto">
-            <Outlet context={metaData} />
+            <Outlet context={data} />
           </div>
         </main>
       </div>

@@ -22,8 +22,11 @@ import { FACTORY_ADDRESS } from "@/lib/constants";
 import toast from "react-hot-toast";
 import { useSmartAccountClient } from "@account-kit/react";
 import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
+import { useOutletContext } from "react-router-dom";
+import CardNFT from "@/components/Layout/CardNFT";
 
 const NFTService = () => {
+  const data = useOutletContext();
   const { client } = useSmartAccountClient({});
   const [formData, setFormData] = useState({
     serialNumber: "",
@@ -481,6 +484,7 @@ const NFTService = () => {
                 </div>
 
                 <div className="space-y-3">
+                  ={/* <CardNFT dataNft={data} /> */}
                   {attributes.map((attribute, index) => (
                     <div key={index} className="flex gap-2 items-center">
                       <div className="flex-1">
@@ -522,7 +526,6 @@ const NFTService = () => {
                       </ButtonCustom>
                     </div>
                   ))}
-
                   <ButtonCustom
                     variant="outline"
                     size="sm"
@@ -558,6 +561,13 @@ const NFTService = () => {
             </div>
 
             <div className="space-y-4">
+              {data?.items?.map((item: any, index: number) => (
+                <CardNFT
+                  key={index}
+                  tokenId={item.tokenId}
+                  contractAddress={item.NftContractAddress}
+                />
+              ))}
               {nftProducts.map((nft) => (
                 <div
                   key={nft.id}
