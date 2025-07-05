@@ -1,73 +1,81 @@
-import React, { useState } from 'react';
-import { Plus, Eye, Circle, Gem, Zap, X, Tags, Upload, Image } from 'lucide-react';
-import CardCustom from '@/components/UI/CardCustom';
-import ButtonCustom from '@/components/UI/ButtonCustom';
-import { Input } from '@/components/UI/input';
-import { Textarea } from '@/components/UI/textarea';
-import { Label } from '@/components/UI/label';
-import { hashSerial } from '@/utils/hashSerial';
-import { PinataSDK } from 'pinata'
-import { usePreMint } from '@/hooks/usePreMint';
-import { useReadBrandData } from '@/hooks/useReadRegisteredBrand';
-import { FACTORY_ADDRESS } from '@/lib/constants';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import {
+  Plus,
+  Eye,
+  Circle,
+  Gem,
+  Zap,
+  X,
+  Tags,
+  Upload,
+  Image,
+} from "lucide-react";
+import CardCustom from "@/components/UI/CardCustom";
+import ButtonCustom from "@/components/UI/ButtonCustom";
+import { Input } from "@/components/UI/input";
+import { Textarea } from "@/components/UI/textarea";
+import { Label } from "@/components/UI/label";
+import { hashSerial } from "@/utils/hashSerial";
+import { usePreMint } from "@/hooks/usePreMint";
+import { useReadBrandData } from "@/hooks/useReadRegisteredBrand";
+import { FACTORY_ADDRESS } from "@/lib/constants";
+import toast from "react-hot-toast";
 import { useSmartAccountClient } from "@account-kit/react";
-import { pinataApiKey, pinataSecretKey, pinataGateway } from '@/lib/constants';
+import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
+import { useOutletContext } from "react-router-dom";
+import CardNFT from "@/components/Layout/CardNFT";
 
 const NFTService = () => {
+  const data = useOutletContext();
   const { client } = useSmartAccountClient({});
   const [formData, setFormData] = useState({
-    serialNumber: '',
-    productName: '',
-    description: '',
-    price: ''
+    serialNumber: "",
+    productName: "",
+    description: "",
+    price: "",
   });
 
-  const [attributes, setAttributes] = useState([
-    { trait_type: '', value: '' }
-  ]);
-
+  const [attributes, setAttributes] = useState([{ trait_type: "", value: "" }]);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  
 
   const nftProducts = [
     {
-      id: '1234',
-      name: 'Premium Watch',
-      status: 'Active',
-      wallet: '0x742...4c2a',
-      minted: '2024-01-15',
+      id: "1234",
+      name: "Premium Watch",
+      status: "Active",
+      wallet: "0x742...4c2a",
+      minted: "2024-01-15",
       attributes: [
-        { trait_type: 'Brand', value: 'Luxury' },
-        { trait_type: 'Material', value: 'Gold' },
-        { trait_type: 'Rarity', value: 'Rare' }
-      ]
+        { trait_type: "Brand", value: "Luxury" },
+        { trait_type: "Material", value: "Gold" },
+        { trait_type: "Rarity", value: "Rare" },
+      ],
     },
     {
-      id: '5678',
-      name: 'Luxury Bag',
-      status: 'Pending',
-      wallet: '0x8f3...9d1b',
-      minted: '2024-01-14',
+      id: "5678",
+      name: "Luxury Bag",
+      status: "Pending",
+      wallet: "0x8f3...9d1b",
+      minted: "2024-01-14",
       attributes: [
-        { trait_type: 'Brand', value: 'Designer' },
-        { trait_type: 'Color', value: 'Black' },
-        { trait_type: 'Size', value: 'Medium' }
-      ]
+        { trait_type: "Brand", value: "Designer" },
+        { trait_type: "Color", value: "Black" },
+        { trait_type: "Size", value: "Medium" },
+      ],
     },
     {
-      id: '9012',
-      name: 'Designer Shoes',
-      status: 'Active',
-      wallet: '0xa21...7e8f',
-      minted: '2024-01-13',
+      id: "9012",
+      name: "Designer Shoes",
+      status: "Active",
+      wallet: "0xa21...7e8f",
+      minted: "2024-01-13",
       attributes: [
-        { trait_type: 'Style', value: 'Sneakers' },
-        { trait_type: 'Size', value: '42' },
-        { trait_type: 'Limited Edition', value: 'Yes' }
-      ]
-    }
+        { trait_type: "Style", value: "Sneakers" },
+        { trait_type: "Size", value: "42" },
+        { trait_type: "Limited Edition", value: "Yes" },
+      ],
+    },
   ];
 
   const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
@@ -75,72 +83,75 @@ const NFTService = () => {
     ownerAddress: client?.account?.address,
   });
 
-  console.log(brandInfo, "ini brand info")
-
-const { preMint, isPreMint, transactionUrl } = usePreMint({
-  onSuccess: () => {
-    toast.dismiss();
-    toast.success('Registration successful! Your brand is under review.');
-  },
-  onError: (error) => {
-    toast.dismiss();
-    const message = error?.shortMessage ?? "An error occurred.";
-    toast.error(`Registration failed: ${message}`);
-    }
+  const { preMint, isPreMint, transactionUrl } = usePreMint({
+    onSuccess: () => {
+      toast.dismiss();
+      toast.success("Premint successful! Your Product is ready to claim.");
+    },
+    onError: (error) => {
+      toast.dismiss();
+      const message = error?.shortMessage ?? "An error occurred.";
+      toast.error(`Registration failed: ${message}`);
+    },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   // Upload metadata to Pinata IPFS
   const uploadMetadataToPinata = async (metadata) => {
     const data = JSON.stringify(metadata);
-    
+
     const config = {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'pinata_api_key': pinataApiKey,
-        'pinata_secret_api_key': pinataSecretKey,
+        "Content-Type": "application/json",
+        pinata_api_key: pinataApiKey,
+        pinata_secret_api_key: pinataSecretKey,
       },
       body: JSON.stringify({
         pinataContent: metadata,
         pinataMetadata: {
-          name: `NFT_Metadata_${metadata.name || 'Unknown'}_${Date.now()}`,
+          name: `NFT_Metadata_${metadata.name || "Unknown"}_${Date.now()}`,
           keyvalues: {
-            type: 'nft_metadata',
-            productName: metadata.name || 'Unknown'
-          }
+            type: "nft_metadata",
+            productName: metadata.name || "Unknown",
+          },
         },
         pinataOptions: {
           cidVersion: 0,
-        }
+        },
       }),
     };
 
     try {
-      const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', config);
+      const response = await fetch(
+        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+        config
+      );
       const result = await response.json();
-      
+
       if (response.ok) {
         return result.IpfsHash;
       } else {
-        throw new Error(result.error || 'Failed to upload metadata');
+        throw new Error(result.error || "Failed to upload metadata");
       }
     } catch (error) {
-      console.error('Error uploading metadata:', error);
+      console.error("Error uploading metadata:", error);
       throw error;
     }
   };
 
-  const handleImageUpload = (e:any) => {
+  const handleImageUpload = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith("image/")) {
         setImageFile(file);
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -148,7 +159,7 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
         };
         reader.readAsDataURL(file);
       } else {
-        alert('Please select a valid image file');
+        alert("Please select a valid image file");
       }
     }
   };
@@ -156,58 +167,64 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
   // Upload image to Pinata IPFS
   const uploadImageToPinata = async (file: any) => {
     const formData = new FormData();
-    formData.append('file', file);
-    
+    formData.append("file", file);
+
     const metadata = JSON.stringify({
       name: `NFT_Image_${Date.now()}`,
       keyvalues: {
-        type: 'nft_image',
-        productName: formData.productName || 'Unknown'
-      }
+        type: "nft_image",
+        productName: formData.productName || "Unknown",
+      },
     });
-    formData.append('pinataMetadata', metadata);
+    formData.append("pinataMetadata", metadata);
 
     const options = JSON.stringify({
       cidVersion: 0,
     });
-    formData.append('pinataOptions', options);
+    formData.append("pinataOptions", options);
 
     try {
-      const response = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-        method: 'POST',
-        headers: {
-          'pinata_api_key': pinataApiKey,
-          'pinata_secret_api_key': pinataSecretKey,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        {
+          method: "POST",
+          headers: {
+            pinata_api_key: pinataApiKey,
+            pinata_secret_api_key: pinataSecretKey,
+          },
+          body: formData,
+        }
+      );
 
       const result = await response.json();
       if (response.ok) {
         return result.IpfsHash;
       } else {
-        throw new Error(result.error || 'Failed to upload image');
+        throw new Error(result.error || "Failed to upload image");
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       throw error;
     }
   };
-
 
   const removeImage = () => {
     setImageFile(null);
     setImagePreview(null);
   };
 
-  const handleAttributeChange = (index: number, field: 'trait_type' | 'value', value: string) => {
+  const handleAttributeChange = (
+    index: number,
+    field: "trait_type" | "value",
+    value: string
+  ) => {
     const newAttributes = [...attributes];
     newAttributes[index][field] = value;
     setAttributes(newAttributes);
   };
 
   const addAttribute = () => {
-    setAttributes([...attributes, { trait_type: '', value: '' }]);
+    setAttributes([...attributes, { trait_type: "", value: "" }]);
   };
 
   const removeAttribute = (index: number) => {
@@ -216,22 +233,25 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
     }
   };
 
+  // console.log(window.location.origin.toString());
+
   const handleMintNFT = async () => {
     if (!formData.productName || !formData.description) {
-      alert('Please fill in all required fields');
+      alert("Please fill in all required fields");
       return;
     }
 
-    toast.loading('Waiting...');
+    toast.loading("Waiting...");
 
     try {
       let imageHash = null;
-      
+
       // Upload image to IPFS if present
       if (imageFile) {
-        toast.loading('Uploading image to IPFS...');
+        toast.dismiss();
+        toast.loading("Uploading image to IPFS...");
         imageHash = await uploadImageToPinata(imageFile);
-        console.log('Image uploaded to IPFS:', imageHash);
+        console.log("Image uploaded to IPFS:", imageHash);
       }
 
       // Prepare metadata
@@ -239,9 +259,13 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
         name: formData.productName,
         serialNumber: formData.serialNumber,
         description: formData.description,
-        image: imageHash ? `${pinataGateway}/ipfs/${imageHash}` : null,
-        attributes: attributes.filter(attr => attr.trait_type && attr.value),
-        external_url: '', // Optional: link to your website
+        image: imageHash
+          ? `https://${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
+              import.meta.env.VITE_PINATA_GATWAYTOKEN
+            }`
+          : null,
+        attributes: attributes.filter((attr) => attr.trait_type && attr.value),
+        external_url: "", // Optional: link to your website
         nameBrand: brandInfo?.name,
         nftContractAddress: brandInfo?.nftContractAddress,
         nftSymbol: brandInfo?.nftSymbol,
@@ -249,43 +273,61 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
       };
 
       // Upload metadata to IPFS
-      toast.loading('Uploading metadata to IPFS...');
+      toast.dismiss();
+      toast.loading("Uploading metadata to IPFS...");
       const metadataHash = await uploadMetadataToPinata(metadata);
-      console.log('Metadata uploaded to IPFS:', metadataHash);
-      const linkMetadata = `${pinataGateway}/ipfs/${metadataHash}`
+      console.log("Metadata uploaded to IPFS:", metadataHash);
+      const linkMetadata = `https://${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
+        import.meta.env.VITE_PINATA_GATWAYTOKEN
+      }`;
 
       // Mint NFT
-      preMint(String(hashSerial(formData.serialNumber)), linkMetadata, brandInfo?.nftContractAddress);
+      preMint(
+        String(hashSerial(formData.serialNumber)),
+        linkMetadata,
+        brandInfo?.nftContractAddress
+      );
 
       // Final result
       const nftData = {
         imageHash,
         metadataHash,
         serialHash: hashSerial(formData.serialNumber),
-        imageUrl: imageHash ? `${pinataGateway}/ipfs/${imageHash}` : null,
-        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}`,
-        metadata
+        imageUrl: imageHash
+          ? `${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
+              import.meta.env.VITE_PINATA_GATWAYTOKEN
+            }`
+          : null,
+        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
+          import.meta.env.VITE_PINATA_GATWAYTOKEN
+        }`,
+        metadata,
       };
 
-      console.log('NFT minted successfully:', nftData);
-      console.log(nftData.serialHash, 'serial hash')
+      console.log("NFT minted successfully:", nftData);
+      console.log(nftData.serialHash, "serial hash");
       toast.dismiss();
-      toast.success('NFT minted successfully!');
-      
+      toast.success("NFT minted successfully!");
+
       // Reset form after successful upload
       setTimeout(() => {
-        setFormData({ serialNumber: '', productName: '', description: '', price: '' });
-        setAttributes([{ trait_type: '', value: '' }]);
+        setFormData({
+          serialNumber: "",
+          productName: "",
+          description: "",
+          price: "",
+        });
+        setAttributes([{ trait_type: "", value: "" }]);
         setImageFile(null);
         setImagePreview(null);
-        toast.dismiss();
+        // refetch();
+        // toast.dismiss();
       }, 2000);
-
     } catch (error: any) {
-      console.error('Error minting NFT:', error);
+      console.error("Error minting NFT:", error);
       // setUploadStatus('Error: ' + error.message);
       toast.dismiss();
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
       // setIsUploading(false);
       toast.dismiss();
@@ -295,7 +337,9 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="space-y-4 text-center">
-        <h1 className="text-4xl font-bold blockchain-gradient animate-glow">NFT Service</h1>
+        <h1 className="text-4xl font-bold blockchain-gradient animate-glow">
+          NFT Service
+        </h1>
         <p className="text-muted-foreground text-lg">
           Manage NFTs and tokenize your products with blockchain technology
         </p>
@@ -318,7 +362,12 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="serialNumber" className="text-sm font-medium text-foreground">Serial Number</Label>
+                <Label
+                  htmlFor="serialNumber"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Serial Number
+                </Label>
                 <Input
                   id="serialNumber"
                   name="serialNumber"
@@ -329,7 +378,12 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                 />
               </div>
               <div>
-                <Label htmlFor="productName" className="text-sm font-medium text-foreground">Product Name</Label>
+                <Label
+                  htmlFor="productName"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Product Name
+                </Label>
                 <Input
                   id="productName"
                   name="productName"
@@ -341,7 +395,12 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
               </div>
 
               <div>
-                <Label htmlFor="description" className="text-sm font-medium text-foreground">Description</Label>
+                <Label
+                  htmlFor="description"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Description
+                </Label>
                 <Textarea
                   id="description"
                   name="description"
@@ -356,9 +415,11 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Image className="h-4 w-4 text-purple-400" />
-                  <Label className="text-sm font-medium text-foreground">NFT Image</Label>
+                  <Label className="text-sm font-medium text-foreground">
+                    NFT Image
+                  </Label>
                 </div>
-                
+
                 {!imagePreview ? (
                   <div className="border-2 border-dashed border-border/50 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
                     <input
@@ -376,8 +437,12 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                         <Upload className="h-6 w-6 text-purple-400" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-foreground">Upload NFT Image</p>
-                        <p className="text-xs text-muted-foreground mt-1">PNG, JPG, GIF up to 10MB</p>
+                        <p className="text-sm font-medium text-foreground">
+                          Upload NFT Image
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
                       </div>
                     </label>
                   </div>
@@ -401,7 +466,8 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                         {imageFile?.name}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {imageFile && (imageFile.size / 1024 / 1024).toFixed(2)} MB
+                        {imageFile && (imageFile.size / 1024 / 1024).toFixed(2)}{" "}
+                        MB
                       </p>
                     </div>
                   </div>
@@ -412,9 +478,11 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Tags className="h-4 w-4 text-purple-400" />
-                  <Label className="text-sm font-medium text-foreground">Metadata Attributes</Label>
+                  <Label className="text-sm font-medium text-foreground">
+                    Metadata Attributes
+                  </Label>
                 </div>
-                
+
                 <div className="space-y-3">
                   {attributes.map((attribute, index) => (
                     <div key={index} className="flex gap-2 items-center">
@@ -422,7 +490,13 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                         <Input
                           placeholder="Trait Type (e.g., Color, Size)"
                           value={attribute.trait_type}
-                          onChange={(e) => handleAttributeChange(index, 'trait_type', e.target.value)}
+                          onChange={(e) =>
+                            handleAttributeChange(
+                              index,
+                              "trait_type",
+                              e.target.value
+                            )
+                          }
                           className="neon-border bg-input/50 backdrop-blur-sm"
                         />
                       </div>
@@ -430,7 +504,13 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                         <Input
                           placeholder="Value (e.g., Blue, Large)"
                           value={attribute.value}
-                          onChange={(e) => handleAttributeChange(index, 'value', e.target.value)}
+                          onChange={(e) =>
+                            handleAttributeChange(
+                              index,
+                              "value",
+                              e.target.value
+                            )
+                          }
                           className="neon-border bg-input/50 backdrop-blur-sm"
                         />
                       </div>
@@ -445,7 +525,6 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                       </ButtonCustom>
                     </div>
                   ))}
-                  
                   <ButtonCustom
                     variant="outline"
                     size="sm"
@@ -458,7 +537,7 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                 </div>
               </div>
 
-              <ButtonCustom 
+              <ButtonCustom
                 variant="crypto"
                 onClick={handleMintNFT}
                 className="w-full mt-6"
@@ -479,15 +558,36 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
               </div>
               <h2 className="text-xl font-semibold">All NFT & Products</h2>
             </div>
-            
+
             <div className="space-y-4">
+              {data?.items?.map((nftData: any, index: number) => (
+                <>
+                  {nftData?.status == "premint" && (
+                    <CardNFT
+                      key={index}
+                      data={nftData}
+                      // tokenId={nftData.tokenId}
+                      // contractAddress={nftData.NftContractAddress}
+                    />
+                  )}
+                </>
+              ))}
+              {/* <>
               {nftProducts.map((nft) => (
-                <div key={nft.id} className="p-4 border border-border/50 rounded-lg hover:border-primary/50 transition-all duration-300 crypto-glass backdrop-blur-sm">
+                <div
+                  key={nft.id}
+                  className="p-4 border border-border/50 rounded-lg hover:border-primary/50 transition-all duration-300 crypto-glass backdrop-blur-sm"
+                >
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <h3 className="font-medium text-foreground">{nft.name} #{nft.id}</h3>
+                      <h3 className="font-medium text-foreground">
+                        {nft.name} #{nft.id}
+                      </h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Wallet: <span className="font-mono text-cyan-400">{nft.wallet}</span>
+                        Wallet:{" "}
+                        <span className="font-mono text-cyan-400">
+                          {nft.wallet}
+                        </span>
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Minted: {nft.minted}
@@ -495,32 +595,43 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
-                        <Circle className={`h-2 w-2 fill-current ${
-                          nft.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
-                        }`} />
-                        <span className={`text-sm font-medium ${
-                          nft.status === 'Active' ? 'text-green-400' : 'text-yellow-400'
-                        }`}>
+                        <Circle
+                          className={`h-2 w-2 fill-current ${
+                            nft.status === "Active"
+                              ? "text-green-400"
+                              : "text-yellow-400"
+                          }`}
+                        />
+                        <span
+                          className={`text-sm font-medium ${
+                            nft.status === "Active"
+                              ? "text-green-400"
+                              : "text-yellow-400"
+                          }`}
+                        >
                           {nft.status}
                         </span>
                       </div>
-                      <ButtonCustom variant="outline" size="sm">
-                        <Eye className="mr-2 h-3 w-3" />
-                        View Details
-                      </ButtonCustom>
+                      <BrandReviewDialog brandData={data}>
+                        <ButtonCustom variant="outline" size="sm">
+                          <Eye className="mr-2 h-3 w-3" />
+                          View Details
+                        </ButtonCustom>
+                      </BrandReviewDialog>
                     </div>
                   </div>
-                  
-                  {/* Attributes Display */}
+
                   {nft.attributes && nft.attributes.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-border/30">
                       <div className="flex items-center gap-2 mb-2">
                         <Tags className="h-3 w-3 text-purple-400" />
-                        <span className="text-xs font-medium text-muted-foreground">Attributes</span>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Attributes
+                        </span>
                       </div>
                       <div className="flex flex-wrap gap-1">
                         {nft.attributes.map((attr, index) => (
-                          <span 
+                          <span
                             key={index}
                             className="px-2 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full text-xs text-purple-300 border border-purple-500/30"
                           >
@@ -532,6 +643,7 @@ const { preMint, isPreMint, transactionUrl } = usePreMint({
                   )}
                 </div>
               ))}
+              </> */}
             </div>
           </div>
         </CardCustom>

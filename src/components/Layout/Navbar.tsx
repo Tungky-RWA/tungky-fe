@@ -5,6 +5,15 @@ import { useWindowScroll } from "react-use"
 import gsap from "gsap"
 import { Link } from "react-router-dom"
 import { Shield, Menu, X } from "lucide-react"
+import { useSignerStatus } from "@account-kit/react"
+import ButtonCustom from "../UI/ButtonCustom"
+// import { useSignerStatus } from "@account-kit/react"
+
+// Asumsi warna primer dan aksen dari contoh Anda
+const colors = {
+  primary: '#007BFF', // Contoh warna biru primer
+  accent: '#34D399',  // Contoh warna hijau/cyan aksen
+}
 
 const Navbar = () => {
   const navContainerRef = useRef<HTMLDivElement>(null)
@@ -12,6 +21,64 @@ const Navbar = () => {
   const [isNavVisible, setIsNavVisible] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { y: currentScrollY } = useWindowScroll()
+
+
+
+
+  const akunButton : any = ()=>{
+
+    const signerStatus = useSignerStatus();
+
+    // alert(signerStatus.isConnected)
+
+    if(!signerStatus.isConnected){
+
+      return(
+        <div className="flex flex-row gap-3">
+            <Link
+            to="/register"
+            onClick={() => setIsMenuOpen(false)}
+            className="w-full text-center bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 px-5 py-3 rounded-lg transition-all duration-300 text-lg"
+          >
+            Register
+          </Link>
+          <Link
+            to="/login"
+            onClick={() => setIsMenuOpen(false)}
+            className="w-full text-center bg-primary text-white px-5 py-3 rounded-lg transition-all duration-300 hover:bg-opacity-80 text-lg"
+          >
+            Login
+          </Link>
+
+        </div>
+
+
+      )
+
+    }
+
+     if(signerStatus.isConnected){
+
+         return(
+          <div>
+           
+            <Link
+              to="/user"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <ButtonCustom variant="primary">
+                Go to User Dashboard
+              </ButtonCustom>
+            </Link>
+
+          </div>
+
+
+      )
+
+     }
+
+  }
 
   const navItems = [
     { path: "/brand", label: "Documentation", icon: Shield },
@@ -24,20 +91,15 @@ const Navbar = () => {
     if (currentScrollY === 0) {
       setIsNavVisible(true)
     } else if (currentScrollY > lastScrollY) {
-      // Jangan hide navbar jika mobile menu sedang terbuka
       if (!isMenuOpen) {
         setIsNavVisible(false)
       }
-      // Tutup mobile menu ketika scroll down
       setIsMenuOpen(false)
     } else if (currentScrollY < lastScrollY) {
       setIsNavVisible(true)
     }
     setLastScrollY(currentScrollY)
   }, [currentScrollY, lastScrollY, isMenuOpen])
-
-
-   
 
   // GSAP animation for navbar visibility
   useEffect(() => {
@@ -56,7 +118,6 @@ const Navbar = () => {
         setIsMenuOpen(false)
       }
     }
-
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
@@ -68,14 +129,15 @@ const Navbar = () => {
     } else {
       document.body.style.overflow = "unset"
     }
-
     return () => {
       document.body.style.overflow = "unset"
     }
   }, [isMenuOpen])
 
   const navBackgroundClass =
-    currentScrollY > 10 ? "bg-[#1D242B]/70 backdrop-blur-md border-b border-gray-700/50" : "border-b border-transparent"
+    currentScrollY > 10
+      ? "bg-gray-900/80 backdrop-blur-md border-b border-white/10"
+      : "border-b border-transparent"
 
   return (
     <div
@@ -86,8 +148,10 @@ const Navbar = () => {
         <nav className="flex h-16 max-w-7xl mx-auto items-center justify-between p-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 z-30 relative" onClick={() => setIsMenuOpen(false)}>
-            <img src="/img/logo.png" alt="logo" className="h-8 w-auto" />
-            <span className="text-xl font-bold text-[#FAFAFA]">Tungky</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-xl flex items-center justify-center animate-glow">
+              <span className="text-white font-bold">T</span>
+            </div>
+             <h2 className="font-bold text-lg blockchain-gradient text-white hidden sm:block">Tungky</h2>
           </Link>
 
           {/* Desktop Navigation */}
@@ -96,30 +160,25 @@ const Navbar = () => {
               <Link
                 key={item.label}
                 to={item.path}
-                className="flex items-center gap-2 px-4 py-2 text-[#C7EEFF] hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-200"
+                className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors duration-200"
               >
                 {item.icon && <item.icon size={16} />}
                 <span>{item.label}</span>
               </Link>
             ))}
-            <Link
-              to="/brand"
-              className="bg-[#0077C0] text-white px-5 py-2 rounded-lg transition-all duration-300 hover:bg-opacity-80 hover:shadow-lg hover:shadow-[#0077C0]/30 ml-4"
-            >
-              Register
-            </Link>
+            {akunButton()}
           </div>
+          
 
-          {/* Mobile Menu Button - dengan z-index tinggi */}
+          {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden z-30 relative">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-              className="text-[#FAFAFA] hover:text-[#C7EEFF] transition-colors p-2 -m-2"
+              className="text-white/90 hover:text-white transition-colors p-2 -m-2"
             >
               {isMenuOpen ? 
-              // <X size={28} /> 
-              <></>
+              <X size={28} />
               : 
               <Menu size={28} />}
             </button>
@@ -128,22 +187,14 @@ const Navbar = () => {
       </header>
 
       {/* Mobile Menu Overlay */}
-      {isMenuOpen && <div className="md:hidden fixed inset-0 bg-black/50 z-10" onClick={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-10" onClick={() => setIsMenuOpen(false)} />}
 
       {/* Mobile Menu (Collapsible) */}
       <div
-        className={`md:hidden fixed top-[-20px] left-0 w-full bg-[#1D242B] transition-transform duration-300 ease-in-out z-20 ${
-          isMenuOpen ? "translate-y-0 mt-[8px]" : "-translate-y-full"
+        className={`md:hidden fixed top-0 left-0 w-full bg-gray-900 border-b border-white/10 transition-transform duration-300 ease-in-out z-20 ${
+          isMenuOpen ? "translate-y-0" : "-translate-y-full"
         } pt-20 pb-8 px-4 sm:rounded-b-xl shadow-lg min-h-screen sm:min-h-fit`}
       >
-        {/* Close button di dalam mobile menu untuk backup */}
-        <button
-          onClick={() => setIsMenuOpen(false)}
-          className="absolute top-4 right-4 text-[#FAFAFA] hover:text-[#C7EEFF] transition-colors p-2 z-30"
-          aria-label="Close menu"
-        >
-          <X size={24} />
-        </button>
 
         <div className="flex flex-col items-center gap-4 mt-8">
           {navItems.map((item) => (
@@ -151,19 +202,14 @@ const Navbar = () => {
               key={item.label}
               to={item.path}
               onClick={() => setIsMenuOpen(false)}
-              className="w-full text-center flex items-center justify-center gap-3 px-4 py-3 text-lg text-[#C7EEFF] hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-200"
+              className="w-full text-center flex items-center justify-center gap-3 px-4 py-3 text-lg text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors duration-200"
             >
               {item.icon && <item.icon size={20} />}
               <span>{item.label}</span>
             </Link>
           ))}
-          <Link
-            to="/brand"
-            onClick={() => setIsMenuOpen(false)}
-            className="w-full text-center mt-4 bg-[#0077C0] text-white px-5 py-3 rounded-lg transition-all duration-300 hover:bg-opacity-80 text-lg"
-          >
-            Register
-          </Link>
+           <div className="w-full border-t border-white/10 my-4"></div>
+            {akunButton()}
         </div>
       </div>
     </div>

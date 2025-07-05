@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 const fetchBrandRegisted = async () => {
-  const res = await fetch('http://localhost:42069/graphql', {
+  const res = await fetch(import.meta.env.VITE_PONDER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

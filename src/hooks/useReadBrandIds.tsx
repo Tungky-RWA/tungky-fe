@@ -1,14 +1,14 @@
 import { useSmartAccountClient } from "@account-kit/react";
 import { useQuery } from "@tanstack/react-query";
 import { type Address } from "viem";
-import { CONTRACT_ABI } from "@/lib/constants";
+import { METADATA_ABI } from "@/lib/constants";
+import { METADATA_ADDRESS } from "@/lib/constants";
 
-interface UseReadNFTUriParams {
-  contractAddress?: Address;
-  ownerAddress?: Address;
+interface UseReadBrandIdsParams {
+  brandAddress?: Address;
 }
 
-interface BrandInfoReturn {
+interface BrandIdsReturn {
   brandWallet: string;
   isActive: boolean;
   isLegalVerified: boolean;
@@ -18,48 +18,46 @@ interface BrandInfoReturn {
   registrationTimestamp: bigint;
 }
 
-export const useReadBrandData = (props: UseReadNFTUriParams) => {
-  const { contractAddress, ownerAddress } = props;
+export const useReadbrandIds = (props: UseReadBrandIdsParams) => {
+  const { brandAddress } = props;
 
   const { client } = useSmartAccountClient({});
 
   // Query for NFT count
   const {
-    data: brandInfo,
+    data: brandIds,
     isLoading: isLoadingBrandInfo,
     error: brandInfoError,
     refetch: refetchBrandInfo,
   } = useQuery<
-    BrandInfoReturn | undefined,
+    BrandIdsReturn | undefined,
     Error,
-    BrandInfoReturn | undefined,
+    BrandIdsReturn | undefined,
     readonly unknown[]
   >({
-    queryKey: ["brandInfo", contractAddress, ownerAddress, client?.chain?.id],
+    queryKey: ["brandIds", brandAddress, client?.chain?.id],
+    //@ts-ignore
     queryFn: async () => {
       if (!client) {
         throw new Error("Smart account client not ready");
       }
-      if (!contractAddress) {
-        throw new Error("Contract address is not defined for queryFn.");
-      }
-      if (!ownerAddress) {
-        throw new Error("Owner address is not defined for queryFn.");
+      if (!brandAddress) {
+        throw new Error("Brand address is not defined for queryFn.");
       }
       const info = await client.readContract({
-        address: contractAddress,
-        abi: CONTRACT_ABI,
-        functionName: "getBrandInfo",
-        args: [ownerAddress],
+        address: METADATA_ADDRESS,
+        abi: METADATA_ABI,
+        functionName: "brandIds",
+        args: [brandAddress],
       });
       return info;
     },
 
-    enabled: !!client && !!contractAddress && !!ownerAddress,
+    enabled: !!client && !!brandAddress,
   });
 
   return {
-    brandInfo,
+    brandIds,
     isLoading: isLoadingBrandInfo,
     isLoadingBrandInfo,
     error: brandInfoError,
