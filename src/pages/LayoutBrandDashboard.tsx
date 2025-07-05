@@ -17,7 +17,7 @@ import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
 
 const BrandLayout = () => {
   const { isLoadingClient } = useSmartAccountClient({});
-  const { data, isLoading } = useBrandRole();
+  const { data: dataBrandRole, isLoading: isLoadingBrandRole } = useBrandRole();
   const signerStatus = useSignerStatus();
   const { client } = useSmartAccountClient({});
 
@@ -32,9 +32,8 @@ const BrandLayout = () => {
   console.log(metaData, "metadata");
 
   const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
-  console.log(data, "data nft");
 
-  if (isLoading || (isLoadingClient && !signerStatus.isDisconnected)) {
+  if (isLoadingBrandRole || (isLoadingClient && !signerStatus.isDisconnected)) {
     return <LoadingPage />;
   }
 
@@ -47,7 +46,7 @@ const BrandLayout = () => {
     );
   }
 
-  if (data?.includes('0x000000')) {
+  if (dataBrandRole?.includes('0x000000')) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
         <Navbar/>
