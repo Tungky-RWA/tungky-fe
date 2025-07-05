@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
   Wallet, 
@@ -38,23 +38,45 @@ const Sidebar = ({ pageType }: SidebarProps) => {
   const [isCopied, setIsCopied] = useState(false);
   const { client } = useSmartAccountClient({});
   const location = useLocation();
+  
 
-  const navItems = pageType ? [
-    { path: '/admin', icon: Home, label: 'Dashboard' },
-    { path: '/admin/brand', icon: Users, label: 'Brand' },
-    { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-  ] : [
-    { path: '/brand', icon: Home, label: 'Dashboard' },
-    { path: '/brand/analytics', icon: BarChart3, label: 'Analytics' },
-    // { path: '/brand/nft-tracker', icon: MapPin, label: 'NFT Tracker' },
-    { path: '/brand/nft', icon: Coins, label: 'NFT Service' },
-    { path: '/brand/token', icon: Wallet, label: 'Token Service' },
-    // { path: '/brand/product', icon: Package, label: 'Product Service' },
-    // { path: '/brand/marketplace', icon: Store, label: 'Marketplace Service' },
-    { path: '/brand/nfc', icon: Smartphone, label: 'NFC Service' },
-    { path: '/brand/qr', icon: QrCode, label: 'QR Code Service' },
-    // { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
-  ];
+
+  let navItems : any ;
+
+  if(pageType === 'admin') {
+      navItems =   [
+      { path: '/admin', icon: Home, label: 'Dashboard' },
+      { path: '/admin/brand', icon: Users, label: 'Brand' },
+      { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+    ]  
+  }else if (pageType == 'user'){
+    navItems =   [
+      { path: '/user', icon: Home, label: 'Dashboard' },
+      { path: 'mine', icon: Zap, label: 'Mine' },
+    
+    ];
+  }else{
+       navItems =   [
+      { path: '/brand', icon: Home, label: 'Dashboard' },
+      { path: '/brand/analytics', icon: BarChart3, label: 'Analytics' },
+      // { path: '/brand/nft-tracker', icon: MapPin, label: 'NFT Tracker' },
+      { path: '/brand/nft', icon: Coins, label: 'NFT Service' },
+      { path: '/brand/buyer', icon: Store, label: 'BUyer' },
+      { path: '/brand/token', icon: Wallet, label: 'Token Service' },
+      // { path: '/brand/product', icon: Package, label: 'Product Service' },
+      // { path: '/brand/marketplace', icon: Store, label: 'Marketplace Service' },
+      { path: '/brand/nfc', icon: Smartphone, label: 'NFC Service' },
+      { path: '/brand/qr', icon: QrCode, label: 'QR Code Service' },
+      // { path: '/brand/help', icon: HelpCircle, label: 'Help Service' },
+    ];
+  }
+  
+
+  
+
+  
+  
+ 
 
   const handleCopy = () => {
     navigator.clipboard.writeText(client?.account?.address ?? "");
@@ -73,10 +95,13 @@ const Sidebar = ({ pageType }: SidebarProps) => {
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 rounded-xl flex items-center justify-center animate-glow">
             <span className="text-white font-bold">T</span>
           </div>
-          <div>
-            <h2 className="font-bold text-lg blockchain-gradient">Tungky</h2>
-            <p className="text-xs text-muted-foreground">Web3 Brand Portal</p>
-          </div>
+            <Link to="/" className="font-bold text-lg blockchain-gradient">
+            <div>
+                <h2 className="font-bold text-lg blockchain-gradient">Tungky</h2>
+                <p className="text-xs text-muted-foreground">Web3 Brand Portal</p>
+            </div>
+            </Link>
+         
         </div>
 
         <div>
