@@ -56,11 +56,12 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
     navItems = [
       { path: "/brand", icon: Home, label: "Dashboard" },
       { path: "/brand/analytics", icon: BarChart3, label: "Analytics" },
+      { path: "/brand/product", icon: Package, label: "Products Mint" },
       // { path: '/brand/nft-tracker', icon: MapPin, label: 'NFT Tracker' },
       { path: "/brand/nft", icon: Coins, label: "NFT Service" },
-      { path: "/brand/buyer", icon: Store, label: "BUyer" },
+      // { path: "/brand/buyer", icon: Store, label: "BUyer" },
       { path: "/brand/token", icon: Wallet, label: "Token Service" },
-      // { path: '/brand/product', icon: Package, label: 'Product Service' },
+
       // { path: '/brand/marketplace', icon: Store, label: 'Marketplace Service' },
       { path: "/brand/nfc", icon: Smartphone, label: "NFC Service" },
       { path: "/brand/qr", icon: QrCode, label: "QR Code Service" },

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-const fetchBrandRegisted = async (userContractAddress: string) => {
+const fetchBrandNFTSPremint = async () => {
   const res = await fetch(import.meta.env.VITE_PONDER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -10,7 +10,7 @@ const fetchBrandRegisted = async (userContractAddress: string) => {
           nfts(
             orderDirection: "desc"
             orderBy: "blockTimestamp"
-            where: {ownerAddress: "${userContractAddress}"}
+            where: {status: premint}
           ) {
             totalCount
             items {
@@ -24,11 +24,6 @@ const fetchBrandRegisted = async (userContractAddress: string) => {
               status
               tokenId
               transactionHash
-              brand {
-                BrandWalletAddress
-                NftContractAddress
-                name
-              }
             }
           }
         }
@@ -37,20 +32,20 @@ const fetchBrandRegisted = async (userContractAddress: string) => {
   });
 
   const response = await res.json();
-  console.log("GraphQL Response:", response); // 🔍 DEBUG
+  // console.log("GraphQL Response:", response?.data?.nfts); // 🔍 DEBUG
 
   if (response.errors) {
     console.error("❌ GraphQL Error:", response.errors);
     throw new Error("GraphQL query error");
   }
 
-  return response.data; // ✅ return final
+  return response?.data?.nfts; // ✅ return final
 };
 
-export const useBrandRegisted = () => {
+export const useBrandNFTSPremint = () => {
   return useQuery({
-    queryKey: ["brandRegisted"],
-    //@ts-ignore
-    queryFn: fetchBrandRegisted,
+    queryKey: ["brandNFTS"],
+    queryFn: fetchBrandNFTSPremint,
+    // refetchInterval: 10000,
   });
 };

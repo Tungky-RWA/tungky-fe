@@ -6,9 +6,8 @@ import {
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { encodeFunctionData, type Address } from "viem";
 import { NFTBRAND_ABI } from "@/lib/constants";
-import toast from 'react-hot-toast';
-import axios from 'axios';
-
+import toast from "react-hot-toast";
+import axios from "axios";
 
 export interface useClaimNFT {
   onSuccess?: () => void;
@@ -18,10 +17,23 @@ export interface useClaimNFT {
 }
 
 export interface useClaimNFTReturn {
-  preMint: (serialNumber: string, uri: URL, brandAddress: `0x${string}`) => void;
-  updatePreMint: (oldSerialNumber: string, newSerialNumber: string, uri: URL, brandAddress: `0x${string}`) => void;
-  mutation: any,
-  claimNFT: (tokenId: string | null, to: `0x${string}`, contractAddress: `0x${string}`) => void;
+  preMint: (
+    serialNumber: string,
+    uri: URL,
+    brandAddress: `0x${string}`
+  ) => void;
+  updatePreMint: (
+    oldSerialNumber: string,
+    newSerialNumber: string,
+    uri: URL,
+    brandAddress: `0x${string}`
+  ) => void;
+  mutation: any;
+  claimNFT: (
+    tokenId: string | null,
+    to: `0x${string}`,
+    contractAddress: `0x${string}`
+  ) => void;
   transactionUrl?: string;
   error?: string;
 }
@@ -29,7 +41,8 @@ export interface useClaimNFTReturn {
 export interface useVerificationParams {
   contractAddress: Address;
   tokenId: string | null;
-  client: any
+  client: any;
+  enabled?: boolean;
 }
 
 // const infoMinted = await client.readContract({
@@ -39,18 +52,19 @@ export interface useVerificationParams {
 //         args: [tokenId],
 //       });
 
-      // const ownerOf = await client.readContract({
-      //   address: contractAddress,
-      //   abi: NFTBRAND_ABI,
-      //   functionName: "ownerOf",
-      //   args: [tokenId],
-      // });
+// const ownerOf = await client.readContract({
+//   address: contractAddress,
+//   abi: NFTBRAND_ABI,
+//   functionName: "ownerOf",
+//   args: [tokenId],
+// });
 
-export const useOwner = ({ tokenId, contractAddress } : useVerificationParams) => {
+export const useOwner = ({
+  tokenId,
+  contractAddress,
+}: useVerificationParams) => {
   const { client } = useSmartAccountClient({});
-  const {
-    data, isLoading, isError, refetch
-  } = useQuery<
+  const { data, isLoading, isError, refetch } = useQuery<
     string | undefined,
     Error,
     string | undefined,
@@ -67,7 +81,6 @@ export const useOwner = ({ tokenId, contractAddress } : useVerificationParams) =
       if (!tokenId) {
         throw new Error("tokenId is not defined for queryFn.");
       }
-      
 
       const infoOwner = await client.readContract({
         address: contractAddress,
@@ -76,24 +89,27 @@ export const useOwner = ({ tokenId, contractAddress } : useVerificationParams) =
         args: [tokenId],
       });
 
-      return infoOwner
+      return infoOwner;
     },
-    
+
     enabled: !!client && !!contractAddress && !!tokenId,
   });
 
-  
-
   return {
-    data, isLoading, isError, refetch
-  }
-}
+    data,
+    isLoading,
+    isError,
+    refetch,
+  };
+};
 
-export const useInfoMinted = ({ tokenId, contractAddress } : useVerificationParams) => {
+export const useInfoMinted = ({
+  tokenId,
+  contractAddress,
+  enabled = true,
+}: useVerificationParams) => {
   const { client } = useSmartAccountClient({});
-  const {
-    data, isLoading, isError, refetch
-  } = useQuery<
+  const { data, isLoading, isError, refetch } = useQuery<
     string | undefined,
     Error,
     string | undefined,
@@ -118,23 +134,26 @@ export const useInfoMinted = ({ tokenId, contractAddress } : useVerificationPara
         args: [tokenId],
       });
 
-      return infoMinted
+      return infoMinted;
     },
-    
-    enabled: !!client && !!contractAddress && !!tokenId,
+
+    enabled: enabled && !!client && !!contractAddress && !!tokenId,
   });
 
-  
-
   return {
-    data, isLoading, isError, refetch
-  }
-}
+    data,
+    isLoading,
+    isError,
+    refetch,
+  };
+};
 
-export const useVerification = ({ tokenId, contractAddress, client } : useVerificationParams) => {
-  const {
-    data, isLoading, isError, refetch
-  } = useQuery<
+export const useVerification = ({
+  tokenId,
+  contractAddress,
+  client,
+}: useVerificationParams) => {
+  const { data, isLoading, isError, refetch } = useQuery<
     string | undefined,
     Error,
     string | undefined,
@@ -151,8 +170,8 @@ export const useVerification = ({ tokenId, contractAddress, client } : useVerifi
       if (!tokenId) {
         throw new Error("tokenId is not defined for queryFn.");
       }
-      
-      const _tokenId = BigInt(tokenId)
+
+      const _tokenId = BigInt(tokenId);
 
       const info = await client.readContract({
         address: contractAddress,
@@ -161,21 +180,26 @@ export const useVerification = ({ tokenId, contractAddress, client } : useVerifi
         args: [_tokenId],
       });
 
-      return info
+      return info;
     },
-    
+
     enabled: !!client && !!contractAddress && !!tokenId,
   });
 
-  
-
   return {
-    data, isLoading, isError, refetch
-  }
-}
+    data,
+    isLoading,
+    isError,
+    refetch,
+  };
+};
 
-export const useClaimNFT = ({ onSuccess, contractAddress, ownerAddress }: useClaimNFT): useClaimNFTReturn => {
-  BigInt.prototype.toJSON = function() {
+export const useClaimNFT = ({
+  onSuccess,
+  contractAddress,
+  ownerAddress,
+}: useClaimNFT): useClaimNFTReturn => {
+  BigInt.prototype.toJSON = function () {
     return this.toString();
   };
 
@@ -193,7 +217,7 @@ export const useClaimNFT = ({ onSuccess, contractAddress, ownerAddress }: useCla
     console.error("Mint error:", error);
     setIsRegistering(false);
     toast.dismiss();
-    toast.error(error.message || "Failed to mint NFT")
+    toast.error(error.message || "Failed to mint NFT");
     setError(error.message || "Failed to mint NFT");
   };
 
@@ -204,57 +228,75 @@ export const useClaimNFT = ({ onSuccess, contractAddress, ownerAddress }: useCla
     onSuccess: handleSuccess,
     onMutate: () => {
       setIsRegistering(true);
-      toast.loading('Waiting...');
+      toast.loading("Waiting...");
       setError(undefined);
     },
   });
 
   const mutation = useMutation({
-    mutationFn: (body: {tokenId: any, to: `0x${string}`, contractAddress: `0x${string}`}) => {
-      return axios.post('http://blockdev.aone.my.id:42070/api/claim-nft', body)
+    mutationFn: (body: {
+      tokenId: any;
+      to: `0x${string}`;
+      contractAddress: `0x${string}`;
+    }) => {
+      return axios.post("http://blockdev.aone.my.id:42070/api/claim-nft", body);
     },
     onMutate: () => {
-      toast.loading('claiming nft...')
+      toast.loading("claiming nft...");
     },
     onSuccess,
     onError: (err) => {
-      toast.dismiss()
+      toast.dismiss();
       toast.error(err.message);
-    }
-  })
+    },
+  });
 
+  const claimNFT = useCallback(
+    async (
+      tokenId: string | null,
+      to: `0x${string}`,
+      contractAddress: `0x${string}`
+    ) => {
+      if (!client) {
+        setError("Wallet not connected");
+        return;
+      }
 
-  const claimNFT = useCallback(async (tokenId: string | null, to: `0x${string}`, contractAddress: `0x${string}`) => {
-    if (!client) {
-      setError("Wallet not connected");
-      return;
-    }
+      const body = {
+        tokenId,
+        contractAddress,
+        to,
+      };
 
-    const body = {
-      tokenId,
-      contractAddress,
-      to
-    }
+      mutation.mutate(body);
+    },
+    [mutation]
+  );
 
-    mutation.mutate(body)
-  }, [mutation]);
-
-  const updatePreMint = useCallback(async (oldSerialNumber: string, newSerialNumber: string, uri: URL, brandAddress: `0x${string}`) => {
-    if (!client) {
-      setError("Wallet not connected");
-      return;
-    }
-    sendUserOperation({
-      uo: {
-        target: brandAddress,
-        data: encodeFunctionData({
-          abi: NFTBRAND_ABI,
-          functionName: "updatePreMint",
-          args: [oldSerialNumber, newSerialNumber, uri],
-        }),
-      },
-    });
-  }, [client, sendUserOperation]);
+  const updatePreMint = useCallback(
+    async (
+      oldSerialNumber: string,
+      newSerialNumber: string,
+      uri: URL,
+      brandAddress: `0x${string}`
+    ) => {
+      if (!client) {
+        setError("Wallet not connected");
+        return;
+      }
+      sendUserOperation({
+        uo: {
+          target: brandAddress,
+          data: encodeFunctionData({
+            abi: NFTBRAND_ABI,
+            functionName: "updatePreMint",
+            args: [oldSerialNumber, newSerialNumber, uri],
+          }),
+        },
+      });
+    },
+    [client, sendUserOperation]
+  );
 
   const transactionUrl = useMemo(() => {
     if (!client?.chain?.blockExplorers || !sendUserOperationResult?.hash) {
