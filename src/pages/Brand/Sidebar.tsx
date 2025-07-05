@@ -75,7 +75,7 @@ const Sidebar = ({ pageType }: SidebarProps) => {
           </div>
           <div>
             <h2 className="font-bold text-lg blockchain-gradient">Tungky</h2>
-            <p className="text-xs text-muted-foreground">Web3 Brand Portal</p>
+            <p className="text-xs text-muted-foreground">Create RWA Easily</p>
           </div>
         </div>
 
