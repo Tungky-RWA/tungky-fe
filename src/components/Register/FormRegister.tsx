@@ -201,9 +201,10 @@ export default function FormRegister() {
       headers: {
         "Content-Type": "application/json",
 
-        pinata_api_key: import.meta.env.VITE_PINATA_APIKEY,
+        pinata_api_key: "d71f9a4588a09de46fa8",
 
-        pinata_secret_api_key: import.meta.env.VITE_PINATA_SECRETKEY,
+        pinata_secret_api_key:
+          "c1c1d69aaabb92dad7fe2aa6752ee40d1096ccffc26fd241a1dce0a631733ace",
       },
 
       body: JSON.stringify({
@@ -237,9 +238,7 @@ export default function FormRegister() {
 
       if (response.ok) {
         // return result.IpfsHash;
-        return `https://${import.meta.env.VITE_PINATA_GATEWAY}/ipfs/${
-          result.IpfsHash
-        }?pinataGatewayToken=${import.meta.env.VITE_PINATA_GATWAYTOKEN}`;
+        return `https://copper-defeated-gopher-612.mypinata.cloud/ipfs/${result.IpfsHash}?pinataGatewayToken=74Gtv0rsnTkTxjAlvYRQqwNgDvZVsXAgX1llN5vtq7FyD5cuksMtQND9v_uxNRlC`;
       } else {
         throw new Error(result.error || "Failed to upload metadata");
       }
@@ -251,7 +250,8 @@ export default function FormRegister() {
   };
 
   const uploadFileToPinata = async (fileContent: any, fileName: string) => {
-    const PINATA_JWT = import.meta.env.VITE_PINATA_JWT;
+    const PINATA_JWT =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJhNzFkOWEzZi1iNmJlLTQyZGItYjViNy1iYjg1YWRjM2M5ZGYiLCJlbWFpbCI6Imhkenp6enp6MDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImQ3MWY5YTQ1ODhhMDlkZTQ2ZmE4Iiwic2NvcGVkS2V5U2VjcmV0IjoiYzFjMWQ2OWFhYWJiOTJkYWQ3ZmUyYWE2NzUyZWU0MGQxMDk2Y2NmZmMyNmZkMjQxYTFkY2UwYTYzMTczM2FjZSIsImV4cCI6MTc4MzE3OTkzNH0.eW2UIKuoeaA2moiUPV1nw6DxZDqkxV1_4pImHrJbdoE";
     const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
     // 1. Membuat objek FormData
@@ -335,6 +335,8 @@ export default function FormRegister() {
     contractAddress: CONTRACT_ADDRESS,
     ownerAddress: client?.account?.address,
   });
+
+  console.log(brandInfo);
 
   const handleCopy = () => {
     if (!client?.account?.address) return;

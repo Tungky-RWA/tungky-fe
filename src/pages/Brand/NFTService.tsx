@@ -22,6 +22,7 @@ import { FACTORY_ADDRESS } from "@/lib/constants";
 import toast from "react-hot-toast";
 import { useSmartAccountClient } from "@account-kit/react";
 import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
+import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
 
 const NFTService = () => {
   const { client } = useSmartAccountClient({});
@@ -32,10 +33,7 @@ const NFTService = () => {
     price: "",
   });
 
-  console.log(import.meta.env.VITE_PINATA_GATEWAY, "gateway");
-
   const [attributes, setAttributes] = useState([{ trait_type: "", value: "" }]);
-
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -78,17 +76,18 @@ const NFTService = () => {
     },
   ];
 
+  // const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
+  // console.log(data.nft?.items, "data nft");
+
   const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
     contractAddress: FACTORY_ADDRESS,
     ownerAddress: client?.account?.address,
   });
 
-  console.log(brandInfo, "ini brand info");
-
   const { preMint, isPreMint, transactionUrl } = usePreMint({
     onSuccess: () => {
       toast.dismiss();
-      toast.success("Registration successful! Your brand is under review.");
+      toast.success("Premint successful! Your Product is ready to claim.");
     },
     onError: (error) => {
       toast.dismiss();
@@ -248,6 +247,7 @@ const NFTService = () => {
 
       // Upload image to IPFS if present
       if (imageFile) {
+        toast.dismiss();
         toast.loading("Uploading image to IPFS...");
         imageHash = await uploadImageToPinata(imageFile);
         console.log("Image uploaded to IPFS:", imageHash);
@@ -259,7 +259,7 @@ const NFTService = () => {
         serialNumber: formData.serialNumber,
         description: formData.description,
         image: imageHash
-          ? `${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
+          ? `https://${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
               import.meta.env.VITE_PINATA_GATWAYTOKEN
             }`
           : null,
@@ -272,10 +272,13 @@ const NFTService = () => {
       };
 
       // Upload metadata to IPFS
+      toast.dismiss();
       toast.loading("Uploading metadata to IPFS...");
       const metadataHash = await uploadMetadataToPinata(metadata);
       console.log("Metadata uploaded to IPFS:", metadataHash);
-      const linkMetadata = `${pinataGateway}/ipfs/${metadataHash}`;
+      const linkMetadata = `https://${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
+        import.meta.env.VITE_PINATA_GATWAYTOKEN
+      }`;
 
       // Mint NFT
       preMint(
@@ -289,8 +292,14 @@ const NFTService = () => {
         imageHash,
         metadataHash,
         serialHash: hashSerial(formData.serialNumber),
-        imageUrl: imageHash ? `${pinataGateway}/ipfs/${imageHash}` : null,
-        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}`,
+        imageUrl: imageHash
+          ? `${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
+              import.meta.env.VITE_PINATA_GATWAYTOKEN
+            }`
+          : null,
+        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
+          import.meta.env.VITE_PINATA_GATWAYTOKEN
+        }`,
         metadata,
       };
 
