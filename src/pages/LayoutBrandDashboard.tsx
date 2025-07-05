@@ -6,6 +6,8 @@ import { useSignerStatus } from "@account-kit/react";
 import { useSmartAccountClient } from "@account-kit/react";
 import { useReadbrandIds } from "@/hooks/useReadBrandIds";
 import { useReadbrandMetadata } from "@/hooks/useGetBrandUri";
+import Navbar from "@/components/Layout/Navbar";
+import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
 
 const BrandLayout = () => {
   const signerStatus = useSignerStatus();
@@ -21,9 +23,13 @@ const BrandLayout = () => {
 
   console.log(metaData, "metadata");
 
+  const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
+  console.log(data, "data nft");
+
   if (!signerStatus.isConnected) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
+        <Navbar />
         <LoginCard cardDescription="Login to continue" />
       </div>
     );

@@ -28,20 +28,20 @@ const fetchBrandNFTS = async () => {
   });
 
   const response = await res.json();
-  console.log("GraphQL Response:", response); // 🔍 DEBUG
+  console.log("GraphQL Response:", response?.data?.nfts); // 🔍 DEBUG
 
   if (response.errors) {
     console.error("❌ GraphQL Error:", response.errors);
     throw new Error("GraphQL query error");
   }
 
-  return response.data; // ✅ return final
+  return response?.data?.nfts; // ✅ return final
 };
 
 export const useBrandNFTS = () => {
   return useQuery({
     queryKey: ["brandNFTS"],
     queryFn: fetchBrandNFTS,
-    refetchInterval: 10000,
+    // refetchInterval: 10000,
   });
 };

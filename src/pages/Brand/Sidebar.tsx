@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   Home,
   Wallet,
@@ -67,8 +67,6 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
   const handleLogout = () => {
     console.log("Logging out...");
   };
-
-  console.log(metadata, "image");
 
   return (
     <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col top-0 backdrop-blur-xl">

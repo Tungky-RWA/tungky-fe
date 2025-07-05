@@ -22,7 +22,6 @@ import { FACTORY_ADDRESS } from "@/lib/constants";
 import toast from "react-hot-toast";
 import { useSmartAccountClient } from "@account-kit/react";
 import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
-import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
 
 const NFTService = () => {
   const { client } = useSmartAccountClient({});
@@ -75,9 +74,6 @@ const NFTService = () => {
       ],
     },
   ];
-
-  // const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
-  // console.log(data.nft?.items, "data nft");
 
   const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
     contractAddress: FACTORY_ADDRESS,
@@ -234,6 +230,8 @@ const NFTService = () => {
     }
   };
 
+  // console.log(window.location.origin.toString());
+
   const handleMintNFT = async () => {
     if (!formData.productName || !formData.description) {
       alert("Please fill in all required fields");
@@ -319,7 +317,8 @@ const NFTService = () => {
         setAttributes([{ trait_type: "", value: "" }]);
         setImageFile(null);
         setImagePreview(null);
-        toast.dismiss();
+        // refetch();
+        // toast.dismiss();
       }, 2000);
     } catch (error: any) {
       console.error("Error minting NFT:", error);

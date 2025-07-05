@@ -1,13 +1,14 @@
 import { useSmartAccountClient } from "@account-kit/react";
 import { useQuery } from "@tanstack/react-query";
-import { METADATA_ABI } from "@/lib/constants";
-import { METADATA_ADDRESS } from "@/lib/constants";
+import { type Address } from "viem";
+import { NFTBRAND_ABI } from "@/lib/constants";
 
-interface UseReadBrandMetadataParams {
-  nftTokenId?: any;
+interface UseReadNFTUriParams {
+  contractAddress?: Address;
+  tokenid?: string;
 }
 
-interface BrandMetadataReturn {
+interface BrandInfoReturn {
   brandWallet: string;
   isActive: boolean;
   isLegalVerified: boolean;
@@ -17,55 +18,53 @@ interface BrandMetadataReturn {
   registrationTimestamp: bigint;
 }
 
-export const useReadbrandMetadata = (props: UseReadBrandMetadataParams) => {
-  const { nftTokenId } = props;
-
-  // console.log(brandTokenId, "brandTokenId");
+export const useReadNFTData = (props: UseReadNFTUriParams) => {
+  const { contractAddress, tokenid } = props;
 
   const { client } = useSmartAccountClient({});
 
   // Query for NFT count
   const {
-    data: nftUri,
+    data: nftdata,
     isLoading: isLoadingBrandInfo,
     error: brandInfoError,
-    refetch: refetchBrandInfo,
+    refetch: refetchNftInfo,
   } = useQuery<
-    BrandMetadataReturn | undefined,
+    BrandInfoReturn | undefined,
     Error,
-    BrandMetadataReturn | undefined,
+    BrandInfoReturn | undefined,
     readonly unknown[]
   >({
-    queryKey: ["tokenURIbrand", nftTokenId, client?.chain?.id],
+    queryKey: ["nftInfo", contractAddress, tokenid, client?.chain?.id],
     //@ts-ignore
     queryFn: async () => {
       if (!client) {
         throw new Error("Smart account client not ready");
       }
-      if (!nftTokenId) {
-        throw new Error("NFT tokenId is not defined for queryFn.");
+      if (!contractAddress) {
+        throw new Error("Contract address is not defined for queryFn.");
+      }
+      if (!tokenid) {
+        throw new Error("TokenId is not defined for queryFn.");
       }
       const info = await client.readContract({
-        address: METADATA_ADDRESS,
-        abi: METADATA_ABI,
+        address: contractAddress,
+        abi: NFTBRAND_ABI,
         functionName: "tokenURI",
-        args: [nftTokenId],
+        args: [tokenid],
       });
-
-      const res = await fetch(info);
-      const json = await res.json();
-      return json;
+      return info;
     },
 
-    enabled: !!client && !!nftTokenId,
+    enabled: !!client && !!contractAddress && !!tokenid,
   });
 
   return {
-    nftUri,
+    nftdata,
     isLoading: isLoadingBrandInfo,
     isLoadingBrandInfo,
     error: brandInfoError,
     brandInfoError,
-    refetchBrandInfo,
+    refetchNftInfo,
   };
 };
