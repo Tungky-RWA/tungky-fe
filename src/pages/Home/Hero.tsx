@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import { Button } from "@/components/UI/button";
+import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -205,9 +206,10 @@ const Hero = () => {
                 onClick={handleWatchTrailer}
                 className="group relative overflow-hidden bg-[#0077C0] hover:bg-[#1D242B] text-white font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-[#C7EEFF]/50"
               >
-                <span className="relative z-10 flex items-center gap-3 font-bold text-[#FAFAFA]">
+                <span className="relative z-10 flex items-center gap-3 font-bold text-[#FAFAFA]" >
                   <TiLocationArrow className="text-xl group-hover:rotate-45 transition-transform duration-300" />
-                  Register Now!!!
+                  <Link to="/register">  Register Now!!!</Link>
+                
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Button>
