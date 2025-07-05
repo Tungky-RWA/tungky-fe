@@ -10,9 +10,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
 import { MASTER_ABI } from '@/lib/masterAbi';
 import { CONTRACT_TEMP, MASTER_ADDRESS, DEFAULT_ROLE_ADMIN } from '@/lib/constants';
-import Navbar from '@/components/Layout/Navbar';
+import { Toaster } from 'react-hot-toast';
 
-const BrandLayout = () => {
+const UserLayout = () => {
   const signerStatus = useSignerStatus();
   const { isLoadingClient, client } = useSmartAccountClient({});
 
@@ -20,8 +20,6 @@ const BrandLayout = () => {
     roleAddress: DEFAULT_ROLE_ADMIN,
     userAddress: client?.account?.address || "0x0"
   })
-
-  console.log(isLoadingClient, isLoadingClient, signerStatus)
 
   if (isLoadingHasRole || (isLoadingClient && !signerStatus.isDisconnected)) {
     return <LoadingPage />;
@@ -36,21 +34,15 @@ const BrandLayout = () => {
   }
   
   
-  if (!hasRole && signerStatus.isConnected) {
-    
-    return (
-      <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
-        <Navbar/>
-        <LoginCard cardDescription="You are not authorized to access this page"/>
-      </div>
-    )
-  }
+//   if (!hasRole && signerStatus.isConnected) {
+//     return <>404</>
+//   }
   return (
 
     <div className="min-h-screen bg-blockchain-gradient flex w-full">
       {/* Fixed Sidebar */}
       <div className="w-64 fixed top-0 left-0 h-screen z-50">
-        <Sidebar pageType="admin" />
+        <Sidebar pageType="user" />
       </div>
 
       {/* Main Content with left padding to make space for sidebar */}
@@ -62,8 +54,21 @@ const BrandLayout = () => {
           </div>
         </main>
       </div>
+       <Toaster 
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          className: 'bg-background text-foreground border border-border',
+          style: {
+            background: '#1a1a1a',
+            color: '#ffffff',
+            border: '1px solid #333333'
+          },
+        }}
+      />
+    
     </div>
   );
 };
 
-export default BrandLayout;
+export default UserLayout;

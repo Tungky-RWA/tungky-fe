@@ -13,7 +13,11 @@ interface Particle {
   delay: number;
 }
 
-const LoadingPage = () => {
+interface LoadingPageProps {
+  message?: string;
+}
+
+const LoadingPage = ({ message }: LoadingPageProps) => {
   
   const [progress, setProgress] = useState(0);
   const [particles, setParticles] = useState<Particle[]>([]);  
@@ -107,7 +111,7 @@ const LoadingPage = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 animate-float">
-            Entering the Dashboard...
+            {message ? message : "Entering the Dashboard..."}
           </p>
         </div>
 

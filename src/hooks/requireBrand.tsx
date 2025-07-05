@@ -1,58 +1,103 @@
-import { Outlet, Navigate } from 'react-router-dom';
-import { useSmartAccountClient, useAuthenticate, useSignerStatus } from '@account-kit/react';
-import { useState, useEffect } from 'react';
-import { useReadBrandData } from '@/hooks/useReadRegisteredBrand';
-import { Address } from 'viem';
-import { MASTER_ABI } from '@/lib/constants';
-import { FACTORY_ADDRESS, MASTER_ADDRESS } from '@/lib/constants';
-import LoadingPage from '@/components/UI/loadingPage';
-import { DEFAULT_ROLE_ADMIN } from '@/lib/constants';
-import LoginCard from '@/components/Register/login-card';
+import { useCallback, useMemo, useState } from "react";
+import {
+  useSmartAccountClient,
+  useSendUserOperation,
+} from "@account-kit/react";
+import { encodeFunctionData } from "viem";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
+import toast from 'react-hot-toast';
 
-const RequireBrand = () => {
+export interface useApproveBrandParams {
+  onSuccess?: () => void;
+}
+export interface useRegisterBrandReturn {
+  isLegalVerified: boolean;
+  handleApproveBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`) => void;
+  approveRegisteredBrand: (brandWallet: `0x${string}`) => void;
+  transactionUrl?: string;
+  error?: string;
+}
+
+export const useClaimNFT = ({ onSuccess }: useApproveBrandParams): useRegisterBrandReturn => {
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [error, setError] = useState<string>();
+
   const { client } = useSmartAccountClient({});
-  const { isPending } = useAuthenticate({});
-  const signerStatus = useSignerStatus();
-  
 
-  const [veryfied, setVeryfied] = useState<boolean | null>(null); // null = belum cek
-  const [loading, setLoading] = useState(true);
+  const handleSuccess = () => {
+    setIsRegistering(false);
+    setError(undefined);
+    onSuccess?.();
+  };
 
-  const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
-    contractAddress: FACTORY_ADDRESS,
-    ownerAddress: client?.account?.address,
+  const handleError = (error: Error) => {
+    console.error("Mint error:", error);
+    setIsRegistering(false);
+    toast.dismiss();
+    toast.error(error.message || "Failed to mint NFT")
+    setError(error.message || "Failed to mint NFT");
+  };
+
+  const { sendUserOperationResult, sendUserOperation } = useSendUserOperation({
+    client,
+    waitForTxn: true,
+    onError: handleError,
+    onSuccess: handleSuccess,
+    onMutate: () => {
+      setIsRegistering(true);
+      toast.loading('Waiting...');
+      setError(undefined);
+    },
   });
 
-  useEffect(() => {
-    const checkRole = async () => {
-      if (!client?.account?.address) return;
-      try {
-        setVeryfied(Boolean(brandInfo?.isLegalVerified));
-        if(!isLoadingBrandInfo){
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Failed to check role:", err);
-        setVeryfied(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (!isPending && client?.account?.address) {
-      checkRole();
+  const approveRegisteredBrand = useCallback(async (brandWallet: `0x${string}`) => {
+    if (!client) {
+      setError("Wallet not connected");
+      return;
     }
-  }, [client, isPending]);
 
-  if (loading || isPending || veryfied === null) {
-    return <LoadingPage />;
-  }
 
-  // if (!veryfied) {
-  //   return <Navigate to="/" replace />;
-  // }
+    sendUserOperation({
+      uo: {
+        target: CONTRACT_ADDRESS,
+        data: encodeFunctionData({
+          abi: CONTRACT_ABI,
+          functionName: "updateBrandLegalStatus",
+          args: [brandWallet, true],
+        }),
+      },
+    });
+  }, [client, sendUserOperation]);
 
-  return <Outlet />;
+  const handleRegisterBrand = useCallback(async (brandName: string, brandSymbol: string, brandWallet: `0x${string}`) => {
+    if (!client) {
+      setError("Wallet not connected");
+      return;
+    }
+    sendUserOperation({
+      uo: {
+        target: CONTRACT_ADDRESS,
+        data: encodeFunctionData({
+          abi: CONTRACT_ABI,
+          functionName: "registerBrand",
+          args: [brandName, brandSymbol, brandWallet],
+        }),
+      },
+    });
+  }, [client, sendUserOperation]);
+
+  const transactionUrl = useMemo(() => {
+    if (!client?.chain?.blockExplorers || !sendUserOperationResult?.hash) {
+      return undefined;
+    }
+    return `${client.chain.blockExplorers.default.url}/tx/${sendUserOperationResult.hash}`;
+  }, [client, sendUserOperationResult?.hash]);
+
+  return {
+    isRegistering,
+    handleRegisterBrand,
+    approveRegisteredBrand,
+    transactionUrl,
+    error,
+  };
 };
-
-export default RequireBrand;

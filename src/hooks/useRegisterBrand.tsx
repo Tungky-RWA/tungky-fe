@@ -13,7 +13,7 @@ export interface useRegisterBrandNFTParams {
 }
 export interface useRegisterBrandReturn {
   isRegistering: boolean;
-  handleRegisterBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`) => void;
+  handleRegisterBrand: (brandName: string, nftSymbol: string, brandWallet: `0x${string}`, uri: string) => void;
   approveRegisteredBrand: (brandWallet: `0x${string}`, minterWallet: `0x${string}`) => void;
   transactionUrl?: string;
   error?: string;
@@ -69,7 +69,7 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
     });
   }, [client, sendUserOperation]);
 
-  const handleRegisterBrand = useCallback(async (brandName: string, brandSymbol: string, brandWallet: `0x${string}`) => {
+  const handleRegisterBrand = useCallback(async (brandName: string, brandSymbol: string, brandWallet: `0x${string}`, uri ?: string) => {
     if (!client) {
       setError("Wallet not connected");
       return;
@@ -80,7 +80,7 @@ export const useRegisterBrand = ({ onSuccess }: useRegisterBrandNFTParams): useR
         data: encodeFunctionData({
           abi: MASTER_ABI,
           functionName: "registerBrand",
-          args: [brandName, brandSymbol, brandWallet],
+          args: [brandName, brandSymbol, brandWallet, uri],
         }),
       },
     });
