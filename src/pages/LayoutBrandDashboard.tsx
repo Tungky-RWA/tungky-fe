@@ -2,11 +2,24 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Brand/Sidebar";
 import Header from "@/components/Layout/Header";
 import LoginCard from "@/components/Register/login-card";
-import { useSignerStatus } from "@account-kit/react";
+import { useSignerStatus, useSmartAccountClient } from "@account-kit/react";
 import Navbar from "@/components/Layout/Navbar";
+import { useBrandRole } from "@/hooks/useHasRole";
+import CardCustom from "@/components/UI/CardCustom";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/UI/card";
+import ButtonCustom from "@/components/UI/ButtonCustom";
+import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import LoadingPage from "@/components/UI/loadingPage";
 
 const BrandLayout = () => {
+  const { isLoadingClient } = useSmartAccountClient({});
+  const { data, isLoading } = useBrandRole();
   const signerStatus = useSignerStatus();
+
+  if (isLoading || (isLoadingClient && !signerStatus.isDisconnected)) {
+    return <LoadingPage />;
+  }
 
   if (!signerStatus.isConnected) {
     return (
@@ -15,6 +28,39 @@ const BrandLayout = () => {
         <LoginCard cardDescription="Login to continue" />
       </div>
     );
+  }
+
+  if (data?.includes('0x000000')) {
+    return (
+      <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
+        <Navbar/>
+        <CardCustom>
+          <CardHeader className={cn("text-center space-y-4 pb-8")}>
+            <CardTitle
+              className={cn(
+                "text-4xl font-bold blockchain-gradient animate-glow",
+                "dark:from-white dark:to-gray-300 bg-clip-text text-transparent",
+              )}
+            >
+              BRAND REGISTER
+            </CardTitle>
+            <CardDescription
+              className={cn("text-muted-foreground text-lg")}
+            >
+              You need to register as a brand to continue
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className={cn("space-y-6 pb-8")}>
+            <Link to="/register">
+              <ButtonCustom variant="crypto" className="w-full mt-4 border border-border/30 hover:border-primary/50">
+                Register Now
+              </ButtonCustom>
+            </Link>
+          </CardContent>
+        </CardCustom>
+      </div>
+    )
   }
 
   return (

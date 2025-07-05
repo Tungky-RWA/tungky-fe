@@ -6,6 +6,7 @@ import gsap from "gsap"
 import { Link } from "react-router-dom"
 import { Shield, Menu, X } from "lucide-react"
 import { useSignerStatus } from "@account-kit/react"
+import ButtonCustom from "../UI/ButtonCustom"
 // import { useSignerStatus } from "@account-kit/react"
 
 // Asumsi warna primer dan aksen dari contoh Anda
@@ -62,11 +63,12 @@ const Navbar = () => {
           <div>
            
             <Link
-              to="/brand"
+              to="/user"
               onClick={() => setIsMenuOpen(false)}
-              className="w-full text-center bg-primary text-white px-5 py-3 rounded-lg transition-all duration-300 hover:bg-opacity-80 text-lg"
             >
-              Dashboard
+              <ButtonCustom variant="primary">
+                Go to User Dashboard
+              </ButtonCustom>
             </Link>
 
           </div>

@@ -9,7 +9,7 @@ import LoadingPage from '@/components/UI/loadingPage';
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
 import { MASTER_ABI } from '@/lib/masterAbi';
-import { CONTRACT_TEMP, MASTER_ADDRESS, DEFAULT_ROLE_ADMIN } from '@/lib/constants';
+import { DEFAULT_ROLE_ADMIN } from '@/lib/constants';
 import Navbar from '@/components/Layout/Navbar';
 
 const BrandLayout = () => {

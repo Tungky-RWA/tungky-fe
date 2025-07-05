@@ -1,13 +1,17 @@
 
 import React from 'react';
-import { Bell, Search, User, Wallet } from 'lucide-react';
+import { Bell, Search, User } from 'lucide-react';
 import { Button } from '@/components/UI/button';
+import ButtonCustom from '../UI/ButtonCustom';
+import { Link, useLocation } from "react-router-dom"
 
 interface HeaderProps {
   userRole: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ userRole }) => {
+  const location = useLocation()
+  const isDashboardUser = location.pathname.includes("/user")
   return (
     <header className="h-16 crypto-glass border-b border-white/10 px-6 flex items-center justify-between sticky top-0 z-50 backdrop-blur-xl">
       <div className="flex items-center gap-4">
@@ -41,10 +45,17 @@ const Header: React.FC<HeaderProps> = ({ userRole }) => {
           <User className="h-4 w-4" />
         </Button>
 
-        <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-400/20 to-cyan-400/20 rounded-full border border-green-400/30">
-          <Wallet className="h-3 w-3 text-green-400" />
-          <span className="text-xs text-green-400 font-medium">Connected</span>
-        </div>
+        {/* <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-green-400/20 to-cyan-400/20 rounded-full border border-green-400/30"> */}
+        {isDashboardUser ? <Link to="/brand">
+          <ButtonCustom>
+            Go to Brand Dashboard
+          </ButtonCustom>
+        </Link> :
+        (<Link to="/user">
+          <ButtonCustom>
+            Go to User Dashboard
+          </ButtonCustom>
+        </Link>)}
       </div>
     </header>
   );
