@@ -32,6 +32,11 @@ import RequireAdmin from "./hooks/requireAdmin.tsx";
 import RequireBrand from "./hooks/requireBrand.tsx";
 import RegisterCard from "./components/Register/login-card.tsx";
 import Login from "./pages/Login.tsx";
+import BuyyerPage from "./pages/BuyyerPage.tsx";
+import UserLayout from "./pages/LayoutUser.tsx";
+import UserDashboard from "./pages/User/UserDashboard.tsx";
+import MinePage from "./pages/User/MinePage.tsx";
+import MarketplaceHomepage from "./pages/MarketPlace/MarketPlaceHomePage.tsx";
 
 function App() {
   const initialState = cookieToInitialState(config);
@@ -54,6 +59,7 @@ function App() {
               {/* <Route path="marketplace" element={<MarketplaceService />} /> */}
               <Route path="nfc" element={<NFCService />} />
               <Route path="qr" element={<QRService />} />
+              {/* <Route path="buyer" element={<BuyyerPage/>} /> */}
               {/* <Route path="help" element={<HelpService />} /> */}
             </Route>
             {/* </Route> */}
@@ -64,16 +70,28 @@ function App() {
               <Route path="brand" element={<AdminBrand />} />
               {/* <Route path="help" element={<HelpService />} /> */}
             </Route>
-          {/* </Route> */}
-          <Route path="/register" element={<Register />} />
-          <Route path="/buyer" element={<BuyerInterface />} />
-          <Route path="/verify/" element={<VerifyProduct />} />
-          {/* <Route path="/verify/:productId" element={<VerificationPage />} /> */}
-        </Routes>
+
+            <Route path="/user" element={<UserLayout />}>
+              <Route index element={<UserDashboard />} />
+              <Route path="mine" element={<MinePage />} />
+              {/* <Route path="help" element={<HelpService />} /> */}
+            </Route>
+
+            {/* </Route> */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/buyer" element={<BuyerInterface />} />
+            <Route path="/verify/:productId" element={<VerifyProduct />} />
+            <Route path="/marketplace" element={<MarketplaceHomepage />} />
+            {/* <Route path="/verify/:productId" element={<VerificationPage />} /> */}
+            
+          </Routes>
         </div>
       </Router>
       <Toaster />
+      
     </Providers>
+    
   );
 }
 

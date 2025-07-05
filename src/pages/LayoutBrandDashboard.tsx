@@ -3,6 +3,7 @@ import Sidebar from "./Brand/Sidebar";
 import Header from "@/components/Layout/Header";
 import LoginCard from "@/components/Register/login-card";
 import { useSignerStatus } from "@account-kit/react";
+import Navbar from "@/components/Layout/Navbar";
 
 const BrandLayout = () => {
   const signerStatus = useSignerStatus();
@@ -10,6 +11,7 @@ const BrandLayout = () => {
   if (!signerStatus.isConnected) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
+        <Navbar/>
         <LoginCard cardDescription="Login to continue" />
       </div>
     );

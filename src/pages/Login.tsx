@@ -5,6 +5,7 @@ import { useSignerStatus } from "@account-kit/react";
 import FormRegister from '@/components/Register/FormRegister';
 import RegisterCard from '@/components/Register/login-card';
 import Navbar from '@/components/Layout/Navbar';
+import HasLogin from './hasLogin';
 
 const Login: React.FC = () => {
   const { isConnected } = useSignerStatus();
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
         {/* Logika yang sudah ada: menampilkan komponen berdasarkan status koneksi */}
         {isConnected ?
         //  <FormRegister />
-             <RegisterCard />
+            <HasLogin/>
           : <RegisterCard />}
 
       </div>
