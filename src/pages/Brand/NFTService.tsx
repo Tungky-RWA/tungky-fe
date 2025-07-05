@@ -24,6 +24,7 @@ import { useSmartAccountClient } from "@account-kit/react";
 import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
 import { useOutletContext } from "react-router-dom";
 import CardNFT from "@/components/Layout/CardNFT";
+import BrandReviewDialog from "@/components/Dialogs/BrandReviewDialog";
 
 const NFTService = () => {
   const data = useOutletContext();
@@ -484,7 +485,6 @@ const NFTService = () => {
                 </div>
 
                 <div className="space-y-3">
-                  ={/* <CardNFT dataNft={data} /> */}
                   {attributes.map((attribute, index) => (
                     <div key={index} className="flex gap-2 items-center">
                       <div className="flex-1">
@@ -561,13 +561,15 @@ const NFTService = () => {
             </div>
 
             <div className="space-y-4">
-              {data?.items?.map((item: any, index: number) => (
+              {data?.items?.map((nftData: any, index: number) => (
                 <CardNFT
                   key={index}
-                  tokenId={item.tokenId}
-                  contractAddress={item.NftContractAddress}
+                  data={nftData}
+                  // tokenId={nftData.tokenId}
+                  // contractAddress={nftData.NftContractAddress}
                 />
               ))}
+              {/* <>
               {nftProducts.map((nft) => (
                 <div
                   key={nft.id}
@@ -607,10 +609,12 @@ const NFTService = () => {
                           {nft.status}
                         </span>
                       </div>
-                      <ButtonCustom variant="outline" size="sm">
-                        <Eye className="mr-2 h-3 w-3" />
-                        View Details
-                      </ButtonCustom>
+                      <BrandReviewDialog brandData={data}>
+                        <ButtonCustom variant="outline" size="sm">
+                          <Eye className="mr-2 h-3 w-3" />
+                          View Details
+                        </ButtonCustom>
+                      </BrandReviewDialog>
                     </div>
                   </div>
 
@@ -637,6 +641,7 @@ const NFTService = () => {
                   )}
                 </div>
               ))}
+              </> */}
             </div>
           </div>
         </CardCustom>

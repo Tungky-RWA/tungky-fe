@@ -85,8 +85,6 @@ export const useNFTsWithURIs = (nftArray: NFTItem[]) => {
   });
 
   // Menggabungkan hasil dengan status loading/error
-
-  //@ts-ignore
   const nftsWithURIs: NFTWithURI[] = nftArray.map((nft, index) => {
     const query = queries[index];
     return {

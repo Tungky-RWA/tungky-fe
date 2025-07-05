@@ -7,7 +7,12 @@ const fetchBrandNFTS = async () => {
     body: JSON.stringify({
       query: `
         query MyQuery {
-          nfts(orderDirection: "desc", orderBy: "blockTimestamp") {
+          nfts(
+            orderDirection: "desc"
+            orderBy: "blockTimestamp"
+            where: {status: premint}
+          ) {
+            totalCount
             items {
               NftContractAddress
               blockTimestamp
@@ -20,7 +25,6 @@ const fetchBrandNFTS = async () => {
               tokenId
               transactionHash
             }
-            totalCount
           }
         }
       `,
