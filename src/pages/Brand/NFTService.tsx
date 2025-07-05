@@ -618,7 +618,6 @@ const NFTService = () => {
                     </div>
                   </div>
 
-                  {/* Attributes Display */}
                   {nft.attributes && nft.attributes.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-border/30">
                       <div className="flex items-center gap-2 mb-2">
