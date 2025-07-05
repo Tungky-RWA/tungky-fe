@@ -6,14 +6,13 @@ import FormRegister from '@/components/Register/FormRegister';
 import RegisterCard from '@/components/Register/login-card';
 import Navbar from '@/components/Layout/Navbar';
 
-const Register: React.FC = () => {
+const Login: React.FC = () => {
   const { isConnected } = useSignerStatus();
 
   return (
     // 1. Kontainer utama dibuat relatif untuk menampung video yang posisinya absolut
-
     <div className="relative w-full min-h-screen overflow-hidden">
-      <Navbar/>
+        <Navbar/>
       
       {/* 2. Elemen video untuk latar belakang */}
       <video
@@ -32,11 +31,14 @@ const Register: React.FC = () => {
       <div className="relative flex items-center justify-center min-h-screen z-20 p-4">
         
         {/* Logika yang sudah ada: menampilkan komponen berdasarkan status koneksi */}
-        {isConnected ? <FormRegister /> : <RegisterCard />}
+        {isConnected ?
+        //  <FormRegister />
+             <RegisterCard />
+          : <RegisterCard />}
 
       </div>
     </div>
   );
 };
 
-export default Register;
+export default Login;
