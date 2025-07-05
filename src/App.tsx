@@ -68,6 +68,10 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />
           <Route path="/verify/" element={<VerifyProduct />} />
+          <Route path="/test" element={<div className="flex flex-col justify-center items-center">
+            <h2 className="font-bold text-[224px] blockchain-gradient italic">Tungky</h2>
+            <p className="text-[82px] text-muted-foreground mb-[-10px]">Create RWA Easily</p>
+          </div>} />
           {/* <Route path="/verify/:productId" element={<VerificationPage />} /> */}
         </Routes>
         </div>

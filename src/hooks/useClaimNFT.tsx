@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import {
   useSmartAccountClient,
   useSendUserOperation,
-  useSignerStatus,
 } from "@account-kit/react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { encodeFunctionData, type Address } from "viem";
@@ -33,22 +32,75 @@ export interface useVerificationParams {
   client: any
 }
 
-export const useVerification = ({ tokenId, contractAddress, client } : useVerificationParams) => {
+// const infoMinted = await client.readContract({
+//         address: contractAddress,
+//         abi: NFTBRAND_ABI,
+//         functionName: "tokenURI",
+//         args: [tokenId],
+//       });
+
+      // const ownerOf = await client.readContract({
+      //   address: contractAddress,
+      //   abi: NFTBRAND_ABI,
+      //   functionName: "ownerOf",
+      //   args: [tokenId],
+      // });
+
+export const useOwner = ({ tokenId, contractAddress } : useVerificationParams) => {
+  const { client } = useSmartAccountClient({});
   const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    isSuccess,
+    data, isLoading, isError, refetch
   } = useQuery<
-    Address | undefined,
+    string | undefined,
     Error,
-    Address | undefined,
+    string | undefined,
     readonly unknown[]
   >({
-    queryKey: ["ownerOf", contractAddress, client?.chain?.id, tokenId],
+    queryKey: ["ownerOf", contractAddress, tokenId],
     queryFn: async () => {
-      console.log(client, 'woi')
+      if (!client) {
+        throw new Error("Smart account client not ready");
+      }
+      if (!contractAddress) {
+        throw new Error("Contract Address is not defined for queryFn");
+      }
+      if (!tokenId) {
+        throw new Error("tokenId is not defined for queryFn.");
+      }
+      
+
+      const infoOwner = await client.readContract({
+        address: contractAddress,
+        abi: NFTBRAND_ABI,
+        functionName: "ownerOf",
+        args: [tokenId],
+      });
+
+      return infoOwner
+    },
+    
+    enabled: !!client && !!contractAddress && !!tokenId,
+  });
+
+  
+
+  return {
+    data, isLoading, isError, refetch
+  }
+}
+
+export const useInfoMinted = ({ tokenId, contractAddress } : useVerificationParams) => {
+  const { client } = useSmartAccountClient({});
+  const {
+    data, isLoading, isError, refetch
+  } = useQuery<
+    string | undefined,
+    Error,
+    string | undefined,
+    readonly unknown[]
+  >({
+    queryKey: ["infoMinted", contractAddress, tokenId],
+    queryFn: async () => {
       if (!client) {
         throw new Error("Smart account client not ready");
       }
@@ -59,25 +111,29 @@ export const useVerification = ({ tokenId, contractAddress, client } : useVerifi
         throw new Error("tokenId is not defined for queryFn.");
       }
 
-      const info = await client.readContract({
+      const infoMinted = await client.readContract({
         address: contractAddress,
         abi: NFTBRAND_ABI,
-        functionName: "ownerOf",
+        functionName: "tokenURI",
         args: [tokenId],
       });
 
-      return info;
+      return infoMinted
     },
     
     enabled: !!client && !!contractAddress && !!tokenId,
   });
+
   
+
+  return {
+    data, isLoading, isError, refetch
+  }
+}
+
+export const useVerification = ({ tokenId, contractAddress, client } : useVerificationParams) => {
   const {
-    data: dataPreMint,
-    isLoading: isLoadingPremint,
-    error: errorPremint,
-    refetch: refetchPremint,
-    isSuccess: isSuccessPremint,
+    data, isLoading, isError, refetch
   } = useQuery<
     string | undefined,
     Error,
@@ -105,21 +161,7 @@ export const useVerification = ({ tokenId, contractAddress, client } : useVerifi
         args: [_tokenId],
       });
 
-      console.log('woi premints', info)
-      
-      if (info) {
-        return info;
-      }
-      
-      const infoMinted = await client.readContract({
-        address: contractAddress,
-        abi: NFTBRAND_ABI,
-        functionName: "tokenURI",
-        args: [tokenId],
-      });
-      console.log('woi infoMinted', infoMinted)
-      
-      return infoMinted
+      return info
     },
     
     enabled: !!client && !!contractAddress && !!tokenId,
@@ -128,8 +170,7 @@ export const useVerification = ({ tokenId, contractAddress, client } : useVerifi
   
 
   return {
-    data, isLoading, error, refetch, isSuccess, isSuccessPremint,
-    dataPreMint, isLoadingPremint, errorPremint, refetchPremint
+    data, isLoading, isError, refetch
   }
 }
 
@@ -226,7 +267,6 @@ export const useClaimNFT = ({ onSuccess, contractAddress, ownerAddress }: useCla
     claimNFT,
     mutation,
     updatePreMint,
-    // preMint,
     transactionUrl,
     error,
   };

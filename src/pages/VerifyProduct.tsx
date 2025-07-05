@@ -4,7 +4,7 @@ import Card from '../components/UI/CardCustom';
 import Navbar from '@/components/Layout/Navbar';
 import LoginCard from '@/components/Register/login-card';
 import LoadingPage from '@/components/UI/loadingPage';
-import { useVerification, useClaimNFT } from '@/hooks/useClaimNFT';
+import { useVerification, useClaimNFT, useInfoMinted, useOwner } from '@/hooks/useClaimNFT';
 
 import { useSignerStatus, useSmartAccountClient, useLogout, useUser } from '@account-kit/react';
 import ButtonCustom from '../components/UI/ButtonCustom';
@@ -17,58 +17,28 @@ const VerifyProduct: React.FC = () => {
   const { client } = useSmartAccountClient({})
   
   const signerStatus = useSignerStatus();
-  const { data: ownerNFT, isLoading: isLoadingVerif, dataPreMint, isLoadingPremint, isSuccess, isSuccessPremint, error: errorOwner, errorPremint } = useVerification({
+  // const { data: ownerNFT, isLoading: isLoadingVerif, dataPreMint, refetch, isLoadingPremint, isSuccess, isSuccessPremint, error: errorOwner, errorPremint, isStale } = useVerification({
+  //   tokenId,
+  //   contractAddress: contract,
+  //   client
+  // })
+  const { data } = useVerification({
     tokenId,
     contractAddress: contract,
     client
   })
+  const { data: dataInfoMinted } = useInfoMinted({
+    tokenId,
+    contractAddress: contract,
+    client
+  })
+  console.log(data, 'woi anjay')
 
   // const [verificationResult, setVerificationResult] = useState<any>(null);
   // const [isLoading, setIsLoading] = useState(true);
   // const [isLoadingGetLocation, setIsLoadingGetLocation] = useState(true);
   // const [isLocationPermisionGranted, setIsLocationPermissionGranted] = useState(false);
   // const [location, setLocation] = useState({lat: 0, lng: 0});
-  
-
-  // useEffect(() => {
-  //   // logout()
-  //   setIsLoadingGetLocation(true)
-  //   if(!navigator.geolocation){
-  //       alert("location not support")
-  //   }
-    
-  //   // Simulate product verification API call
-  //   navigator.geolocation.getCurrentPosition((position) => {
-  //     const { latitude, longitude } = position.coords;
-  //     console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-
-  //     setLocation({ lat: latitude, lng: longitude });
-
-  //     setIsLocationPermissionGranted(true);
-       
-  //     setIsLoadingGetLocation(false);
-  //   }, (err) => {
-  //     if(err.code == 1){
-  //       setIsLocationPermissionGranted(false);
-  //     }
-       
-  //    setIsLoadingGetLocation(false);
-  //   })
-   
-
-  //   const verifyProduct = async () => {
-  //     setIsLoading(true);
-      
-  //     // Simulate API delay
-  //     await new Promise(resolve => setTimeout(resolve, 4000));
-      
-  //     // 
-
-
-  //   };
-
-  //   verifyProduct();
-  // }, [productId]);
 
   if (signerStatus.isDisconnected) {
     return (
@@ -78,47 +48,12 @@ const VerifyProduct: React.FC = () => {
     )
   }
 
-  // if(isLoadingGetLocation){
-  //   return (
-  //     <div className="min-h-screen bg-gray-900 pt-16">
-  //       {/* <Header showNavigation /> */}
-  //       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-  //         <Card className="text-center">
-  //           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-  //           <h2 className="text-xl font-semibold text-white mb-2">Need Location Permision...</h2>
-  //           <p className="text-white/60">Turn On Your Browser location</p>
-  //         </Card>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-  console.log(isLoadingPremint, isLoadingVerif, isSuccess, isSuccess, errorOwner, errorPremint)
-  if (isLoadingVerif || isLoadingPremint || (!isSuccess && !isSuccessPremint && !errorOwner && !errorPremint)) {
+
+  if (!data && !dataInfoMinted) {
     return (
       <LoadingPage message="Verifying the product..." />
     )
   }
-
-
-
-  // if(!isLocationPermisionGranted){
-  //   return (
-  //     <div className="min-h-screen bg-gray-900 pt-16">
-  //     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-  //       <div className="text-center bg-gray-800 p-8 rounded-lg shadow-lg">
-  //         <h2 className="text-xl font-semibold text-white mb-4">You Need to Allow Location Browser Permission</h2>
-  //         <p className="text-white/60 mb-6">Please turn on your location in your browser and hit the refresh button.</p>
-  //         <button
-  //           onClick={() => window.location.reload()}
-  //           className="px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition duration-300"
-  //         >
-  //           Refresh
-  //         </button>
-  //       </div>
-  //     </div>
-  //   </div>
-  //   )
-  // }
 
   return (
     <div className="min-h-screen bg-gray-900 pt-16">
@@ -133,8 +68,8 @@ const VerifyProduct: React.FC = () => {
           <p className="text-primary font-bold break-words">{tokenId}</p>
         </div>
 
-        {(dataPreMint || ownerNFT) ? (
-          <AuthenticProduct ownerNFT={ownerNFT} />
+        {(data || dataInfoMinted) ? (
+          <AuthenticProduct />
         ) : (
           <InvalidProduct />
         )}
@@ -143,7 +78,7 @@ const VerifyProduct: React.FC = () => {
   );
 };
 
-const AuthenticProduct: React.FC<{ result: any, client: any, ownerNFT: `0x${string}` }> = ({ result, ownerNFT }) => {
+const AuthenticProduct: React.FC<{ result: any, client: any, dataPremint: string }> = ({ result }) => {
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -155,35 +90,61 @@ const AuthenticProduct: React.FC<{ result: any, client: any, ownerNFT: `0x${stri
   const user = useUser();
   const { claimNFT } = useClaimNFT({
     onSuccess: () => {
-      refetch();
+      refetchMinted();
       refetchPremint();
       toast.dismiss();
       toast.success('Claim NFT success');
     }
   });
-  const { dataPreMint, errorPremint, isLoadingPremint, refetch, refetchPremint } = useVerification({
+  const { data: dataPremint, isLoading: isLoadingPremint, isError: isErrorPremint, refetch: refetchPremint } = useVerification({
     tokenId: tokenId,
     contractAddress: contract,
     client
   })
+  const { data: dataOwner, isLoading: isLoadingOwner, isError: isErrorOwner, refetch: refetchOwner } = useOwner({
+    tokenId: tokenId,
+    contractAddress: contract,
+    client
+  })
+  const { data: dataMinted, isLoading: isLoadingMinted, isError: isErrorMinted, refetch: refetchMinted } = useInfoMinted({
+    tokenId: tokenId,
+    contractAddress: contract,
+    client
+  })
+  
   useEffect(() => {
     const fetchMetadata = async () => {
-      try {
-        const response = await fetch('https://'+dataPreMint);
-        if (!response.ok) {
-          throw new Error('Gagal mengambil data dari network.');
+      if (dataPremint) {
+        try {
+          const response = await fetch(dataPremint);
+          if (!response.ok) {
+            throw new Error('Gagal mengambil data dari network.');
+          }
+          const data = await response.json();
+          setMetadata(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
         }
-        const data = await response.json();
-        setMetadata(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } else {
+        try {
+          const response = await fetch(dataMinted);
+          if (!response.ok) {
+            throw new Error('Gagal mengambil data dari network.');
+          }
+          const data = await response.json();
+          setMetadata(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
     fetchMetadata();
-  }, [dataPreMint]);
+  }, [dataPremint, dataMinted]);
 
   return (
     <div className="space-y-8">
@@ -221,13 +182,13 @@ const AuthenticProduct: React.FC<{ result: any, client: any, ownerNFT: `0x${stri
               <label className="text-white/60 text-sm font-medium">Brand Name</label>
               <p className="text-white font-semibold text-lg">{metadata?.nameBrand}</p>
             </div>
-            {ownerNFT ?
+            {dataOwner ?
             <>
               <div>
               <label className="text-white/60 text-sm font-medium">Owner</label>
               <div className="flex items-center space-x-2">
                 <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1">
-                  {ownerNFT ? ownerNFT : ""}
+                  {dataOwner ? dataOwner : ""}
                 </p>
                 {/* Placeholder for Button component with ExternalLink icon */}
                 <button className="px-3 py-1 bg-gray-700 text-white rounded text-sm flex items-center space-x-1">
@@ -239,7 +200,7 @@ const AuthenticProduct: React.FC<{ result: any, client: any, ownerNFT: `0x${stri
               </div>
               </div>
               <div className="mt-4">
-                {client?.account?.address === ownerNFT ? <>
+                {client?.account?.address === dataOwner ? <>
                 <p className="font-semibold text-xl mb-2 blockchain-gradient">You are the owner of this NFT Product</p>
                 </>
                 : (
@@ -255,7 +216,7 @@ const AuthenticProduct: React.FC<{ result: any, client: any, ownerNFT: `0x${stri
               </div>
             </>
              : null}
-            {!ownerNFT ? <div className="mt-4">
+            {!dataOwner ? <div className="mt-4">
               <p className="text-white font-semibold text-lg mb-2">There is no owner of this product</p>
               <p className="text-white/60 text-sm font-medium mb-2">You can claim NFT of this product, but please make sure you want to mint to this account</p>
               {/* <p className="text-white font-semibold text-lg mb-1">Your Account Information</p> */}
@@ -264,7 +225,7 @@ const AuthenticProduct: React.FC<{ result: any, client: any, ownerNFT: `0x${stri
               </p>
               <div className="flex items-center space-x-2">
                 <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1">
-                  {result?.walletAddress}
+                  {client?.account?.address}
                 </p>
                 {/* Placeholder for Button component with ExternalLink icon */}
                 <button className="px-3 py-1 bg-gray-700 text-white rounded text-sm flex items-center space-x-1">
