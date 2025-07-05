@@ -64,10 +64,6 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleLogout = () => {
-    console.log("Logging out...");
-  };
-
   return (
     <aside className="w-64 h-screen crypto-glass border-r border-white/10 flex flex-col top-0 backdrop-blur-xl">
       <div className="p-6">

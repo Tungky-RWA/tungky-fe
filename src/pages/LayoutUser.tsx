@@ -5,6 +5,7 @@ import { useSignerStatus, useSmartAccountClient  } from "@account-kit/react";
 import LoginCard from '@/components/Register/login-card';
 import { useReadHasRole } from '@/hooks/useHasRole';
 import LoadingPage from '@/components/UI/loadingPage';
+import Navbar from '@/components/Layout/Navbar';
 
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
