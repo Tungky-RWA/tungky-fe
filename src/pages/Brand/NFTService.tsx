@@ -6,7 +6,6 @@ import { Input } from '@/components/UI/input';
 import { Textarea } from '@/components/UI/textarea';
 import { Label } from '@/components/UI/label';
 import { hashSerial } from '@/utils/hashSerial';
-import { PinataSDK } from 'pinata'
 import { usePreMint } from '@/hooks/usePreMint';
 import { useReadBrandData } from '@/hooks/useReadRegisteredBrand';
 import { FACTORY_ADDRESS } from '@/lib/constants';
@@ -22,6 +21,8 @@ const NFTService = () => {
     description: '',
     price: ''
   });
+
+  console.log(import.meta.env.VITE_PINATA_GATEWAY, "gateway");
 
   const [attributes, setAttributes] = useState([
     { trait_type: '', value: '' }
