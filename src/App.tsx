@@ -68,7 +68,7 @@ function App() {
           {/* </Route> */}
           <Route path="/register" element={<Register />} />
           <Route path="/buyer" element={<BuyerInterface />} />
-          <Route path="/verify/:productId" element={<VerifyProduct />} />
+          <Route path="/verify/" element={<VerifyProduct />} />
           {/* <Route path="/verify/:productId" element={<VerificationPage />} /> */}
         </Routes>
         </div>
