@@ -11,11 +11,28 @@ import ButtonCustom from "@/components/UI/ButtonCustom";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import LoadingPage from "@/components/UI/loadingPage";
+import { useReadbrandIds } from "@/hooks/useReadBrandIds";
+import { useReadbrandMetadata } from "@/hooks/useGetBrandUri";
+import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
 
 const BrandLayout = () => {
   const { isLoadingClient } = useSmartAccountClient({});
   const { data, isLoading } = useBrandRole();
   const signerStatus = useSignerStatus();
+  const { client } = useSmartAccountClient({});
+
+  const { brandIds } = useReadbrandIds({
+    brandAddress: client?.account?.address,
+  });
+
+  const { metaData } = useReadbrandMetadata({
+    brandTokenId: String(brandIds),
+  });
+
+  console.log(metaData, "metadata");
+
+  const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
+  console.log(data, "data nft");
 
   if (isLoading || (isLoadingClient && !signerStatus.isDisconnected)) {
     return <LoadingPage />;
@@ -24,7 +41,7 @@ const BrandLayout = () => {
   if (!signerStatus.isConnected) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
-        <Navbar/>
+        <Navbar />
         <LoginCard cardDescription="Login to continue" />
       </div>
     );
@@ -67,7 +84,7 @@ const BrandLayout = () => {
     <div className="min-h-screen bg-blockchain-gradient flex w-full">
       {/* Fixed Sidebar */}
       <div className="w-64 fixed top-0 left-0 h-screen z-50">
-        <Sidebar />
+        <Sidebar metadata={metaData} />
       </div>
 
       {/* Main Content with left padding to make space for sidebar */}
@@ -75,7 +92,7 @@ const BrandLayout = () => {
         <Header userRole="brand" />
         <main className="flex-1 p-8 min-h-screen">
           <div className="max-w-7xl mx-auto">
-            <Outlet />
+            <Outlet context={metaData} />
           </div>
         </main>
       </div>

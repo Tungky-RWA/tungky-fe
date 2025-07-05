@@ -32,10 +32,7 @@ const NFTService = () => {
     price: "",
   });
 
-  console.log(import.meta.env.VITE_PINATA_GATEWAY, "gateway");
-
   const [attributes, setAttributes] = useState([{ trait_type: "", value: "" }]);
-
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -83,12 +80,10 @@ const NFTService = () => {
     ownerAddress: client?.account?.address,
   });
 
-  console.log(brandInfo, "ini brand info");
-
   const { preMint, isPreMint, transactionUrl } = usePreMint({
     onSuccess: () => {
       toast.dismiss();
-      toast.success("Registration successful! Your brand is under review.");
+      toast.success("Premint successful! Your Product is ready to claim.");
     },
     onError: (error) => {
       toast.dismiss();
@@ -235,6 +230,8 @@ const NFTService = () => {
     }
   };
 
+  // console.log(window.location.origin.toString());
+
   const handleMintNFT = async () => {
     if (!formData.productName || !formData.description) {
       alert("Please fill in all required fields");
@@ -248,6 +245,7 @@ const NFTService = () => {
 
       // Upload image to IPFS if present
       if (imageFile) {
+        toast.dismiss();
         toast.loading("Uploading image to IPFS...");
         imageHash = await uploadImageToPinata(imageFile);
         console.log("Image uploaded to IPFS:", imageHash);
@@ -259,7 +257,7 @@ const NFTService = () => {
         serialNumber: formData.serialNumber,
         description: formData.description,
         image: imageHash
-          ? `${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
+          ? `https://${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
               import.meta.env.VITE_PINATA_GATWAYTOKEN
             }`
           : null,
@@ -272,10 +270,13 @@ const NFTService = () => {
       };
 
       // Upload metadata to IPFS
+      toast.dismiss();
       toast.loading("Uploading metadata to IPFS...");
       const metadataHash = await uploadMetadataToPinata(metadata);
       console.log("Metadata uploaded to IPFS:", metadataHash);
-      const linkMetadata = `${pinataGateway}/ipfs/${metadataHash}`;
+      const linkMetadata = `https://${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
+        import.meta.env.VITE_PINATA_GATWAYTOKEN
+      }`;
 
       // Mint NFT
       preMint(
@@ -289,8 +290,14 @@ const NFTService = () => {
         imageHash,
         metadataHash,
         serialHash: hashSerial(formData.serialNumber),
-        imageUrl: imageHash ? `${pinataGateway}/ipfs/${imageHash}` : null,
-        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}`,
+        imageUrl: imageHash
+          ? `${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
+              import.meta.env.VITE_PINATA_GATWAYTOKEN
+            }`
+          : null,
+        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
+          import.meta.env.VITE_PINATA_GATWAYTOKEN
+        }`,
         metadata,
       };
 
@@ -310,7 +317,8 @@ const NFTService = () => {
         setAttributes([{ trait_type: "", value: "" }]);
         setImageFile(null);
         setImagePreview(null);
-        toast.dismiss();
+        // refetch();
+        // toast.dismiss();
       }, 2000);
     } catch (error: any) {
       console.error("Error minting NFT:", error);
