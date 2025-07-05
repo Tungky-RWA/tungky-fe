@@ -21,6 +21,8 @@ const BrandLayout = () => {
     userAddress: client?.account?.address || "0x0"
   })
 
+  console.log(isLoadingClient, isLoadingClient, signerStatus)
+
   if (isLoadingHasRole || (isLoadingClient && !signerStatus.isDisconnected)) {
     return <LoadingPage />;
   }
