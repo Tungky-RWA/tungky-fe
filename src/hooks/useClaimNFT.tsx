@@ -234,12 +234,8 @@ export const useClaimNFT = ({
   });
 
   const mutation = useMutation({
-    mutationFn: (body: {
-      tokenId: any;
-      to: `0x${string}`;
-      contractAddress: `0x${string}`;
-    }) => {
-      return axios.post("http://blockdev.aone.my.id:42070/api/claim-nft", body);
+    mutationFn: (body: {tokenId: any, to: `0x${string}`, contractAddress: `0x${string}`}) => {
+      return axios.post('http://localhost:42069/api/claim-nft', body)
     },
     onMutate: () => {
       toast.loading("claiming nft...");

@@ -167,7 +167,7 @@ const AuthenticProduct: React.FC<{
 
     fetchMetadata();
   }, [dataPremint, dataMinted]);
-
+  console.log(metadata, 'woi')
   return (
     <div className="space-y-8">
       {/* Verification Status */}

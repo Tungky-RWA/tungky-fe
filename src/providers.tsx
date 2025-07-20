@@ -12,25 +12,25 @@ import type {
 
 // Konfigurasi Chain Monad Testnet
 const monadTestnet: Chain = {
-  id: 10143,
-  name: 'Monad Testnet',
+  id: 534351,
+  name: 'Scroll Sepolia',
   nativeCurrency: {
     decimals: 18,
-    name: 'MON',
-    symbol: 'MON',
+    name: 'SCR',
+    symbol: 'SCR',
   },
   rpcUrls: {
     default: {
-      http: ['https://testnet-rpc.monad.xyz/'],
+      http: ['https://scroll-sepolia.g.alchemy.com/v2/HNCmzdMfqwxh_eIJAK9xKUALn1uFE2uh'],
     },
     public: {
-      http: ['https://testnet-rpc.monad.xyz/'],
+      http: ['https://scroll-sepolia.g.alchemy.com/v2/HNCmzdMfqwxh_eIJAK9xKUALn1uFE2uh'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'MonadScan',
-      url: 'https://testnet.monadexplorer.com',
+      name: 'Scrollscan',
+      url: 'https://sepolia.scrollscan.com/',
     },
   },
   testnet: true,
