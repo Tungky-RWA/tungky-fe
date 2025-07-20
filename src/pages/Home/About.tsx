@@ -75,10 +75,10 @@ const About = () => {
   return (
     <section id="about" className="relative min-h-screen w-full bg-[#101418] pt-36 pb-0 overflow-hidden">
       <BackgroundGrid />
-      <div className="relative z-10">
+      {/* <div className="relative z-10"> */}
         <HeroSection />
-        <AnimatedRevealSection />
-      </div>
+        {/* <AnimatedRevealSection /> */}
+      {/* </div> */}
     </section>
   );
 };
