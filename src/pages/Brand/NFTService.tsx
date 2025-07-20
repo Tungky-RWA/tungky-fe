@@ -24,7 +24,6 @@ import { useSmartAccountClient } from "@account-kit/react";
 import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
 import { useOutletContext } from "react-router-dom";
 import CardNFT from "@/components/Layout/CardNFT";
-import BrandReviewDialog from "@/components/Dialogs/BrandReviewDialog";
 
 const NFTService = () => {
   const data = useOutletContext();
@@ -562,12 +561,16 @@ const NFTService = () => {
 
             <div className="space-y-4">
               {data?.items?.map((nftData: any, index: number) => (
-                <CardNFT
-                  key={index}
-                  data={nftData}
-                  // tokenId={nftData.tokenId}
-                  // contractAddress={nftData.NftContractAddress}
-                />
+                <>
+                  {nftData?.status == "premint" && (
+                    <CardNFT
+                      key={index}
+                      data={nftData}
+                      // tokenId={nftData.tokenId}
+                      // contractAddress={nftData.NftContractAddress}
+                    />
+                  )}
+                </>
               ))}
               {/* <>
               {nftProducts.map((nft) => (

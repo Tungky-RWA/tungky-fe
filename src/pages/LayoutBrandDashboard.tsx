@@ -19,6 +19,7 @@ import LoadingPage from "@/components/UI/loadingPage";
 import { useReadbrandIds } from "@/hooks/useReadBrandIds";
 import { useReadbrandMetadata } from "@/hooks/useGetBrandUri";
 import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
+import { useEffect } from "react";
 
 const BrandLayout = () => {
   const { isLoadingClient } = useSmartAccountClient({});
@@ -34,9 +35,15 @@ const BrandLayout = () => {
     brandTokenId: String(brandIds),
   });
 
-  // console.log(metaData, "metadata");
+  console.log(dataBrandRole, "metadatatest");
 
-  const { data, refetch, isLoading, isFetching, error } = useBrandNFTS();
+  const { data, refetch } = useBrandNFTS(dataBrandRole);
+
+  console.log(data, "data");
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   if (isLoadingBrandRole || (isLoadingClient && !signerStatus.isDisconnected)) {
     return <LoadingPage />;
@@ -50,7 +57,7 @@ const BrandLayout = () => {
       </div>
     );
   }
-
+  //@ts-ignore
   if (dataBrandRole?.includes("0x000000")) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">

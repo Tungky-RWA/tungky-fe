@@ -51,7 +51,7 @@ function CardNFT({ data }: any) {
       const res = await fetch(link);
       const json = await res.json();
       setNftdata(json);
-      console.log(json); // Ini adalah JSON metadata-nya
+      // console.log(json); // Ini adalah JSON metadata-nya
       return json;
     } catch (error) {
       console.error("Gagal fetch JSON dari Pinata:", error);
@@ -62,8 +62,8 @@ function CardNFT({ data }: any) {
     fetchPinataJson(dataInfoMinted);
   }, [data]);
 
-  console.log(nftdata, "nftdata");
-  console.log(data, "dataInfo");
+  // console.log(nftdata, "nftdata");
+  // console.log(data, "dataInfo");
 
   if (!nftdata) {
     return <></>;
