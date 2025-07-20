@@ -1,18 +1,17 @@
 import { createConfig } from "@account-kit/react";
 import { QueryClient } from "@tanstack/react-query";
-import { alchemy, monadTestnet } from "@account-kit/infra";
-
+import { alchemy, baseSepolia } from "@account-kit/infra";
 export const config = createConfig(
   {
     // signerConnection: signer,
-    transport: alchemy({ apiKey: "WsqtzV_qpbzbcea1SWe3Q" }), // Replace with your API key
-    chain: monadTestnet,
+    transport: alchemy({ apiKey: "HNCmzdMfqwxh_eIJAK9xKUALn1uFE2uh" }), // Replace with your API key
+    chain: baseSepolia,
     // ssr: true,
     enablePopupOauth: true,
-    policyId: "0b6f281e-1d97-41bc-924c-70f42630fd22",
+    policyId: "b15b8944-958b-452a-8489-ee01ff09f92e",
     sessionConfig: {
       expirationTimeMs: 86400000,
-      sessionKey: "WsqtzV_qpbzbcea1SWe3Q"
+      sessionKey: "HNCmzdMfqwxh_eIJAK9xKUALn1uFE2uh"
     }
   },
   {

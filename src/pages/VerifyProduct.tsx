@@ -145,7 +145,7 @@ const AuthenticProduct: React.FC<{ result: any, client: any, dataPremint: string
 
     fetchMetadata();
   }, [dataPremint, dataMinted]);
-
+  console.log(metadata, 'woi')
   return (
     <div className="space-y-8">
       {/* Verification Status */}
@@ -254,7 +254,7 @@ const AuthenticProduct: React.FC<{ result: any, client: any, dataPremint: string
           </h3>
           <div className="space-y-4">
             <div>
-              <img src={`https://${metadata?.image}`} />
+              <img src={`${metadata?.image}`} />
             </div>
             <div>
               <label className="text-white/60 text-sm font-medium">Product Name</label>
