@@ -17,8 +17,6 @@ import MarketplaceService from "./pages/Brand/MarketplaveService";
 import NFCService from "./pages/Brand/NFCService";
 import QRService from "./pages/Brand/QRService";
 
-import RequireAuth from "./hooks/requireBrand.tsx";
-
 import AdminDashboard from "./pages/Admin/AdminDashboard.tsx";
 import AdminBrand from "./pages/Admin/Brand.tsx";
 
@@ -29,17 +27,26 @@ import { Toaster } from "react-hot-toast";
 
 import VerificationPage from "./pages/Verification";
 import RequireAdmin from "./hooks/requireAdmin.tsx";
-import RequireBrand from "./hooks/requireBrand.tsx";
+// import RequireBrand from "./hooks/requireBrand.tsx";
 import RegisterCard from "./components/Register/login-card.tsx";
 import Login from "./pages/Login.tsx";
-import BuyyerPage from "./pages/BuyyerPage.tsx";
+// import BuyyerPage from "./pages/BuyyerPage.tsx";
 import UserLayout from "./pages/LayoutUser.tsx";
 import UserDashboard from "./pages/User/UserDashboard.tsx";
 import MinePage from "./pages/User/MinePage.tsx";
 import MarketplaceHomepage from "./pages/MarketPlace/MarketPlaceHomePage.tsx";
+import { useAutoConnect } from "thirdweb/react";
+import { client } from "./config";
 
 function App() {
   const initialState = cookieToInitialState(config);
+  // const { data: autoConnected, isLoading } = useAutoConnect({
+  //   client,
+  //   accountAbstraction,
+  //   wallets,
+  //   onConnect,
+  //   timeout,
+  // });
 
   return (
     <Providers initialState={initialState}>
@@ -56,17 +63,17 @@ function App() {
               <Route path="nft" element={<NFTService />} />
               <Route path="token" element={<TokenService />} />
               <Route path="product" element={<ProductService />} />
-              {/* <Route path="marketplace" element={<MarketplaceService />} /> */}
+              <Route path="marketplace" element={<MarketplaceService />} />
               <Route path="nfc" element={<NFCService />} />
               <Route path="qr" element={<QRService />} />
-              {/* <Route path="buyer" element={<BuyyerPage/>} /> */}
-              {/* <Route path="help" element={<HelpService />} /> */}
+              {/* <Route path="buyer" element={<BuyyerPage/>} />
+              <Route path="help" element={<HelpService />} /> */}
             </Route>
             {/* </Route> */}
             {/* <Route element={<RequireAdmin />}> */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
-              <Route path="analytics" element={<Analytics />} />
+              {/* <Route path="analytics" element={<Analytics />} /> */}
               <Route path="brand" element={<AdminBrand />} />
               {/* <Route path="help" element={<HelpService />} /> */}
             </Route>

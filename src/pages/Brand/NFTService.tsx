@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Plus,
-  Eye,
-  Circle,
   Gem,
   Zap,
   X,
@@ -17,83 +15,55 @@ import { Textarea } from "@/components/UI/textarea";
 import { Label } from "@/components/UI/label";
 import { hashSerial } from "@/utils/hashSerial";
 import { usePreMint } from "@/hooks/usePreMint";
-import { useReadBrandData } from "@/hooks/useReadRegisteredBrand";
-import { FACTORY_ADDRESS } from "@/lib/constants";
+import { FACTORY_ABI, FACTORY_ADDRESS, MASTER_ABI, MASTER_ADDRESS, NFTBRAND_ABI } from "@/lib/constants";
 import toast from "react-hot-toast";
-import { useSmartAccountClient } from "@account-kit/react";
 import { pinataApiKey, pinataSecretKey, pinataGateway } from "@/lib/constants";
 import { useOutletContext } from "react-router-dom";
 import CardNFT from "@/components/Layout/CardNFT";
+import { client } from "@/config";
+import { AccountAddress, useActiveAccount, useReadContract, useSendBatchTransaction  } from "thirdweb/react";
+import { defineChain, getContract, prepareContractCall } from "thirdweb";
+import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
+
+const contractFactory = getContract({
+  address: FACTORY_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: FACTORY_ABI
+});
 
 const NFTService = () => {
-  const data = useOutletContext();
-  const { client } = useSmartAccountClient({});
+  const activeAccount = useActiveAccount();
   const [formData, setFormData] = useState({
     serialNumber: "",
     productName: "",
     description: "",
     price: "",
   });
-
+  
   const [attributes, setAttributes] = useState([{ trait_type: "", value: "" }]);
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState<any>(null);
   const [imagePreview, setImagePreview] = useState(null);
-
-  const nftProducts = [
-    {
-      id: "1234",
-      name: "Premium Watch",
-      status: "Active",
-      wallet: "0x742...4c2a",
-      minted: "2024-01-15",
-      attributes: [
-        { trait_type: "Brand", value: "Luxury" },
-        { trait_type: "Material", value: "Gold" },
-        { trait_type: "Rarity", value: "Rare" },
-      ],
-    },
-    {
-      id: "5678",
-      name: "Luxury Bag",
-      status: "Pending",
-      wallet: "0x8f3...9d1b",
-      minted: "2024-01-14",
-      attributes: [
-        { trait_type: "Brand", value: "Designer" },
-        { trait_type: "Color", value: "Black" },
-        { trait_type: "Size", value: "Medium" },
-      ],
-    },
-    {
-      id: "9012",
-      name: "Designer Shoes",
-      status: "Active",
-      wallet: "0xa21...7e8f",
-      minted: "2024-01-13",
-      attributes: [
-        { trait_type: "Style", value: "Sneakers" },
-        { trait_type: "Size", value: "42" },
-        { trait_type: "Limited Edition", value: "Yes" },
-      ],
-    },
-  ];
-
-  const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
-    contractAddress: FACTORY_ADDRESS,
-    ownerAddress: client?.account?.address,
+  
+  const { data: brandInfo, isLoading: isLoadingBrandRole } = useReadContract({
+    contract: contractFactory,
+    method: "getBrandInfo",
+    params: [activeAccount?.address || ""],
   });
+  const { data, refetch } = useBrandNFTS(brandInfo?.nftContractAddress);
+  
+  const { mutateAsync: sendBatch, data: transactionResult, isSuccess, isError } = useSendBatchTransaction();
 
-  const { preMint, isPreMint, transactionUrl } = usePreMint({
-    onSuccess: () => {
+  useEffect(() => {
+    if (activeAccount) {
+      refetch()
+    }
+    if (isSuccess) {
       toast.dismiss();
       toast.success("Premint successful! Your Product is ready to claim.");
-    },
-    onError: (error) => {
-      toast.dismiss();
-      const message = error?.shortMessage ?? "An error occurred.";
-      toast.error(`Registration failed: ${message}`);
-    },
-  });
+      refetch()
+    }
+  }, [isSuccess, activeAccount])
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -105,9 +75,7 @@ const NFTService = () => {
   };
 
   // Upload metadata to Pinata IPFS
-  const uploadMetadataToPinata = async (metadata) => {
-    const data = JSON.stringify(metadata);
-
+  const uploadMetadataToPinata = async (metadata:any) => {
     const config = {
       method: "POST",
       headers: {
@@ -281,31 +249,22 @@ const NFTService = () => {
         import.meta.env.VITE_PINATA_GATWAYTOKEN
       }`;
 
+      const contractBrandNFT = getContract({
+        address: brandInfo?.nftContractAddress || "0x0",
+        chain: defineChain(4202),
+        client,
+        abi: NFTBRAND_ABI
+      })
+
       // Mint NFT
-      preMint(
-        String(hashSerial(formData.serialNumber)),
-        linkMetadata,
-        brandInfo?.nftContractAddress
-      );
+      const tx = prepareContractCall({
+        contract: contractBrandNFT,
+        method: 'preMint',
+        params: [hashSerial(formData.serialNumber), linkMetadata]
+      })
 
-      // Final result
-      const nftData = {
-        imageHash,
-        metadataHash,
-        serialHash: hashSerial(formData.serialNumber),
-        imageUrl: imageHash
-          ? `${pinataGateway}/ipfs/${imageHash}?pinataGatewayToken=${
-              import.meta.env.VITE_PINATA_GATWAYTOKEN
-            }`
-          : null,
-        metadataUrl: `${pinataGateway}/ipfs/${metadataHash}?pinataGatewayToken=${
-          import.meta.env.VITE_PINATA_GATWAYTOKEN
-        }`,
-        metadata,
-      };
+      await sendBatch([tx]);
 
-      console.log("NFT minted successfully:", nftData);
-      console.log(nftData.serialHash, "serial hash");
       toast.dismiss();
       toast.success("NFT minted successfully!");
 

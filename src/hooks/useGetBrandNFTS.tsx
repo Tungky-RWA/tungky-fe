@@ -37,6 +37,7 @@ const fetchBrandNFTS = async (contractBrand: any) => {
   });
 
   const response = await res.json();
+  console.log(response, 'woi')
   // console.log("GraphQL Response:", response?.data?.nfts); // 🔍 DEBUG
 
   if (response.errors) {

@@ -9,6 +9,7 @@ import { http } from 'viem';
 import type {
   Chain
 } from 'wagmi/chains';
+import { ThirdwebProvider } from "thirdweb/react";
 
 // Konfigurasi Chain Monad Testnet
 const monadTestnet: Chain = {
@@ -48,16 +49,12 @@ export const Providers = (
   props: PropsWithChildren<{ initialState?: AlchemyClientState }>,
 ) => {
   return (
-    <WagmiProvider config={wagmiconfig}>
-      <QueryClientProvider client={queryClient}>
-        <AlchemyAccountProvider
-          config={config}
-          queryClient={queryClient}
-          initialState={props.initialState}
-        >
+    <ThirdwebProvider>
+      {/* <WagmiProvider config={wagmiconfig}> */}
+        <QueryClientProvider client={queryClient}>
           {props.children}
-        </AlchemyAccountProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+        </QueryClientProvider>
+      {/* </WagmiProvider> */}
+    </ThirdwebProvider>
   );
 };

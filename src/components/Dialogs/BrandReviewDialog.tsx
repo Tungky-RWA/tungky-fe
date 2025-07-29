@@ -15,10 +15,21 @@ import { FileText, Download } from "lucide-react"
 import { useRegisterBrand } from "@/hooks/useRegisterBrand"
 import toast from 'react-hot-toast'
 import { CONTRACT_TEMP } from "@/lib/constants"
-import { useEffect } from "react"
+import { useSendBatchTransaction  } from "thirdweb/react";
+import { client } from "@/config";
+import { defineChain, getContract, prepareContractCall } from "thirdweb";
+import { MASTER_ABI, MASTER_ADDRESS } from "@/lib/constants"
+
+const contract = getContract({
+  address: MASTER_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: MASTER_ABI
+});
 
 export default function BrandReviewDialog({ children, brandData }: any) {
-  const { isRegistering, approveRegisteredBrand } = useRegisterBrand({
+  const { mutateAsync: sendBatch, data: transactionResult, isSuccess, isError } = useSendBatchTransaction();
+  const { isRegistering } = useRegisterBrand({
     onSuccess: () => {
       toast.dismiss();
       toast.success('Approve Success')
@@ -30,10 +41,27 @@ export default function BrandReviewDialog({ children, brandData }: any) {
     }
   })
 
-  const handleSubmit = () => {
-    console.log(brandData?.BrandWalletAddress, CONTRACT_TEMP);
-    approveRegisteredBrand(brandData?.BrandWalletAddress, CONTRACT_TEMP);
+  const handleSubmit = async () => {
+    toast.loading('approving...')
+    try {
+      const tx = prepareContractCall({
+        contract,
+        method: 'approveBrand',
+        params: [brandData?.BrandWalletAddress || "", CONTRACT_TEMP]
+      })
+      await sendBatch([tx])
+
+      toast.dismiss()
+      toast.success('success approve')
+    } catch (error) {
+      toast.dismiss()
+      toast.error('failed approve')
+    }
   }
+
+  // useEffect(() => {
+
+  // }, [isSuccess])
 
   return (
     <Dialog>

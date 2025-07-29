@@ -27,8 +27,10 @@ import CardCustom from '../components/UI/CardCustom';
 import Button from '../components/UI/ButtonCustom';
 import { useSignerStatus, useSmartAccountClient } from "@account-kit/react";
 import LoginCard from '@/components/Register/login-card';
+import { useActiveAccount } from 'thirdweb/react';
 
 const AdminDashboard: React.FC = () => {
+  const activeAccount = useActiveAccount()
   const [isCopied, setIsCopied] = useState(false);
   const signerStatus = useSignerStatus();
   const location = useLocation();
@@ -70,14 +72,14 @@ const AdminDashboard: React.FC = () => {
             <div className="mb-8">
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="font-mono text-white text-xs py-1 px-2">
-                  {formatAddress(client?.account?.address ?? "")}
+                  {formatAddress(activeAccount?.address ?? "")}
                 </Badge>
                 <TooltipProvider>
                   <Tooltip open={isCopied}>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="md"
                         className="h-6 w-6"
                         onClick={handleCopy}
                       >

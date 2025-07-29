@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Home,
   Wallet,
@@ -7,14 +7,10 @@ import {
   Package,
   Smartphone,
   QrCode,
-  HelpCircle,
   BarChart3,
-  MapPin,
   LogOut,
-  Circle,
   Zap,
   Copy,
-  Store,
   Users,
 } from "lucide-react";
 import {
@@ -24,9 +20,10 @@ import {
   TooltipTrigger,
 } from "@/components/UI/tooltip";
 import { Button } from "@/components/UI/button";
-import { useSmartAccountClient, useLogout } from "@account-kit/react";
 import { formatAddress } from "@/lib/utils";
-import ButtonCustom from "@/components/UI/ButtonCustom";
+// import ButtonCustom from "@/components/UI/ButtonCustom";
+import { useActiveAccount } from "thirdweb/react";
+import { useDisconnect, useActiveWallet } from "thirdweb/react";
 
 interface SidebarProps {
   pageType?: string;
@@ -34,9 +31,10 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ pageType, metadata }: SidebarProps) => {
-  const { logout } = useLogout();
+  const activeAccount = useActiveAccount();
+  const { disconnect } = useDisconnect();
+  const wallet = useActiveWallet();
   const [isCopied, setIsCopied] = useState(false);
-  const { client } = useSmartAccountClient({});
   const location = useLocation();
 
   let navItems: any;
@@ -45,7 +43,7 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
     navItems = [
       { path: "/admin", icon: Home, label: "Dashboard" },
       { path: "/admin/brand", icon: Users, label: "Brand" },
-      { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
+      // { path: "/admin/analytics", icon: BarChart3, label: "Analytics" },
     ];
   } else if (pageType == "user") {
     navItems = [
@@ -70,7 +68,7 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(client?.account?.address ?? "");
+    navigator.clipboard.writeText(activeAccount ? activeAccount?.address : "");
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -107,8 +105,8 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
               bg-gradient-to-r from-green-400/20 to-cyan-400/20 border-green-400/30 text-green-400`}
           >
             <Wallet className="mr-3 h-4 w-4" />
-            {client?.account?.address
-              ? formatAddress(client?.account?.address)
+            {activeAccount?.address
+              ? formatAddress(activeAccount?.address || "")
               : ""}
             <TooltipProvider>
               <Tooltip open={isCopied}>
@@ -158,7 +156,7 @@ const Sidebar = ({ pageType, metadata }: SidebarProps) => {
 
       <div className="p-4 border-t border-white/10">
         <Button
-          onClick={() => logout()}
+          onClick={() => wallet ? disconnect(wallet) : null}
           variant="outline"
           className="w-full justify-start text-red-400 border-red-400/30 hover:bg-red-400/10 hover:border-red-400/50 crypto-glass"
         >

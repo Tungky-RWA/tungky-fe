@@ -1,32 +1,35 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Brand/Sidebar';
 import Header from '@/components/Layout/Header';
-import { useSignerStatus, useSmartAccountClient  } from "@account-kit/react";
 import LoginCard from '@/components/Register/login-card';
-import { useReadHasRole } from '@/hooks/useHasRole';
 import LoadingPage from '@/components/UI/loadingPage';
 
-import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
-import { MASTER_ABI } from '@/lib/masterAbi';
-import { DEFAULT_ROLE_ADMIN } from '@/lib/constants';
+import { DEFAULT_ROLE_ADMIN, MASTER_ABI, MASTER_ADDRESS } from '@/lib/constants';
 import Navbar from '@/components/Layout/Navbar';
+import { useActiveAccount, useReadContract  } from "thirdweb/react";
+import { client } from "@/config";
+import { defineChain, getContract } from "thirdweb";
 
-const BrandLayout = () => {
-  const signerStatus = useSignerStatus();
-  const { isLoadingClient, client } = useSmartAccountClient({});
+const contract = getContract({
+  address: MASTER_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: MASTER_ABI
+});
 
-  const { hasRole, isLoadingHasRole } = useReadHasRole({
-    roleAddress: DEFAULT_ROLE_ADMIN,
-    userAddress: client?.account?.address || "0x0"
-  })
+const AdminLayout = () => {
+  const activeAccount = useActiveAccount();
 
-  console.log(isLoadingClient, isLoadingClient, signerStatus)
+  const { data: hasRole, isLoading: isLoadingHasRole } = useReadContract({
+    contract: contract,
+    method: "hasRole",
+    params: [DEFAULT_ROLE_ADMIN, activeAccount?.address || ""],
+  });
 
-  if (isLoadingHasRole || (isLoadingClient && !signerStatus.isDisconnected)) {
+  if (isLoadingHasRole) {
     return <LoadingPage />;
   }
-  if (!signerStatus.isConnected) {
+  if (!activeAccount) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
         <Navbar/>
@@ -36,7 +39,7 @@ const BrandLayout = () => {
   }
   
   
-  if (!hasRole && signerStatus.isConnected) {
+  if (!hasRole && activeAccount) {
     
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
@@ -66,4 +69,4 @@ const BrandLayout = () => {
   );
 };
 
-export default BrandLayout;
+export default AdminLayout;

@@ -1,6 +1,8 @@
 import { createConfig } from "@account-kit/react";
 import { QueryClient } from "@tanstack/react-query";
 import { alchemy, baseSepolia } from "@account-kit/infra";
+import { createThirdwebClient } from "thirdweb";
+
 export const config = createConfig(
   {
     // signerConnection: signer,
@@ -29,3 +31,7 @@ export const config = createConfig(
 );
 
 export const queryClient = new QueryClient();
+
+export const client = createThirdwebClient({
+  clientId: "3c293f82e6e77f130220ed84ebce68cf", // Get from your thirdweb dashboard
+});
