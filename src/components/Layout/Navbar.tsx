@@ -5,9 +5,8 @@ import { useWindowScroll } from "react-use"
 import gsap from "gsap"
 import { Link } from "react-router-dom"
 import { Shield, Menu, X } from "lucide-react"
-import { useSignerStatus } from "@account-kit/react"
-import ButtonCustom from "../UI/ButtonCustom"
-// import { useSignerStatus } from "@account-kit/react"
+import { useActiveAccount } from "thirdweb/react";
+import ButtonCustom from "../UI/ButtonCustom";
 
 // Asumsi warna primer dan aksen dari contoh Anda
 const colors = {
@@ -26,12 +25,11 @@ const Navbar = () => {
 
 
   const akunButton : any = ()=>{
-
-    const signerStatus = useSignerStatus();
+    const activeAccount = useActiveAccount();
 
     // alert(signerStatus.isConnected)
 
-    if(!signerStatus.isConnected){
+    if(!activeAccount){
 
       return(
         <div className="flex flex-row gap-3">
@@ -57,7 +55,7 @@ const Navbar = () => {
 
     }
 
-     if(signerStatus.isConnected){
+     if(activeAccount){
 
          return(
           <div>

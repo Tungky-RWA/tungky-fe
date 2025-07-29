@@ -103,96 +103,96 @@ export const useOwner = ({
   };
 };
 
-export const useInfoMinted = ({
-  tokenId,
-  contractAddress,
-  enabled = true,
-}: useVerificationParams) => {
-  const { client } = useSmartAccountClient({});
-  const { data, isLoading, isError, refetch } = useQuery<
-    string | undefined,
-    Error,
-    string | undefined,
-    readonly unknown[]
-  >({
-    queryKey: ["infoMinted", contractAddress, tokenId],
-    queryFn: async () => {
-      if (!client) {
-        throw new Error("Smart account client not ready");
-      }
-      if (!contractAddress) {
-        throw new Error("Contract Address is not defined for queryFn");
-      }
-      if (!tokenId) {
-        throw new Error("tokenId is not defined for queryFn.");
-      }
+// export const useInfoMinted = ({
+//   tokenId,
+//   contractAddress,
+//   enabled = true,
+// }: useVerificationParams) => {
+//   const { client } = useSmartAccountClient({});
+//   const { data, isLoading, isError, refetch } = useQuery<
+//     string | undefined,
+//     Error,
+//     string | undefined,
+//     readonly unknown[]
+//   >({
+//     queryKey: ["infoMinted", contractAddress, tokenId],
+//     queryFn: async () => {
+//       if (!client) {
+//         throw new Error("Smart account client not ready");
+//       }
+//       if (!contractAddress) {
+//         throw new Error("Contract Address is not defined for queryFn");
+//       }
+//       if (!tokenId) {
+//         throw new Error("tokenId is not defined for queryFn.");
+//       }
 
-      const infoMinted = await client.readContract({
-        address: contractAddress,
-        abi: NFTBRAND_ABI,
-        functionName: "tokenURI",
-        args: [tokenId],
-      });
+//       const infoMinted = await client.readContract({
+//         address: contractAddress,
+//         abi: NFTBRAND_ABI,
+//         functionName: "tokenURI",
+//         args: [tokenId],
+//       });
 
-      return infoMinted;
-    },
+//       return infoMinted;
+//     },
 
-    enabled: enabled && !!client && !!contractAddress && !!tokenId,
-  });
+//     enabled: enabled && !!client && !!contractAddress && !!tokenId,
+//   });
 
-  return {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  };
-};
+//   return {
+//     data,
+//     isLoading,
+//     isError,
+//     refetch,
+//   };
+// };
 
-export const useVerification = ({
-  tokenId,
-  contractAddress,
-  client,
-}: useVerificationParams) => {
-  const { data, isLoading, isError, refetch } = useQuery<
-    string | undefined,
-    Error,
-    string | undefined,
-    readonly unknown[]
-  >({
-    queryKey: ["preMints", contractAddress, client?.chain?.id, tokenId],
-    queryFn: async () => {
-      if (!client) {
-        throw new Error("Smart account client not ready");
-      }
-      if (!contractAddress) {
-        throw new Error("Contract Address is not defined for queryFn");
-      }
-      if (!tokenId) {
-        throw new Error("tokenId is not defined for queryFn.");
-      }
+// export const useVerification = ({
+//   tokenId,
+//   contractAddress,
+//   client,
+// }: useVerificationParams) => {
+//   const { data, isLoading, isError, refetch } = useQuery<
+//     string | undefined,
+//     Error,
+//     string | undefined,
+//     readonly unknown[]
+//   >({
+//     queryKey: ["preMints", contractAddress, client?.chain?.id, tokenId],
+//     queryFn: async () => {
+//       if (!client) {
+//         throw new Error("Smart account client not ready");
+//       }
+//       if (!contractAddress) {
+//         throw new Error("Contract Address is not defined for queryFn");
+//       }
+//       if (!tokenId) {
+//         throw new Error("tokenId is not defined for queryFn.");
+//       }
 
-      const _tokenId = BigInt(tokenId);
+//       const _tokenId = BigInt(tokenId);
 
-      const info = await client.readContract({
-        address: contractAddress,
-        abi: NFTBRAND_ABI,
-        functionName: "preMints",
-        args: [_tokenId],
-      });
+//       const info = await client.readContract({
+//         address: contractAddress,
+//         abi: NFTBRAND_ABI,
+//         functionName: "preMints",
+//         args: [_tokenId],
+//       });
 
-      return info;
-    },
+//       return info;
+//     },
 
-    enabled: !!client && !!contractAddress && !!tokenId,
-  });
+//     enabled: !!client && !!contractAddress && !!tokenId,
+//   });
 
-  return {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  };
-};
+//   return {
+//     data,
+//     isLoading,
+//     isError,
+//     refetch,
+//   };
+// };
 
 export const useClaimNFT = ({
   onSuccess,
@@ -253,10 +253,10 @@ export const useClaimNFT = ({
       to: `0x${string}`,
       contractAddress: `0x${string}`
     ) => {
-      if (!client) {
-        setError("Wallet not connected");
-        return;
-      }
+      // if (!client) {
+      //   setError("Wallet not connected");
+      //   return;
+      // }
 
       const body = {
         tokenId,
@@ -269,42 +269,42 @@ export const useClaimNFT = ({
     [mutation]
   );
 
-  const updatePreMint = useCallback(
-    async (
-      oldSerialNumber: string,
-      newSerialNumber: string,
-      uri: URL,
-      brandAddress: `0x${string}`
-    ) => {
-      if (!client) {
-        setError("Wallet not connected");
-        return;
-      }
-      sendUserOperation({
-        uo: {
-          target: brandAddress,
-          data: encodeFunctionData({
-            abi: NFTBRAND_ABI,
-            functionName: "updatePreMint",
-            args: [oldSerialNumber, newSerialNumber, uri],
-          }),
-        },
-      });
-    },
-    [client, sendUserOperation]
-  );
+  // const updatePreMint = useCallback(
+  //   async (
+  //     oldSerialNumber: string,
+  //     newSerialNumber: string,
+  //     uri: URL,
+  //     brandAddress: `0x${string}`
+  //   ) => {
+  //     if (!client) {
+  //       setError("Wallet not connected");
+  //       return;
+  //     }
+  //     sendUserOperation({
+  //       uo: {
+  //         target: brandAddress,
+  //         data: encodeFunctionData({
+  //           abi: NFTBRAND_ABI,
+  //           functionName: "updatePreMint",
+  //           args: [oldSerialNumber, newSerialNumber, uri],
+  //         }),
+  //       },
+  //     });
+  //   },
+  //   [client, sendUserOperation]
+  // );
 
-  const transactionUrl = useMemo(() => {
-    if (!client?.chain?.blockExplorers || !sendUserOperationResult?.hash) {
-      return undefined;
-    }
-    return `${client.chain.blockExplorers.default.url}/tx/${sendUserOperationResult.hash}`;
-  }, [client, sendUserOperationResult?.hash]);
+  // const transactionUrl = useMemo(() => {
+  //   if (!client?.chain?.blockExplorers || !sendUserOperationResult?.hash) {
+  //     return undefined;
+  //   }
+  //   return `${client.chain.blockExplorers.default.url}/tx/${sendUserOperationResult.hash}`;
+  // }, [client, sendUserOperationResult?.hash]);
 
   return {
     claimNFT,
     mutation,
-    updatePreMint,
+    // updatePreMint,
     transactionUrl,
     error,
   };

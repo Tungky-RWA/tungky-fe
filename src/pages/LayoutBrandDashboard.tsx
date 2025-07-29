@@ -16,23 +16,53 @@ import ButtonCustom from "@/components/UI/ButtonCustom";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import LoadingPage from "@/components/UI/loadingPage";
-import { useReadbrandIds } from "@/hooks/useReadBrandIds";
-import { useReadbrandMetadata } from "@/hooks/useGetBrandUri";
 import { useBrandNFTS } from "@/hooks/useGetBrandNFTS";
 import { useEffect } from "react";
+import { useActiveAccount, useReadContract  } from "thirdweb/react";
+import { client } from "@/config";
+import { defineChain, getContract } from "thirdweb";
+import { FACTORY_ABI, FACTORY_ADDRESS, METADATA_ABI, METADATA_ADDRESS } from "@/lib/constants";
+
+const contract = getContract({
+  address: METADATA_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: METADATA_ABI
+});
+
+const contractFactory = getContract({
+  address: FACTORY_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: FACTORY_ABI
+});
 
 const BrandLayout = () => {
-  const { isLoadingClient } = useSmartAccountClient({});
-  const { data: dataBrandRole, isLoading: isLoadingBrandRole } = useBrandRole();
-  const signerStatus = useSignerStatus();
-  const { client } = useSmartAccountClient({});
+  const activeAccount = useActiveAccount();
+  // const { data: dataBrandRole, isLoading: isLoadingBrandRole } = useBrandRole();
 
-  const { brandIds } = useReadbrandIds({
-    brandAddress: client?.account?.address,
+  // const { brandIds } = useReadbrandIds({
+  //   brandAddress: client?.account?.address,
+  // });
+
+  const { data: dataBrandRole, isLoading: isLoadingBrandRole } = useReadContract({
+    contract: contractFactory,
+    method: "getBrandNFTContractAddress",
+    params: [activeAccount?.address || ""],
   });
 
-  const { metaData } = useReadbrandMetadata({
-    brandTokenId: String(brandIds),
+  const { data: brandIds, isLoading: isLoadingBrandIds } = useReadContract({
+    contract: contract,
+    method: "brandIds",
+    params: [activeAccount?.address || ""],
+  });
+  
+  console.log(brandIds, 'woi hasrole')
+  
+  const { data: metaData, isLoading: isLoadingMetadata } = useReadContract({
+    contract: contract,
+    method: "tokenURI",
+    params: [brandIds || 0n],
   });
 
   console.log(dataBrandRole, "metadatatest");
@@ -45,11 +75,11 @@ const BrandLayout = () => {
     refetch();
   }, [refetch]);
 
-  if (isLoadingBrandRole || (isLoadingClient && !signerStatus.isDisconnected)) {
+  if (isLoadingBrandRole) {
     return <LoadingPage />;
   }
 
-  if (!signerStatus.isConnected) {
+  if (!activeAccount) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
         <Navbar />

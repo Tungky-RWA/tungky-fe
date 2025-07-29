@@ -4,45 +4,57 @@ import Card from "../components/UI/CardCustom";
 import Navbar from "@/components/Layout/Navbar";
 import LoginCard from "@/components/Register/login-card";
 import LoadingPage from "@/components/UI/loadingPage";
-import {
-  useVerification,
-  useClaimNFT,
-  useInfoMinted,
-  useOwner,
-} from "@/hooks/useClaimNFT";
-
-import {
-  useSignerStatus,
-  useSmartAccountClient,
-  useLogout,
-  useUser,
-} from "@account-kit/react";
 import ButtonCustom from "../components/UI/ButtonCustom";
 import toast from "react-hot-toast";
 
+import { useActiveAccount, useReadContract, useProfiles, useDisconnect, useActiveWallet } from "thirdweb/react";
+import { client } from "@/config";
+import { defineChain, getContract } from "thirdweb";
+import { NFTBRAND_ABI } from "@/lib/constants";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+
 const VerifyProduct: React.FC = () => {
+  const activeAccout = useActiveAccount();
   const [searchParams] = useSearchParams();
   const tokenId = searchParams.get("tokenId");
   const contract = searchParams.get("contract") as `0x${string}`;
-  const { client } = useSmartAccountClient({});
+  // const { client } = useSmartAccountClient({});
 
-  const signerStatus = useSignerStatus();
+  const contractBrand = getContract({
+    client,
+    chain: defineChain(4202),
+    address: contract,
+    abi: NFTBRAND_ABI
+  })
+
+  const { data } = useReadContract({
+    contract: contractBrand,
+    method: "preMints",
+    params: [BigInt(tokenId || 0)],
+  });
+
+  const { data: dataInfoMinted } = useReadContract({
+    contract: contractBrand,
+    method: "tokenURI",
+    params: [BigInt(tokenId || 0)],
+  });
+
   // const { data: ownerNFT, isLoading: isLoadingVerif, dataPreMint, refetch, isLoadingPremint, isSuccess, isSuccessPremint, error: errorOwner, errorPremint, isStale } = useVerification({
   //   tokenId,
   //   contractAddress: contract,
   //   client
   // })
-  const { data } = useVerification({
-    tokenId,
-    contractAddress: contract,
-    client,
-  });
-  const { data: dataInfoMinted } = useInfoMinted({
-    tokenId,
-    contractAddress: contract,
-    client,
-  });
-  console.log(data, "woi anjay");
+  // const { data } = useVerification({
+  //   tokenId,
+  //   contractAddress: contract,
+  //   client,
+  // // });
+  // const { data: dataInfoMinted } = useInfoMinted({
+  //   tokenId,
+  //   contractAddress: contract,
+  //   client,
+  // });
 
   // const [verificationResult, setVerificationResult] = useState<any>(null);
   // const [isLoading, setIsLoading] = useState(true);
@@ -50,7 +62,7 @@ const VerifyProduct: React.FC = () => {
   // const [isLocationPermisionGranted, setIsLocationPermissionGranted] = useState(false);
   // const [location, setLocation] = useState({lat: 0, lng: 0});
 
-  if (signerStatus.isDisconnected) {
+  if (!activeAccout) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
         <LoginCard cardDescription="Login to continue" />
@@ -86,53 +98,70 @@ const AuthenticProduct: React.FC<{
   client: any;
   dataPremint: string;
 }> = ({ result }) => {
+  const activeAccount = useActiveAccount()
+  const { data: profiles } = useProfiles({
+    client,
+  });
+  const { disconnect } = useDisconnect();
+  const wallet = useActiveWallet();
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const tokenId = searchParams.get("tokenId");
   const contract = searchParams.get("contract") as `0x${string}`;
-  const { client } = useSmartAccountClient({});
-  const { logout } = useLogout();
-  const user = useUser();
-  const { claimNFT } = useClaimNFT({
+
+  const contractBrand = getContract({
+    client,
+    chain: defineChain(4202),
+    address: contract,
+    abi: NFTBRAND_ABI
+  })
+
+  const claimNFT = useMutation({
+    mutationFn: (body: {tokenId: any, to: `0x${string}`, contractAddress: `0x${string}`}) => {
+      return axios.post('http://localhost:42069/api/claim-nft', body)
+    },
+    onMutate: () => {
+      toast.loading("claiming nft...");
+    },
     onSuccess: () => {
       refetchMinted();
       refetchPremint();
       toast.dismiss();
       toast.success("Claim NFT success");
     },
+    onError: (err) => {
+      toast.dismiss();
+      toast.error(err.message);
+    },
   });
-  const {
-    data: dataPremint,
-    isLoading: isLoadingPremint,
-    isError: isErrorPremint,
-    refetch: refetchPremint,
-  } = useVerification({
-    tokenId: tokenId,
-    contractAddress: contract,
-    client,
+  const { data: dataPremint, refetch: refetchPremint } = useReadContract({
+    contract: contractBrand,
+    method: "preMints",
+    params: [BigInt(tokenId || 0)],
   });
-  const {
-    data: dataOwner,
-    isLoading: isLoadingOwner,
-    isError: isErrorOwner,
-    refetch: refetchOwner,
-  } = useOwner({
-    tokenId: tokenId,
-    contractAddress: contract,
-    client,
+  
+  const { data: dataOwner, refetch: refetchOwner, } = useReadContract({
+    contract: contractBrand,
+    method: "ownerOf",
+    params: [BigInt(tokenId || 0)],
   });
-  const {
-    data: dataMinted,
-    isLoading: isLoadingMinted,
-    isError: isErrorMinted,
-    refetch: refetchMinted,
-  } = useInfoMinted({
-    tokenId: tokenId,
-    contractAddress: contract,
-    client,
+  const { data: dataMinted, refetch: refetchMinted, } = useReadContract({
+    contract: contractBrand,
+    method: "tokenURI",
+    params: [BigInt(tokenId || 0)],
   });
+  // const {
+  //   data: dataMinted,
+  //   isLoading: isLoadingMinted,
+  //   isError: isErrorMinted,
+  //   refetch: refetchMinted,
+  // } = useInfoMinted({
+  //   tokenId: tokenId,
+  //   contractAddress: contract,
+  //   client,
+  // });
 
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -259,7 +288,7 @@ const AuthenticProduct: React.FC<{
                   </div>
                 </div>
                 <div className="mt-4">
-                  {client?.account?.address === dataOwner ? (
+                  {activeAccount?.address === dataOwner ? (
                     <>
                       <p className="font-semibold text-xl mb-2 blockchain-gradient">
                         You are the owner of this NFT Product
@@ -297,11 +326,11 @@ const AuthenticProduct: React.FC<{
                 </p>
                 {/* <p className="text-white font-semibold text-lg mb-1">Your Account Information</p> */}
                 <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1 my-1 relative">
-                  {user?.email}
+                  {profiles?.length ? profiles[0]?.details.email : null}
                 </p>
                 <div className="flex items-center space-x-2">
                   <p className="text-white font-mono text-sm bg-white/5 p-2 rounded flex-1 break-all ">
-                    {client?.account?.address}
+                    {activeAccount?.address}
                   </p>
                   {/* Placeholder for Button component with ExternalLink icon */}
                   <button className="px-3 py-1 bg-gray-700 text-white rounded text-sm flex items-center space-x-1">
@@ -322,13 +351,13 @@ const AuthenticProduct: React.FC<{
                   </button>
                 </div>
                 <div className="flex items-center space-x-2 mt-2 justify-end">
-                  <ButtonCustom onClick={() => logout()} variant="secondary">
+                  <ButtonCustom onClick={() => wallet ? disconnect(wallet) : null} variant="secondary">
                     Change Account
                   </ButtonCustom>
                   <ButtonCustom
                     variant="primary"
                     onClick={() =>
-                      claimNFT(tokenId, client?.account?.address, contract)
+                      claimNFT.mutate({ tokenId: tokenId, to: activeAccount?.address as `0x${string}`, contractAddress: contract})
                     }
                   >
                     Claim NFT

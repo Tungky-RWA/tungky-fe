@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Brand/Sidebar';
 import Header from '@/components/Layout/Header';
-import { useSignerStatus, useSmartAccountClient  } from "@account-kit/react";
 import LoginCard from '@/components/Register/login-card';
 import { useReadHasRole } from '@/hooks/useHasRole';
 import LoadingPage from '@/components/UI/loadingPage';
+import { useActiveAccount } from "thirdweb/react";
 import Navbar from '@/components/Layout/Navbar';
 
 import { useQuery } from '@tanstack/react-query';
@@ -14,18 +14,9 @@ import { CONTRACT_TEMP, MASTER_ADDRESS, DEFAULT_ROLE_ADMIN } from '@/lib/constan
 import { Toaster } from 'react-hot-toast';
 
 const UserLayout = () => {
-  const signerStatus = useSignerStatus();
-  const { isLoadingClient, client } = useSmartAccountClient({});
+  const activeAccount = useActiveAccount();
 
-  const { hasRole, isLoadingHasRole } = useReadHasRole({
-    roleAddress: DEFAULT_ROLE_ADMIN,
-    userAddress: client?.account?.address || "0x0"
-  })
-
-  if (isLoadingHasRole || (isLoadingClient && !signerStatus.isDisconnected)) {
-    return <LoadingPage />;
-  }
-  if (!signerStatus.isConnected) {
+  if (!activeAccount) {
     return (
       <div className="min-h-screen relative justify-center items-center bg-blockchain-gradient flex w-full">
         <Navbar/>
@@ -33,11 +24,7 @@ const UserLayout = () => {
       </div>
     )
   }
-  
-  
-//   if (!hasRole && signerStatus.isConnected) {
-//     return <>404</>
-//   }
+
   return (
 
     <div className="min-h-screen bg-blockchain-gradient flex w-full">

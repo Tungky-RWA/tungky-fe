@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  Plus,
   Eye,
   Circle,
-  Gem,
-  Zap,
-  X,
   Tags,
-  Upload,
-  Image,
 } from "lucide-react";
 import ButtonCustom from "@/components/UI/ButtonCustom";
-import { useVerification } from "@/hooks/useClaimNFT";
-import { useSmartAccountClient } from "@account-kit/react";
 import { formatTimestampToIndoDate } from "@/utils/formatTime";
 import NftReviewDialog from "../Dialogs/NftReviewDialog";
+import { client } from "@/config";
+import { useReadContract  } from "thirdweb/react";
+import { defineChain, getContract } from "thirdweb";
+import { NFTBRAND_ABI } from "@/lib/constants";
 
 interface NFTItem {
   NftContractAddress: string;
@@ -31,27 +27,28 @@ interface NFTItem {
 
 function CardNFT({ data }: any) {
   // console.log(dataNft, "NFTCARD");
-  const { client } = useSmartAccountClient({});
+  const contract = getContract({
+    client,
+    chain: defineChain(4202),
+    address: data?.NftContractAddress,
+    abi: NFTBRAND_ABI
+  })
   const [nftdata, setNftdata] = useState<any>(null);
-  // const { nftdata, refetchNftInfo } = useReadNFTData({
-  //   contractAddress: dataNft?.contractAddress,
-  //   tokenid: dataNft?.tokenId,
-  // });
 
   // console.log(tokenId, contractAddress);
 
-  const { data: dataInfoMinted } = useVerification({
-    contractAddress: data?.NftContractAddress,
-    tokenId: data?.tokenId,
-    client,
+  const { data: dataInfoMinted } = useReadContract({
+    contract: contract,
+    method: "preMints",
+    params: [data?.tokenId],
   });
 
   async function fetchPinataJson(link: any) {
     try {
       const res = await fetch(link);
       const json = await res.json();
+      console.log(json, 'woi json')
       setNftdata(json);
-      // console.log(json); // Ini adalah JSON metadata-nya
       return json;
     } catch (error) {
       console.error("Gagal fetch JSON dari Pinata:", error);
@@ -61,9 +58,6 @@ function CardNFT({ data }: any) {
   useEffect(() => {
     fetchPinataJson(dataInfoMinted);
   }, [data]);
-
-  // console.log(nftdata, "nftdata");
-  // console.log(data, "dataInfo");
 
   if (!nftdata) {
     return <></>;

@@ -19,14 +19,29 @@ import {
   TooltipTrigger,
 } from "@/components/UI/tooltip";
 import { cn, formatAddress } from "@/lib/utils";
-import { useUser, useSmartAccountClient, useLogout } from "@account-kit/react";
 import { useRegisterBrand } from "@/hooks/useRegisterBrand";
-import { useReadBrandData } from "@/hooks/useReadRegisteredBrand";
 import toast from "react-hot-toast";
-import { CONTRACT_ADDRESS } from "@/lib/constants";
+import { FACTORY_ABI, FACTORY_ADDRESS, MASTER_ABI, MASTER_ADDRESS } from "@/lib/constants";
 import { Checkbox } from "../UI/CheckBox";
 import CardCustom from "../UI/CardCustom";
 import ButtonCustom from "../UI/ButtonCustom";
+import { useActiveAccount, useProfiles, useWalletInfo, useSendBatchTransaction, useReadContract, useDisconnect, useActiveWallet  } from "thirdweb/react";
+import { client } from "@/config";
+import { defineChain, getContract, prepareContractCall } from "thirdweb";
+
+const contract = getContract({
+  address: MASTER_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: MASTER_ABI
+});
+
+const contractFactory = getContract({
+  address: FACTORY_ADDRESS,
+  chain: defineChain(4202),
+  client,
+  abi: FACTORY_ABI
+})
 
 // Palet warna
 const accentPurple = "violet-600";
@@ -172,11 +187,12 @@ function EnhancedLogoUploader({
 }
 
 export default function FormRegister() {
-  const { logout } = useLogout();
+  const activeAccount = useActiveAccount();
+  const { disconnect } = useDisconnect();
+  const wallet = useActiveWallet();
   const [isCopied, setIsCopied] = useState(false);
-  const user = useUser();
   const navigate = useNavigate();
-  const { client } = useSmartAccountClient({});
+  // const { client } = useSmartAccountClient({});
 
   const [formData, setFormData] = useState({
     companyName: "",
@@ -189,6 +205,16 @@ export default function FormRegister() {
     phoneNumber: "",
     termsAccepted: false,
   });
+
+  const { data: profiles } = useProfiles({
+    client,
+  });
+
+
+  const { data: walletInfo } = useWalletInfo("io.metamask");
+  console.log("wallet name", walletInfo);
+
+  const { mutateAsync: sendBatchTransaction, data: transactionUrl, isPending: isRegistering } = useSendBatchTransaction();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -264,10 +290,6 @@ export default function FormRegister() {
     // 3. (Opsional) Menambahkan metadata kustom
     const metadata = JSON.stringify({
       name: `Asset_${fileName}_${Date.now()}`,
-      // keyvalues: {
-      //   source: 'my-dapp',
-      //   user: 'user-id-123'
-      // }
     });
     formData.append("pinataMetadata", metadata);
 
@@ -312,35 +334,20 @@ export default function FormRegister() {
   };
 
   useEffect(() => {
-    if (user?.email) {
-      setFormData((prev) => ({ ...prev, email: user.email } as any));
+    if (profiles?.length) {
+      setFormData((prev) => ({ ...prev, email: profiles[0].details.email } as any));
     }
-  }, [user?.email]);
+  }, [profiles]);
 
-  const { handleRegisterBrand, isRegistering, transactionUrl } =
-    useRegisterBrand({
-      onSuccess: () => {
-        toast.dismiss();
-        toast.success("Registration successful! Your brand is under review.");
-        refetchBrandInfo();
-      },
-      onError: (error) => {
-        toast.dismiss();
-        const message = error?.shortMessage ?? "An error occurred.";
-        toast.error(`Registration failed: ${message}`);
-      },
-    });
-
-  const { brandInfo, isLoadingBrandInfo, refetchBrandInfo } = useReadBrandData({
-    contractAddress: CONTRACT_ADDRESS,
-    ownerAddress: client?.account?.address,
+  const { data: brandInfo, isLoading: isLoadingBrandInfo } = useReadContract({
+    contract: contractFactory,
+    method: "getBrandInfo",
+    params: [activeAccount?.address || ""],
   });
 
-  console.log(brandInfo);
-
   const handleCopy = () => {
-    if (!client?.account?.address) return;
-    navigator.clipboard.writeText(client.account.address);
+    if (!activeAccount) return;
+    navigator.clipboard.writeText(activeAccount?.address || "");
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -356,7 +363,7 @@ export default function FormRegister() {
 
     console.log("Mengirimkan data:", {
       ...formData,
-      address: client?.account?.address,
+      address: activeAccount?.address,
       logoFile,
     });
     // handleUploadImageToIpfs();
@@ -372,12 +379,29 @@ export default function FormRegister() {
 
     console.log(metaDataLink);
 
-    handleRegisterBrand(
-      formData.companyName,
-      formData.brandName,
-      client?.account?.address || "0x",
-      metaDataLink
-    );
+    // handleRegisterBrand(
+    //   formData.companyName,
+    //   formData.brandName,
+    //   activeAccount?.address || "0x",
+    //   metaDataLink
+    // );
+
+    const tx1 = prepareContractCall({
+      contract,
+      method: "registerBrand",
+      params: [formData.companyName, formData.brandName, activeAccount?.address || "", metaDataLink],
+    });
+
+    try {
+      await sendBatchTransaction([
+        tx1
+      ]);
+      toast.dismiss()
+      toast.success('register success')
+    } catch (error) {
+      toast.dismiss()
+      toast.error('failed regist')  
+    }
 
     setIsLoading(false);
   };
@@ -389,7 +413,7 @@ export default function FormRegister() {
     !formData.brandName ||
     !formData.identityNumber ||
     !formData.termsAccepted ||
-    isRegistering;
+    isRegistering
 
   if (isLoadingBrandInfo) {
     return (
@@ -450,8 +474,8 @@ export default function FormRegister() {
                   id="walletAddress"
                   className="flex-grow rounded-md bg-black/30 px-3 py-2 text-sm font-mono text-gray-300 border border-gray-700"
                 >
-                  {client?.account?.address
-                    ? formatAddress(client.account.address)
+                  {activeAccount?.address
+                    ? formatAddress(activeAccount?.address)
                     : "Address not available"}
                 </div>
                 <TooltipProvider delayDuration={0}>
@@ -462,7 +486,7 @@ export default function FormRegister() {
                         variant="ghost"
                         size="icon"
                         onClick={handleCopy}
-                        disabled={!client?.account?.address}
+                        disabled={!activeAccount}
                         className="shrink-0 text-[#FAFAFA] hover:bg-white/10"
                       >
                         <Copy className="h-4 w-4" />
@@ -650,7 +674,7 @@ export default function FormRegister() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => logout()}
+                    onClick={() => wallet ? disconnect(wallet) : null}
                     className={cn(
                       `w-full sm:w-1/3 border-${accentPurple} text-${accentPurple}`,
                       `hover:bg-gradient-to-r hover:from-${accentPurpleHover} hover:via-${accentCyanHover} hover:to-${accentCyanHover} hover:text-white`
@@ -668,7 +692,7 @@ export default function FormRegister() {
                       "disabled:bg-gray-600 disabled:cursor-not-allowed"
                     )}
                   >
-                    {isRegistering || isLoading
+                    {isLoading || isRegistering
                       ? "Submitting..."
                       : "Submit Registration"}
                   </ButtonCustom>

@@ -1,15 +1,12 @@
 import React from 'react';
-// import yang tidak terpakai telah dihapus untuk kebersihan kode
-
-import { useSignerStatus } from "@account-kit/react";
-import FormRegister from '@/components/Register/FormRegister';
-import RegisterCard from '@/components/Register/login-card';
+import LoginCard from '@/components/Register/login-card';
 import Navbar from '@/components/Layout/Navbar';
 import HasLogin from './hasLogin';
+import { useActiveAccount } from "thirdweb/react";
 
 const Login: React.FC = () => {
-  const { isConnected } = useSignerStatus();
-
+  const activeAccount = useActiveAccount();
+  console.log(activeAccount, 'woi')
   return (
     // 1. Kontainer utama dibuat relatif untuk menampung video yang posisinya absolut
     <div className="relative w-full min-h-screen overflow-hidden">
@@ -32,10 +29,10 @@ const Login: React.FC = () => {
       <div className="relative flex items-center justify-center min-h-screen z-20 p-4">
         
         {/* Logika yang sudah ada: menampilkan komponen berdasarkan status koneksi */}
-        {isConnected ?
+        {activeAccount ?
         //  <FormRegister />
             <HasLogin/>
-          : <RegisterCard />}
+          : <LoginCard />}
 
       </div>
     </div>

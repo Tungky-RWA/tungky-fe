@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -8,8 +8,6 @@ import {
   Send,
   Wallet,
   AlertTriangle,
-  CheckCircle,
-  XCircle,
   Gem,
 } from "lucide-react";
 import CardCustom from "@/components/UI/CardCustom";
@@ -19,74 +17,64 @@ import { useSmartAccountClient } from "@account-kit/react";
 import { useInfoMinted } from "@/hooks/useClaimNFT";
 import { useTransfer } from "@/hooks/useTransfer";
 
-// Dummy data for the user's NFT collection
-const myNfts = [
-  {
-    id: "nft-001",
-    name: "Mega Mendung Batik",
-    brand: "Batik Trusmi",
-    image: "/img/user/mega-mendung.jpeg", // Replace with actual image
-  },
-  {
-    id: "nft-002",
-    name: "Professional Angklung Set",
-    brand: "Angklung UDJO",
-    image: "/img/user/angklung.jpeg",
-  },
-  {
-    id: "nft-003",
-    name: "Esemka Car Miniature",
-    brand: "SMK Car",
-    image: "/img/user/mobil-esemka.jpeg",
-  },
-  {
-    id: "nft-004",
-    name: "Premium Batik Scarf",
-    brand: "Batik Trusmi",
-    image: "/img/user/batik-premium.jpeg",
-  },
-  {
-    id: "nft-005",
-    name: "Kujang Heritage Blade",
-    brand: "Pusaka Nusantara",
-    image: "/images/kujang.jpg",
-  },
-  {
-    id: "nft-006",
-    name: "Angklung Keychain",
-    brand: "Angklung UDJO",
-    image: "/images/gantungan-kunci-angklung.jpg",
-  },
-];
+import { useActiveAccount, useReadContract, useProfiles, useSendBatchTransaction } from "thirdweb/react";
+import { client } from "@/config";
+import { defineChain, getContract, prepareContractCall } from "thirdweb";
+import { NFTBRAND_ABI } from "@/lib/constants";
+
 
 // Main Component for the "Mine" page
 const MinePage = () => {
-  const { client } = useSmartAccountClient({});
+  const activeAccount = useActiveAccount();
+    const { mutateAsync: sendBatch, data: transactionResult, isSuccess, isError, } = useSendBatchTransaction();
   const [selectedNft, setSelectedNft] = useState(null);
   const [isActionModalOpen, setActionModalOpen] = useState(false);
   const [isTransferModalOpen, setTransferModalOpen] = useState(false);
 
   const {
     data: dataNfts,
-    isLoading,
-    isError,
     refetch,
-  } = useUserNFTS(client?.account?.address);
-  const { handleTransfer } = useTransfer({
-    onSuccess: () => {
-      toast.dismiss();
-      toast.success("success transfer");
-      setTransferModalOpen(false);
-      refetch();
-    },
-  });
+  } = useUserNFTS(activeAccount?.address?.toLowerCase() || "");
+
+  const handleTransfer = useCallback(async (contractAddress: `0x${string}`, to: `0x${string}`, tokenId: string) => {
+    try {
+      toast.loading('sending...')
+      const contractBrand = getContract({
+        client,
+        chain: defineChain(4202),
+        address: contractAddress,
+        abi: NFTBRAND_ABI
+      })
+      const tx1 = prepareContractCall({
+        contract: contractBrand,
+        method: 'approve',
+        params: [to, BigInt(tokenId)]
+      })
+      const tx2 = prepareContractCall({
+        contract: contractBrand,
+        method: "transferFrom",
+        params: [activeAccount?.address || "", to, BigInt(tokenId)]
+      })
+
+      await sendBatch([tx1, tx2]);
+    } catch (error) {
+      toast.dismiss()
+      toast.error('failed transfer NFT')
+      refetch()
+    }
+  }, [])
+  console.log(dataNfts, activeAccount?.address, 'woiiii')
 
   const [transferAddress, setTransferAddress] = useState("");
   const [confirmNftName, setConfirmNftName] = useState("");
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [client?.account?.address])
+  useEffect(() => {
+    if (isSuccess) {
+      toast.dismiss()
+      toast.success('transfer success')
+    }
+    refetch()
+  }, [isSuccess])
   // Open the first modal with NFT actions
   const handleNftClick = (nft: any) => {
     setSelectedNft(nft);
@@ -264,11 +252,18 @@ const MinePage = () => {
 
 const NFTCard = ({ nft, handleNftClick }: any) => {
   const [metadata, setMetadata] = useState<any>(null);
-  const { data, isLoading } = useInfoMinted({
-    tokenId: nft?.tokenId,
-    contractAddress: nft?.NftContractAddress,
+  const contractBrand = getContract({
+    client,
+    chain: defineChain(4202),
+    address: nft?.NftContractAddress,
+    abi: NFTBRAND_ABI
+  })
+  const { data, isLoading } = useReadContract({
+    contract: contractBrand,
+    method: "tokenURI",
+    params: [BigInt(nft?.tokenId || 0)],
   });
-  console.log(metadata, nft, "data");
+
   useEffect(() => {
     const fetchMetadata = async () => {
       const res = await fetch(data);
@@ -278,8 +273,8 @@ const NFTCard = ({ nft, handleNftClick }: any) => {
 
     fetchMetadata();
   }, [data]);
-  // console.log(metadata, 'metadata')
-  if (isLoading) return <>loading...</>;
+  // // console.log(metadata, 'metadata')
+  // if (isLoading) return <>loading...</>;
   return (
     <div
       key={nft?.tokenId}
