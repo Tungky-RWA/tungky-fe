@@ -27,7 +27,7 @@ const contract = getContract({
 });
 
 export default function BrandReviewDialog({ children, brandData }: any) {
-  const { mutateAsync: sendBatch, data: transactionResult, isSuccess, isError } = useSendBatchTransaction();
+  const { mutateAsync: sendBatch, isPending } = useSendBatchTransaction();
 
   const handleSubmit = async () => {
     toast.loading('approving...')
