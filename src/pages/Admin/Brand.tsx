@@ -1,11 +1,6 @@
-
-import React, { useState } from 'react';
-import { Clock, Eye, Circle, Gem, Zap } from 'lucide-react';
+import { Clock, Eye, Circle, Gem } from 'lucide-react';
 import CardCustom from '@/components/UI/CardCustom';
 import ButtonCustom from '@/components/UI/ButtonCustom';
-import { Input } from '@/components/UI/input';
-import { Textarea } from '@/components/UI/textarea';
-import { Label } from '@/components/UI/label';
 import BrandReviewDialog from '@/components/Dialogs/BrandReviewDialog';
 import { useBrandRegisted } from '@/hooks/useGetBrandsRegisted';
 import WalletDisplay from '@/components/UI/WalletDisplay';
