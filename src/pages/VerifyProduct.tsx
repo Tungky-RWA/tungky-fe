@@ -120,7 +120,7 @@ const AuthenticProduct: React.FC<{
 
   const claimNFT = useMutation({
     mutationFn: (body: {tokenId: any, to: `0x${string}`, contractAddress: `0x${string}`}) => {
-      return axios.post('https://tungky-ponder-production.up.railway.app/claim-nft', body)
+      return axios.post('https://tungky-ponder-production.up.railway.app/api/claim-nft', body)
     },
     onMutate: () => {
       toast.loading("claiming nft...");
