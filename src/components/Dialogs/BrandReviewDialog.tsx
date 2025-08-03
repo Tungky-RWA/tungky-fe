@@ -12,7 +12,6 @@ import {
 } from "@/components/UI/dialog"
 import { Badge } from "@/components/UI/badge"
 import { FileText, Download } from "lucide-react"
-import { useRegisterBrand } from "@/hooks/useRegisterBrand"
 import toast from 'react-hot-toast'
 import { CONTRACT_TEMP } from "@/lib/constants"
 import { useSendBatchTransaction  } from "thirdweb/react";
@@ -29,17 +28,6 @@ const contract = getContract({
 
 export default function BrandReviewDialog({ children, brandData }: any) {
   const { mutateAsync: sendBatch, data: transactionResult, isSuccess, isError } = useSendBatchTransaction();
-  const { isRegistering } = useRegisterBrand({
-    onSuccess: () => {
-      toast.dismiss();
-      toast.success('Approve Success')
-    },
-    onError: (error: any) => {
-      toast.dismiss();
-      const message = error?.shortMessage ?? "An error occurred.";
-      toast.error(`Approve failed: ${message}`);
-    }
-  })
 
   const handleSubmit = async () => {
     toast.loading('approving...')
@@ -127,7 +115,6 @@ export default function BrandReviewDialog({ children, brandData }: any) {
           </DialogClose>
           <ButtonCustom
             onClick={handleSubmit}
-            disabled={isRegistering}
           >
             Approve Brand
           </ButtonCustom>

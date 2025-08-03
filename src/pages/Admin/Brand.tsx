@@ -14,36 +14,6 @@ const Brand = () => {
 
 
   const { data: brands } = useBrandRegisted();
-  console.log(brands,'ini brands');
-
-  const [formData, setFormData] = useState({
-    productName: '',
-    description: '',
-    price: ''
-  });
-
-  const nftProducts = [
-    {
-      id: '1234',
-      name: 'Premium Watch',
-      status: 'Active',
-      wallet: '0x742...4c2a',
-      minted: '2024-01-15'
-    },
-  ];
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleMintNFT = () => {
-    console.log('Minting NFT:', formData);
-    // Reset form
-    setFormData({ productName: '', description: '', price: '' });
-  };
 
   return (
     <div className="space-y-8 animate-fade-in">
